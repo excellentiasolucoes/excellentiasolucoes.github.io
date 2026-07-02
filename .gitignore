@@ -1,0 +1,25 @@
+# ⚠️  O config.js real com chaves NÃO deve ir para o repo.
+#     O GitHub Actions gera ele automaticamente via Secrets.
+#     Mantenha este arquivo excluído localmente.
+js/firebase/config.js
+
+# Ambiente
+.env
+.env.local
+
+# Dependências
+node_modules/
+package-lock.json
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# Temporários
+temp_*.txt
+*.tmp
+patch*.js
+patch*.ps1
+fix_*.ps1
+fix_*.js
