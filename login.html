@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+ï»¿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Excellentia Controll — Login</title>
-  <meta name="description" content="Sistema de Gestão de Demandas para Empresas de Arquitetura">
+  <title>Excellentia Controll ï¿½ Login</title>
+  <meta name="description" content="Sistema de Gestï¿½o de Demandas para Empresas de Arquitetura">
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="assets/logo.png">
 </head>
@@ -14,19 +14,19 @@
   <div class="login-brand">
     <img src="assets/logo.png" alt="Logo Excellentia" onerror="this.style.display='none'">
     <h1>Excellentia Controll</h1>
-    <p>Sistema de Gestão de Demandas para Empresas de Arquitetura</p>
+    <p>Sistema de Gestï¿½o de Demandas para Empresas de Arquitetura</p>
     <div style="margin-top:40px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">
       <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
         <span style="font-size:22px">??</span>
-        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Gestão de Demandas</div><div style="font-size:11px;color:var(--text-3)">Controle total dos seus atendimentos</div></div>
+        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Gestï¿½o de Demandas</div><div style="font-size:11px;color:var(--text-3)">Controle total dos seus atendimentos</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
         <span style="font-size:22px">??</span>
-        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Relatórios & Gráficos</div><div style="font-size:11px;color:var(--text-3)">Dados em tempo real do seu negócio</div></div>
+        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Relatï¿½rios & Grï¿½ficos</div><div style="font-size:11px;color:var(--text-3)">Dados em tempo real do seu negï¿½cio</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
         <span style="font-size:22px">???</span>
-        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Exclusivo para Arquitetura</div><div style="font-size:11px;color:var(--text-3)">Pensado para o seu escritório</div></div>
+        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Exclusivo para Arquitetura</div><div style="font-size:11px;color:var(--text-3)">Pensado para o seu escritï¿½rio</div></div>
       </div>
     </div>
   </div>
@@ -46,19 +46,30 @@
       <div class="form-group">
         <label class="form-label">Senha</label>
         <div class="password-wrapper">
-          <input type="password" class="form-control" id="login-password" placeholder="••••••••" required>
+          <input type="password" class="form-control" id="login-password" placeholder="ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" required>
           <button type="button" class="password-toggle" id="toggle-password">??</button>
         </div>
       </div>
       <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:15px;margin-top:8px" id="btn-login">
         Entrar no Sistema
       </button>
+
+      <div style="display:flex;align-items:center;gap:12px;margin:18px 0 4px">
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+        <span style="font-size:12px;color:var(--text-3);white-space:nowrap">ou continue com</span>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
+
+      <button type="button" id="btn-google" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1.5px solid var(--border);background:transparent;color:var(--text-1);font-size:14px;font-weight:600;border-radius:10px;cursor:pointer;transition:background .2s,border-color .2s;margin-top:4px" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.borderColor='#4285F4'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--border)'">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+        Entrar com Google
+      </button>
     </form>
 
     <div class="login-legal">
       Este sistema foi desenvolvido para organizar e otimizar seus atendimentos.<br>
-      Não é permitida a utilização por pessoas não autorizadas.<br>
-      <strong style="color:var(--gold)">Excellentia Controll © 2026</strong>
+      Nï¿½o ï¿½ permitida a utilizaï¿½ï¿½o por pessoas nï¿½o autorizadas.<br>
+      <strong style="color:var(--gold)">Excellentia Controll ï¿½ 2026</strong>
     </div>
   </div>
 </div>
@@ -70,11 +81,11 @@
       <span class="modal-title">?? Alterar Senha</span>
     </div>
     <div class="modal-body">
-      <p style="color:var(--text-2);margin-bottom:18px;font-size:14px">Por segurança, você precisa definir uma nova senha no primeiro acesso.</p>
+      <p style="color:var(--text-2);margin-bottom:18px;font-size:14px">Por seguranï¿½a, vocï¿½ precisa definir uma nova senha no primeiro acesso.</p>
       <div id="change-pwd-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-group">
         <label class="form-label">Nova Senha</label>
-        <input type="password" class="form-control" id="new-password" placeholder="Mínimo 6 caracteres">
+        <input type="password" class="form-control" id="new-password" placeholder="Mï¿½nimo 6 caracteres">
       </div>
       <div class="form-group">
         <label class="form-label">Confirmar Nova Senha</label>
@@ -149,14 +160,55 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     btn.disabled = false;
     btn.textContent = 'Entrar no Sistema';
     const msgs = {
-      'auth/user-not-found':    'Usuário não encontrado.',
+      'auth/user-not-found':    'Usuï¿½rio nï¿½o encontrado.',
       'auth/wrong-password':    'Senha incorreta.',
-      'auth/invalid-email':     'E-mail inválido.',
+      'auth/invalid-email':     'E-mail invï¿½lido.',
       'auth/too-many-requests': 'Muitas tentativas. Aguarde um momento.',
       'auth/invalid-credential':'E-mail ou senha incorretos.'
     };
     alertEl.textContent = msgs[err.code] || 'Erro ao fazer login. Tente novamente.';
     alertEl.style.display = 'flex';
+  }
+});
+
+// Login com Google
+document.getElementById('btn-google').addEventListener('click', async () => {
+  const btn     = document.getElementById('btn-google');
+  const alertEl = document.getElementById('login-alert');
+  alertEl.style.display = 'none';
+  btn.disabled  = true;
+  btn.textContent = 'Aguarde...';
+  showLoading('Autenticando com Google...');
+  try {
+    const provider = new GoogleAuthProvider();
+    const cred     = await signInWithPopup(auth, provider);
+    const user     = cred.user;
+
+    // Garante doc em /usuarios
+    const { doc: _doc, getDoc: _getDoc, setDoc: _setDoc, serverTimestamp: _ts }
+      = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+    const ref  = _doc(db, 'usuarios', user.uid);
+    const snap = await _getDoc(ref);
+    if (!snap.exists()) {
+      await _setDoc(ref, {
+        nome        : user.displayName || user.email.split('@')[0],
+        email       : user.email,
+        perfil      : 'usuario',
+        ativo       : true,
+        primeiroLogin: false,
+        criadoEm    : _ts()
+      });
+    }
+    hideLoading();
+    window.location.href = 'pages/dashboard.html';
+  } catch (err) {
+    hideLoading();
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> Entrar com Google';
+    if (err.code !== 'auth/popup-closed-by-user') {
+      alertEl.textContent = 'Erro ao entrar com Google: ' + (err.message || err.code);
+      alertEl.style.display = 'flex';
+    }
   }
 });
 
@@ -171,7 +223,7 @@ document.getElementById('btn-save-pwd').addEventListener('click', async () => {
     alertEl.style.display = 'flex'; return;
   }
   if (np !== cp) {
-    alertEl.textContent = 'As senhas não coincidem.';
+    alertEl.textContent = 'As senhas nï¿½o coincidem.';
     alertEl.style.display = 'flex'; return;
   }
 
