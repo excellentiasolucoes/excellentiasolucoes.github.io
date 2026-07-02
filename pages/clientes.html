@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -12,7 +12,7 @@
   <div id="sidebar-placeholder"></div>
   <div class="main-content">
     <div class="topbar">
-      <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
       <div><div class="topbar-title">Clientes</div><div class="topbar-subtitle">Cadastro de clientes</div></div>
       <div class="topbar-actions">
         <button class="btn btn-primary" id="btn-novo">+ Novo Cliente</button>
@@ -21,7 +21,7 @@
     <div class="page-content">
       <div class="search-bar">
         <div class="search-input-wrapper">
-          <span class="search-icon">??</span>
+          <span class="search-icon">&#128269;</span>
           <input type="text" class="form-control" id="search-input" placeholder="Buscar por nome, CPF/CNPJ...">
         </div>
       </div>
@@ -45,7 +45,7 @@
 <div class="modal-overlay" id="modal-form">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">?? <span id="modal-titulo">Novo Cliente</span></span>
+      <span class="modal-title"><span id="modal-titulo">Novo Cliente</span></span>
       <button class="modal-close" id="close-modal">?</button>
     </div>
     <div class="modal-body">
@@ -87,7 +87,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
-      <button class="btn btn-primary" id="btn-salvar">?? Salvar</button>
+      <button class="btn btn-primary" id="btn-salvar">&#128190; Salvar</button>
     </div>
   </div>
 </div>
@@ -213,7 +213,7 @@ function getSidebar(nome, perfil) {
     <div class="sidebar-footer">
       <div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
       <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div></div>
-      <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
   </aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
 }

@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -12,7 +12,7 @@
   <div id="sidebar-placeholder"></div>
   <div class="main-content">
     <div class="topbar">
-      <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
       <div><div class="topbar-title">Or�amentos</div><div class="topbar-subtitle">Gest�o de or�amentos</div></div>
       <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Or�amento</button></div>
     </div>
@@ -32,7 +32,7 @@
 <!-- Modal: Novo/Editar Or�amento -->
 <div class="modal-overlay" id="modal-form">
   <div class="modal modal-lg">
-    <div class="modal-header"><span class="modal-title">?? <span id="modal-titulo">Novo Or�amento</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Or�amento</span></span><button class="modal-close" id="close-modal">?</button></div>
     <div class="modal-body">
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-grid">
@@ -90,7 +90,7 @@
     <div class="modal-footer">
       <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
       <button class="btn btn-info" id="btn-preview">?? Preview</button>
-      <button class="btn btn-primary" id="btn-salvar">?? Salvar</button>
+      <button class="btn btn-primary" id="btn-salvar">&#128190; Salvar</button>
     </div>
   </div>
 </div>
@@ -99,12 +99,12 @@
 <div class="modal-overlay" id="modal-preview">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <span class="modal-title">?? Preview do Or�amento</span>
+      <span class="modal-title">Preview do Or�amento</span>
       <button class="modal-close" id="close-preview">?</button>
     </div>
     <div class="modal-body">
       <div class="no-print" style="display:flex;gap:10px;margin-bottom:16px">
-        <button class="btn btn-secondary" onclick="window.print()">??? Imprimir</button>
+        <button class="btn btn-secondary" onclick="window.print()">?&#128424; Imprimir</button>
         <button class="btn btn-danger" id="btn-pdf">?? Baixar PDF</button>
       </div>
       <div id="orcamento-preview-content" style="background:white;color:#111;padding:40px;border-radius:8px;font-family:'Inter',sans-serif"></div>

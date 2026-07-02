@@ -1,103 +1,199 @@
-﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Usu�rios � Excellentia Controll</title>
+  <title>Usu&#225;rios &#8212; Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
+  <style>
+    .tabs { display:flex; gap:4px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:0; }
+    .tab-btn { padding:10px 20px; background:none; border:none; border-bottom:3px solid transparent;
+      color:var(--text-3); font-size:13.5px; font-weight:600; cursor:pointer; transition:all .2s;
+      font-family:inherit; margin-bottom:-1px; }
+    .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+    .tab-btn:hover:not(.active) { color:var(--text-1); }
+    .tab-pane { display:none; } .tab-pane.active { display:block; }
+    .email-tag { display:inline-flex; align-items:center; gap:6px; background:var(--surface-2);
+      border:1px solid var(--border-subtle); border-radius:20px; padding:4px 12px; font-size:12.5px;
+      color:var(--text-2); margin:4px; }
+    .email-tag button { background:none; border:none; color:var(--text-3); cursor:pointer;
+      font-size:14px; padding:0; line-height:1; transition:color .2s; }
+    .email-tag button:hover { color:var(--danger); }
+    .email-list-wrap { display:flex; flex-wrap:wrap; min-height:44px; background:var(--surface-2);
+      border:1px solid var(--border-subtle); border-radius:var(--radius-sm); padding:6px;
+      margin-bottom:12px; }
+    .info-box { background:var(--surface-2); border:1px solid var(--border-subtle);
+      border-radius:var(--radius-sm); padding:14px 18px; font-size:13px; color:var(--text-2);
+      margin-bottom:20px; line-height:1.6; }
+    .info-box strong { color:var(--gold); }
+    .badge-metodo { font-size:10px; padding:2px 8px; border-radius:10px; font-weight:700;
+      background:rgba(52,152,219,.15); color:#3498DB; border:1px solid rgba(52,152,219,.3); }
+    .badge-metodo.google { background:rgba(234,67,53,.12); color:#EA4335; border-color:rgba(234,67,53,.25); }
+  </style>
 </head>
 <body>
 <div class="app-layout">
   <div id="sidebar-placeholder"></div>
   <div class="main-content">
     <div class="topbar">
-      <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
-      <div><div class="topbar-title">Usu�rios</div><div class="topbar-subtitle">Gest�o de acesso</div></div>
-      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Usu�rio</button></div>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
+      <div><div class="topbar-title">Usu&#225;rios</div><div class="topbar-subtitle">Gest&#227;o de acesso e permiss&#245;es</div></div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" id="btn-novo">&#43; Novo Usu&#225;rio</button>
+      </div>
     </div>
     <div class="page-content">
-      <div class="alert alert-info" style="margin-bottom:16px">
-        ?? Para criar usu�rios, v� ao <strong>Firebase Console ? Authentication ? Adicionar usu�rio</strong>, depois cadastre aqui o perfil.
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="usuarios">&#128100; Usu&#225;rios</button>
+        <button class="tab-btn" data-tab="autorizados">&#128274; Emails Autorizados</button>
       </div>
-      <div class="card" style="padding:0">
-        <div class="table-wrapper">
-          <table class="data-table">
-            <thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>M�todo</th><th>1� Login</th><th>A��es</th></tr></thead>
-            <tbody id="list-tbody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
-          </table>
+
+      <!-- TAB: USUARIOS -->
+      <div class="tab-pane active" id="tab-usuarios">
+        <div class="info-box">
+          &#128273; Para criar usu&#225;rios com <strong>e-mail/senha</strong>, v&#225; ao
+          <strong>Firebase Console &#8594; Authentication &#8594; Adicionar usu&#225;rio</strong>,
+          depois cadastre aqui o perfil. <br>
+          Usu&#225;rios que fizeram login com <strong>Google</strong> aparecem automaticamente.
+        </div>
+        <div class="card" style="padding:0">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead><tr>
+                <th>Nome</th><th>E-mail</th><th>Perfil</th>
+                <th>M&#233;todo</th><th>Ativo</th><th>A&#231;&#245;es</th>
+              </tr></thead>
+              <tbody id="list-tbody">
+                <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
+
+      <!-- TAB: EMAILS AUTORIZADOS -->
+      <div class="tab-pane" id="tab-autorizados">
+        <div class="info-box">
+          &#128274; <strong>Lista de acesso:</strong> Somente os e-mails cadastrados aqui poder&#227;o
+          fazer login no sistema (tanto por e-mail/senha quanto por Google).<br>
+          Deixe a lista <strong>vazia</strong> para permitir qualquer usu&#225;rio autenticado.
+        </div>
+        <div class="card">
+          <div class="form-group" style="margin-bottom:12px">
+            <label class="form-label">Adicionar e-mail autorizado</label>
+            <div style="display:flex;gap:8px">
+              <input type="email" class="form-control" id="input-email-auth"
+                placeholder="usuario@email.com" style="flex:1">
+              <button class="btn btn-primary" id="btn-add-email">Adicionar</button>
+            </div>
+          </div>
+          <div class="email-list-wrap" id="email-tags">
+            <span style="color:var(--text-3);font-size:13px;padding:6px">Carregando...</span>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:16px">
+            <button class="btn btn-primary" id="btn-salvar-emails">&#128190; Salvar lista de acesso</button>
+          </div>
+          <div id="auth-status" style="margin-top:12px;font-size:13px;color:var(--success);display:none">
+            &#10003; Lista salva com sucesso!
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div style="font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:12px">
+            &#128202; Como funciona o controle de acesso
+          </div>
+          <div style="font-size:13px;color:var(--text-3);line-height:1.8">
+            1. O usu&#225;rio tenta fazer login (e-mail/senha ou Google).<br>
+            2. O sistema verifica se o e-mail est&#225; na lista de autorizados.<br>
+            3. Se n&#227;o estiver, o acesso &#233; negado e o usu&#225;rio &#233; desconectado.<br>
+            4. Se a lista estiver <strong style="color:var(--gold)">vazia</strong>,
+               qualquer conta autenticada tem acesso.
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="modal-form">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title">?? <span id="modal-titulo">Novo Usu�rio</span></span><button class="modal-close" id="close-modal">?</button></div>
-    <div class="modal-body">
-      <div id="form-alert" class="alert alert-danger" style="display:none"></div>
-      <div class="form-group"><label class="form-label">UID do Firebase</label>
-        <input type="text" class="form-control" id="f-uid" placeholder="Cole o UID do Firebase Auth">
-        <small style="color:var(--text-3);font-size:11px">Firebase Console ? Authentication ? copie o UID do usu�rio</small>
-      </div>
-      <div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-control" id="f-nome" placeholder="Nome completo"></div>
-      <div class="form-group"><label class="form-label">E-mail</label><input type="email" class="form-control" id="f-email"></div>
-      <div class="form-group"><label class="form-label">Perfil</label>
-        <select class="form-select" id="f-perfil"><option value="Usu&#225;rio">Usu�rio</option><option value="admin">Administrador</option></select>
-      </div>
-      <div class="form-group"><label class="form-label">M�todo de Acesso</label>
-        <select class="form-select" id="f-metodo"><option value="email">E-mail/Senha</option><option value="google">Google</option></select>
-      </div>
-      <div class="form-group"><label class="form-label">For�ar troca de senha no pr�ximo login?</label>
-        <select class="form-select" id="f-primeiro"><option value="true">Sim</option><option value="false">N�o</option></select>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
-      <button class="btn btn-primary" id="btn-salvar">?? Salvar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Reset Password Modal -->
-<div class="modal-overlay" id="modal-reset">
+<!-- MODAL USUARIO -->
+<div class="modal-overlay" id="modal-usuario">
   <div class="modal modal-sm">
-    <div class="modal-header"><span class="modal-title">?? Resetar Senha</span><button class="modal-close" id="close-reset">?</button></div>
+    <div class="modal-header">
+      <span class="modal-title" id="modal-titulo">Usu&#225;rio</span>
+      <button class="modal-close" onclick="closeModal('modal-usuario')">&#10005;</button>
+    </div>
     <div class="modal-body">
-      <p style="color:var(--text-2);margin-bottom:16px;font-size:14px">O usu�rio receber� um e-mail para redefinir a senha. Confirmar?</p>
-      <div id="reset-alert" class="alert alert-danger" style="display:none"></div>
-      <p id="reset-email" style="font-weight:700;color:var(--gold)"></p>
+      <div id="modal-alert" class="alert alert-danger" style="display:none"></div>
+      <input type="hidden" id="edit-id">
+      <div class="form-group">
+        <label class="form-label">Nome completo</label>
+        <input type="text" class="form-control" id="edit-nome" placeholder="Nome do usu&#225;rio">
+      </div>
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input type="email" class="form-control" id="edit-email" placeholder="email@exemplo.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Perfil</label>
+        <select class="form-control" id="edit-perfil">
+          <option value="usuario">Usu&#225;rio</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Situa&#231;&#227;o</label>
+        <select class="form-control" id="edit-ativo">
+          <option value="true">Ativo</option>
+          <option value="false">Inativo</option>
+        </select>
+      </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" id="close-reset-2">Cancelar</button>
-      <button class="btn btn-warning" id="btn-confirm-reset">?? Enviar E-mail de Reset</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-usuario')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-salvar">&#128190; Salvar</button>
     </div>
   </div>
 </div>
 
 <div id="toast-container"></div>
+
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
-import { showToast, confirmDialog, setActiveNav, setupMobileSidebar } from '../js/utils.js';
-const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
-const { getAuth, onAuthStateChanged, signOut, sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
-const { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp }
-  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
-const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
-let allItems=[], editId=null, resetEmailVal='';
+import { showToast, showLoading, hideLoading, openModal, closeModal, confirmDialog,
+         setupMobileSidebar, setActiveNav } from '../js/utils.js';
 
-onAuthStateChanged(auth, async(user)=>{
-  if(!user){window.location.href='../login.html';return;}
-  const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  if(u.perfil!=='admin'){showToast('Acesso restrito a administradores','error');setTimeout(()=>history.back(),1500);return;}
-  renderSidebar(u.nome||user.email,'admin');
-  await loadData();
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, serverTimestamp }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+let currentUser = null;
+
+// ── Auth ──────────────────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = '../login.html'; return; }
+  const snap = await getDoc(doc(db, 'usuarios', user.uid));
+  const uData = snap.exists() ? snap.data() : {};
+  if (uData.perfil !== 'admin') {
+    showToast('Acesso restrito a administradores.', 'error');
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+    return;
+  }
+  currentUser = user;
+  renderSidebar(uData.nome || user.email, 'admin');
+  await loadUsuarios();
+  await loadEmailsAutorizados();
 });
 
+// ── Sidebar ───────────────────────────────────────────────────
 function renderSidebar(nome, perfil) {
   const isAdmin = perfil === 'admin';
   const ini = nome.charAt(0).toUpperCase();
-
-  // Aplica tema salvo
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'light') document.body.classList.add('light-mode');
   window.toggleTheme = function() {
@@ -108,9 +204,7 @@ function renderSidebar(nome, perfil) {
     if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
     if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
   };
-
   const isLight = document.body.classList.contains('light-mode');
-
   document.getElementById('sidebar-placeholder').innerHTML = `
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
@@ -145,93 +239,202 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">Administrador</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
   </aside>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
-
   document.getElementById('btn-logout').addEventListener('click', async () => {
-    await signOut(auth);
-    window.location.href = '../login.html';
+    await signOut(auth); window.location.href = '../login.html';
   });
-  setActiveNav();
-  setupMobileSidebar();
+  setActiveNav(); setupMobileSidebar();
 }
 
-async function loadData(){
-  const snap=await getDocs(collection(db,'usuarios'));
-  allItems=snap.docs.map(d=>({id:d.id,...d.data()}));
+// ── Tabs ──────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Usuários ──────────────────────────────────────────────────
+let allUsers = [];
+
+async function loadUsuarios() {
+  const snap = await getDocs(collection(db, 'usuarios'));
+  allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   renderTable();
 }
 
-function renderTable(){
-  const tbody=document.getElementById('list-tbody');
-  if(!allItems.length){tbody.innerHTML=`<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhum usu�rio</h3></div></td></tr>`;return;}
-  tbody.innerHTML=allItems.map(d=>`<tr>
-    <td>${d.nome||'�'}</td><td>${d.email||'�'}</td>
-    <td><span class="badge" style="${d.perfil==='admin'?'background:#C9A84C22;color:#C9A84C;border:1px solid #C9A84C44':'background:var(--surface-2);color:var(--text-2);border:1px solid var(--border-subtle)'}">${d.perfil==='admin'?'Admin':'Usu&#225;rio'}</span></td>
-    <td>${d.metodoAcesso||'email'}</td>
-    <td>${d.primeiroLogin?'<span style="color:var(--warning)">? Pendente</span>':'?'}</td>
-    <td><div class="td-actions">
-      <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')" title="Editar">??</button>
-      <button class="btn btn-warning btn-icon-sm"   onclick="resetSenha('${d.id}','${d.email}')" title="Resetar senha">??</button>
-      <button class="btn btn-danger btn-icon-sm"    onclick="deleteItem('${d.id}')" title="Excluir">??</button>
-    </div></td></tr>`).join('');
+function renderTable() {
+  const tbody = document.getElementById('list-tbody');
+  if (!allUsers.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)">Nenhum usu&#225;rio cadastrado.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = allUsers.map(u => `
+    <tr class="table-row">
+      <td><strong>${u.nome || '&#8212;'}</strong></td>
+      <td style="color:var(--text-2)">${u.email || '&#8212;'}</td>
+      <td>${u.perfil === 'admin'
+        ? '<span class="badge" style="background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3)">Admin</span>'
+        : '<span class="badge" style="background:rgba(255,255,255,.07);color:var(--text-2);border:1px solid var(--border-subtle)">Usu&#225;rio</span>'}</td>
+      <td><span class="badge-metodo ${u.provedor === 'google' ? 'google' : ''}">${u.provedor === 'google' ? 'Google' : 'E-mail'}</span></td>
+      <td>${u.ativo !== false
+        ? '<span style="color:var(--success)">&#10003; Ativo</span>'
+        : '<span style="color:var(--danger)">&#10005; Inativo</span>'}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="editUser('${u.id}')">&#9999;&#65039; Editar</button>
+          ${u.id !== currentUser?.uid
+            ? `<button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">&#128465;&#65039;</button>`
+            : '<span style="font-size:11px;color:var(--text-3);align-self:center">Voc&#234;</span>'}
+        </div>
+      </td>
+    </tr>`).join('');
 }
 
-function openModal(id=null){
-  editId=id; document.getElementById('form-alert').style.display='none';
-  document.getElementById('modal-titulo').textContent=id?'Editar Usu�rio':'Novo Usu�rio';
-  document.getElementById('f-uid').readOnly=!!id;
-  if(!id){['f-uid','f-nome','f-email'].forEach(i=>document.getElementById(i).value='');document.getElementById('f-perfil').value='Usu&#225;rio';document.getElementById('f-metodo').value='email';document.getElementById('f-primeiro').value='true';}
-  document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
+window.editUser = function(id) {
+  const u = allUsers.find(x => x.id === id);
+  if (!u) return;
+  document.getElementById('edit-id').value    = id;
+  document.getElementById('edit-nome').value  = u.nome  || '';
+  document.getElementById('edit-email').value = u.email || '';
+  document.getElementById('edit-perfil').value = u.perfil || 'usuario';
+  document.getElementById('edit-ativo').value  = String(u.ativo !== false);
+  document.getElementById('modal-titulo').textContent = 'Editar Usu&#225;rio';
+  document.getElementById('modal-alert').style.display = 'none';
+  openModal('modal-usuario');
+};
+
+window.deleteUser = async function(id) {
+  const ok = await confirmDialog('Remover este usu&#225;rio do sistema? (O login no Firebase n&#227;o ser&#225; afetado.)');
+  if (!ok) return;
+  showLoading('Removendo...');
+  try {
+    await deleteDoc(doc(db, 'usuarios', id));
+    showToast('Usu&#225;rio removido.', 'success');
+    await loadUsuarios();
+  } catch(e) {
+    showToast('Erro: ' + e.message, 'error');
+  } finally { hideLoading(); }
+};
+
+document.getElementById('btn-novo').addEventListener('click', () => {
+  document.getElementById('edit-id').value = '';
+  document.getElementById('edit-nome').value = '';
+  document.getElementById('edit-email').value = '';
+  document.getElementById('edit-perfil').value = 'usuario';
+  document.getElementById('edit-ativo').value = 'true';
+  document.getElementById('modal-titulo').textContent = 'Novo Usu&#225;rio';
+  document.getElementById('modal-alert').style.display = 'none';
+  openModal('modal-usuario');
+});
+
+document.getElementById('btn-salvar').addEventListener('click', async () => {
+  const id     = document.getElementById('edit-id').value.trim();
+  const nome   = document.getElementById('edit-nome').value.trim();
+  const email  = document.getElementById('edit-email').value.trim();
+  const perfil = document.getElementById('edit-perfil').value;
+  const ativo  = document.getElementById('edit-ativo').value === 'true';
+  const alertEl = document.getElementById('modal-alert');
+  if (!nome || !email) {
+    alertEl.textContent = 'Preencha nome e e-mail.';
+    alertEl.style.display = 'flex'; return;
+  }
+  showLoading('Salvando...');
+  try {
+    if (id) {
+      await updateDoc(doc(db, 'usuarios', id), { nome, email, perfil, ativo, atualizadoEm: serverTimestamp() });
+    } else {
+      // Cria doc com ID baseado no email (sem UID real — admin gerenciado)
+      const newId = email.replace(/[^a-zA-Z0-9]/g, '_') + '_' + Date.now();
+      await setDoc(doc(db, 'usuarios', newId), {
+        nome, email, perfil, ativo, primeiroLogin: true,
+        provedor: 'email', criadoEm: serverTimestamp()
+      });
+    }
+    closeModal('modal-usuario');
+    showToast('Usu&#225;rio salvo!', 'success');
+    await loadUsuarios();
+  } catch(e) {
+    alertEl.textContent = 'Erro: ' + e.message;
+    alertEl.style.display = 'flex';
+  } finally { hideLoading(); }
+});
+
+// ── Emails Autorizados ────────────────────────────────────────
+let emailsAutorizados = [];
+
+async function loadEmailsAutorizados() {
+  try {
+    const snap = await getDoc(doc(db, 'configuracoes', 'emailsAutorizados'));
+    emailsAutorizados = snap.exists() ? (snap.data().lista || []) : [];
+  } catch(e) { emailsAutorizados = []; }
+  renderEmailTags();
 }
-function closeModalFn(){document.getElementById('modal-form').classList.remove('open');document.body.style.overflow='';editId=null;}
-document.getElementById('btn-novo').addEventListener('click',()=>openModal());
-['close-modal','close-modal-2'].forEach(id=>document.getElementById(id).addEventListener('click',closeModalFn));
 
-window.editItem=async(id)=>{
-  const d=allItems.find(x=>x.id===id); if(!d)return; openModal(id);
-  document.getElementById('f-uid').value=d.id; document.getElementById('f-nome').value=d.nome||'';
-  document.getElementById('f-email').value=d.email||''; document.getElementById('f-perfil').value=d.perfil||'Usu&#225;rio';
-  document.getElementById('f-metodo').value=d.metodoAcesso||'email'; document.getElementById('f-primeiro').value=d.primeiroLogin?'true':'false';
+function renderEmailTags() {
+  const wrap = document.getElementById('email-tags');
+  if (!emailsAutorizados.length) {
+    wrap.innerHTML = '<span style="color:var(--text-3);font-size:13px;padding:6px">&#128275; Nenhum e-mail na lista — qualquer autenticado pode acessar.</span>';
+    return;
+  }
+  wrap.innerHTML = emailsAutorizados.map(em => `
+    <span class="email-tag">
+      ${em}
+      <button onclick="removeEmail('${em}')" title="Remover">&#10005;</button>
+    </span>`).join('');
+}
+
+window.removeEmail = function(email) {
+  emailsAutorizados = emailsAutorizados.filter(e => e !== email);
+  renderEmailTags();
 };
 
-window.resetSenha=(id,email)=>{
-  resetEmailVal=email; document.getElementById('reset-email').textContent=email;
-  document.getElementById('reset-alert').style.display='none';
-  document.getElementById('modal-reset').classList.add('open'); document.body.style.overflow='hidden';
-};
-['close-reset','close-reset-2'].forEach(id=>document.getElementById(id).addEventListener('click',()=>{document.getElementById('modal-reset').classList.remove('open');document.body.style.overflow='';}));
-
-document.getElementById('btn-confirm-reset').addEventListener('click',async()=>{
-  try{
-    await sendPasswordResetEmail(auth,resetEmailVal);
-    document.getElementById('modal-reset').classList.remove('open'); document.body.style.overflow='';
-    showToast('E-mail de reset enviado para '+resetEmailVal,'success');
-  }catch(err){document.getElementById('reset-alert').textContent=err.message;document.getElementById('reset-alert').style.display='flex';}
+document.getElementById('btn-add-email').addEventListener('click', () => {
+  const input = document.getElementById('input-email-auth');
+  const val   = input.value.trim().toLowerCase();
+  if (!val || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+    showToast('Informe um e-mail v&#225;lido.', 'error'); return;
+  }
+  if (emailsAutorizados.includes(val)) {
+    showToast('E-mail j&#225; na lista.', 'warning'); return;
+  }
+  emailsAutorizados.push(val);
+  renderEmailTags();
+  input.value = '';
 });
 
-window.deleteItem=async(id)=>{
-  if(!await confirmDialog('Deseja excluir este usu�rio do banco?'))return;
-  await deleteDoc(doc(db,'usuarios',id));allItems=allItems.filter(d=>d.id!==id);renderTable();showToast('Usu�rio exclu�do!','success');
-};
-
-document.getElementById('btn-salvar').addEventListener('click',async()=>{
-  const uid=editId||document.getElementById('f-uid').value.trim();
-  if(!uid){document.getElementById('form-alert').textContent='Informe o UID.';document.getElementById('form-alert').style.display='flex';return;}
-  const payload={nome:document.getElementById('f-nome').value.trim(),email:document.getElementById('f-email').value.trim(),
-    perfil:document.getElementById('f-perfil').value,metodoAcesso:document.getElementById('f-metodo').value,
-    primeiroLogin:document.getElementById('f-primeiro').value==='true',atualizadoEm:serverTimestamp()};
-  try{
-    if(editId){await updateDoc(doc(db,'usuarios',editId),payload);allItems=allItems.map(d=>d.id===editId?{...d,...payload}:d);}
-    else{await setDoc(doc(db,'usuarios',uid),{...payload,criadoEm:serverTimestamp()});allItems.push({id:uid,...payload});}
-    renderTable();closeModalFn();showToast(editId?'Usu�rio atualizado!':'Usu�rio cadastrado!','success');
-  }catch(err){document.getElementById('form-alert').textContent=err.message;document.getElementById('form-alert').style.display='flex';}
+document.getElementById('input-email-auth').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-add-email').click();
 });
+
+document.getElementById('btn-salvar-emails').addEventListener('click', async () => {
+  showLoading('Salvando...');
+  try {
+    await setDoc(doc(db, 'configuracoes', 'emailsAutorizados'), {
+      lista: emailsAutorizados,
+      atualizadoEm: serverTimestamp(),
+      atualizadoPor: currentUser?.email || ''
+    });
+    hideLoading();
+    const status = document.getElementById('auth-status');
+    status.style.display = 'block';
+    showToast('Lista de acesso salva!', 'success');
+    setTimeout(() => { status.style.display = 'none'; }, 3000);
+  } catch(e) {
+    hideLoading();
+    showToast('Erro ao salvar: ' + e.message, 'error');
+  }
+});
+
+window.closeModal = closeModal;
+window.openModal  = openModal;
 </script>
 </body>
 </html>
-

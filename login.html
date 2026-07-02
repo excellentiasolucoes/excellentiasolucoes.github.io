@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -78,7 +78,7 @@
 <div class="modal-overlay" id="modal-change-pwd">
   <div class="modal modal-sm">
     <div class="modal-header">
-      <span class="modal-title">?? Alterar Senha</span>
+      <span class="modal-title">&#128273; Alterar Senha</span>
     </div>
     <div class="modal-body">
       <p style="color:var(--text-2);margin-bottom:18px;font-size:14px">Por seguran�a, voc� precisa definir uma nova senha no primeiro acesso.</p>
@@ -106,11 +106,24 @@ import { showToast, showLoading, hideLoading } from './js/utils.js';
 
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, signInWithEmailAndPassword, onAuthStateChanged, updatePassword, GoogleAuthProvider, signInWithPopup } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
-const { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+const { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, getDocs } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
 
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
+
+// Verifica se email esta na lista de autorizados
+async function checkEmailAutorizado(email) {
+  try {
+    const snap = await getDoc(doc(db, 'configuracoes', 'emailsAutorizados'));
+    if (!snap.exists()) return true; // lista vazia = todos permitidos
+    const lista = snap.data().lista || [];
+    if (lista.length === 0) return true; // lista vazia = todos permitidos
+    return lista.includes(email.toLowerCase());
+  } catch(e) {
+    return true; // em caso de erro, permite (nao bloqueia por falha tecnica)
+  }
+}
 
 // Redireciona se ja logado
 onAuthStateChanged(auth, async (user) => {
@@ -198,6 +211,17 @@ document.getElementById('btn-google').addEventListener('click', async () => {
     } catch (fsErr) {
       // Regras do Firestore ainda nao liberadas — redireciona mesmo assim
       console.warn('Firestore usuarios:', fsErr.message);
+    }
+    const autorizado = await checkEmailAutorizado(user.email);
+    if (!autorizado) {
+      const { signOut: _so } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+      await _so(auth);
+      hideLoading();
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/></svg> Entrar com Google';
+      document.getElementById('login-alert').textContent = 'Acesso negado. Seu e-mail nao esta autorizado. Contate o administrador.';
+      document.getElementById('login-alert').style.display = 'flex';
+      return;
     }
     hideLoading();
     window.location.href = 'pages/dashboard.html';

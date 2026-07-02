@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -10,12 +10,12 @@
   <div id="sidebar-placeholder"></div>
   <div class="main-content">
     <div class="topbar">
-      <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
       <div><div class="topbar-title">Agenda de Contatos</div><div class="topbar-subtitle">Contatos profissionais</div></div>
       <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Contato</button></div>
     </div>
     <div class="page-content">
-      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">??</span><input type="text" class="form-control" id="search-input" placeholder="Buscar por nome, empresa..."></div></div>
+      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">&#128269;</span><input type="text" class="form-control" id="search-input" placeholder="Buscar por nome, empresa..."></div></div>
       <div id="contatos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px"></div>
     </div>
   </div>
@@ -23,7 +23,7 @@
 
 <div class="modal-overlay" id="modal-form">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title">?? <span id="modal-titulo">Novo Contato</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Contato</span></span><button class="modal-close" id="close-modal">?</button></div>
     <div class="modal-body">
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-grid">
@@ -37,7 +37,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
-      <button class="btn btn-primary" id="btn-salvar">?? Salvar</button>
+      <button class="btn btn-primary" id="btn-salvar">&#128190; Salvar</button>
     </div>
   </div>
 </div>
@@ -150,7 +150,7 @@ function renderGrid(list){
       ${d.contato1?`<div style="font-size:12px;color:var(--text-2);margin-bottom:4px">?? ${d.contato1}</div>`:''}
       ${d.contato2?`<div style="font-size:12px;color:var(--text-2);margin-bottom:8px">?? ${d.contato2}</div>`:''}
       <div style="display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-subtle)">
-        <button class="btn btn-secondary btn-sm" onclick="editItem('${d.id}')">?? Editar</button>
+        <button class="btn btn-secondary btn-sm" onclick="editItem('${d.id}')">&#9999;&#65039; Editar</button>
         <button class="btn btn-danger btn-sm"    onclick="deleteItem('${d.id}')">??</button>
       </div>
     </div>`;
