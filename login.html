@@ -1,10 +1,10 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Excellentia Controll � Login</title>
-  <meta name="description" content="Sistema de Gest�o de Demandas para Empresas de Arquitetura">
+  <meta name="description" content="Sistema de Gestao de Projetos para Empresas de Arquitetura">
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="assets/logo.png">
 </head>
@@ -14,11 +14,11 @@
   <div class="login-brand">
     <img src="assets/logo.png" alt="Logo Excellentia" onerror="this.style.display='none'">
     <h1>Excellentia Controll</h1>
-    <p>Sistema de Gest�o de Demandas para Empresas de Arquitetura</p>
+    <p>Sistema de Gestao de Projetos para Empresas de Arquitetura</p>
     <div style="margin-top:40px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">
       <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
         <span style="font-size:22px">??</span>
-        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Gest�o de Demandas</div><div style="font-size:11px;color:var(--text-3)">Controle total dos seus atendimentos</div></div>
+        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Gestao de Projetos</div><div style="font-size:11px;color:var(--text-3)">Controle total dos seus atendimentos</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
         <span style="font-size:22px">??</span>
@@ -125,9 +125,18 @@ async function checkEmailAutorizado(email) {
   }
 }
 
-// Redireciona se ja logado
+// Redireciona se ja logado (com verificacao de whitelist)
 onAuthStateChanged(auth, async (user) => {
   if (user) {
+    const autorizado = await checkEmailAutorizado(user.email);
+    if (!autorizado) {
+      const { signOut: _so2 } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+      await _so2(auth);
+      document.getElementById('login-alert').textContent =
+        'Acesso negado. Este e-mail nao esta autorizado. Contate o administrador.';
+      document.getElementById('login-alert').style.display = 'flex';
+      return;
+    }
     const snap = await getDoc(doc(db, 'usuarios', user.uid));
     if (snap.exists() && snap.data().primeiroLogin) {
       document.getElementById('modal-change-pwd').classList.add('open');
@@ -158,6 +167,17 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 
   try {
     const cred = await signInWithEmailAndPassword(auth, email, password);
+    const autorizado = await checkEmailAutorizado(cred.user.email);
+    if (!autorizado) {
+      const { signOut: _so3 } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+      await _so3(auth);
+      hideLoading();
+      btn.disabled = false;
+      btn.textContent = 'Entrar no Sistema';
+      alertEl.textContent = 'Acesso negado. Este e-mail nao esta autorizado. Contate o administrador.';
+      alertEl.style.display = 'flex';
+      return;
+    }
     const snap = await getDoc(doc(db, 'usuarios', cred.user.uid));
     hideLoading();
     if (snap.exists() && snap.data().primeiroLogin) {

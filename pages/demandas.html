@@ -1,9 +1,9 @@
-﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Demandas � Excellentia Controll</title>
+  <title>Projetos ?� Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" href="../assets/logo.png">
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -91,11 +91,11 @@
   </div>
 </div>
 
-<!-- Modal: Detalhes da Demanda -->
+<!-- Modal: Detalhes do Projeto -->
 <div class="modal-overlay" id="modal-detalhes">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <span class="modal-title"><span id="modal-titulo">Detalhes da Demanda</span></span>
+      <span class="modal-title"><span id="modal-titulo">Detalhes do Projeto</span></span>
       <button class="modal-close" id="close-detalhes">?</button>
     </div>
     <div class="modal-body">
@@ -528,19 +528,19 @@ window.deleteAcao = async (acaoId) => {
 };
 
 window.toggleArquivar = async (id, arquivar) => {
-  const msg = arquivar ? 'Deseja arquivar esta demanda?' : 'Deseja desarquivar esta demanda?';
+  const msg = arquivar ? 'Deseja arquivar este projeto?' : 'Deseja desarquivar este projeto?';
   if (!await confirmDialog(msg)) return;
   await updateDoc(doc(db, 'demandas', id), { arquivada: arquivar, atualizadoEm: serverTimestamp() });
   allDemandas = allDemandas.map(d => d.id === id ? { ...d, arquivada: arquivar } : d);
-  showToast(arquivar ? 'Demanda arquivada!' : 'Demanda desarquivada!', 'success');
+  showToast(arquivar ? 'Projeto arquivado!' : 'Projeto desarquivado!', 'success');
   renderTable();
 };
 
 window.excluirDemanda = async (id) => {
-  if (!await confirmDialog('Deseja EXCLUIR permanentemente esta demanda? Esta a��o n�o pode ser desfeita.')) return;
+  if (!await confirmDialog('Deseja EXCLUIR permanentemente este projeto? Esta acao nao pode ser desfeita.')) return;
   await deleteDoc(doc(db, 'demandas', id));
   allDemandas = allDemandas.filter(d => d.id !== id);
-  showToast('Demanda exclu�da!', 'success');
+  showToast('Projeto excluido!', 'success');
   renderTable();
 };
 </script>
