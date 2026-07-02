@@ -1,9 +1,9 @@
-﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clientes � Excellentia Controll</title>
+  <title>Clientes  Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" href="../assets/logo.png">
 </head>
@@ -29,7 +29,7 @@
         <div class="table-wrapper">
           <table class="data-table">
             <thead>
-              <tr><th>Nome</th><th>Tipo</th><th>CPF/CNPJ</th><th>E-mail</th><th>Contato</th><th>A��es</th></tr>
+              <tr><th>Nome</th><th>Tipo</th><th>CPF/CNPJ</th><th>E-mail</th><th>Contato</th><th>Aes</th></tr>
             </thead>
             <tbody id="list-tbody">
               <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr>
@@ -59,8 +59,8 @@
           <label class="form-label">Tipo</label>
           <select class="form-select" id="f-tipo">
             <option value="">Selecionar</option>
-            <option value="PF">Pessoa F�sica</option>
-            <option value="PJ">Pessoa Jur�dica</option>
+            <option value="PF">Pessoa Fsica</option>
+            <option value="PJ">Pessoa Jurdica</option>
           </select>
         </div>
         <div class="form-group">
@@ -68,8 +68,8 @@
           <input type="text" class="form-control" id="f-cpf" placeholder="000.000.000-00">
         </div>
         <div class="form-group col-span-2">
-          <label class="form-label">Endere�o Completo</label>
-          <input type="text" class="form-control" id="f-endereco" placeholder="Rua, n�mero, bairro, cidade">
+          <label class="form-label">Endereo Completo</label>
+          <input type="text" class="form-control" id="f-endereco" placeholder="Rua, nmero, bairro, cidade">
         </div>
         <div class="form-group col-span-2">
           <label class="form-label">E-mail</label>
@@ -193,22 +193,22 @@ function getSidebar(nome, perfil) {
     <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a>
-      <a href="demandas.html"><span class="nav-icon">??</span>Projetos</a>
-      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a>
-      <a href="calendario.html"><span class="nav-icon">??</span>Calend&#225;rio</a>
-      <a href="orcamento.html"><span class="nav-icon">??</span>Or&#231;amentos</a>
-      <a href="relatorios.html"><span class="nav-icon">??</span>Relat&#243;rios</a>
+      <a href="dashboard.html"><span class="nav-icon">&#9642;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#9642;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#9642;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#9642;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#9642;</span>Or&#231;amentos</a>
+      <a href="relatorios.html"><span class="nav-icon">&#9642;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a>
-      <a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a>
-      <a href="servicos.html"><span class="nav-icon">??</span>Servi&#231;os</a>
+      <a href="clientes.html"><span class="nav-icon">&#9642;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#9642;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#9642;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#9642;</span>Servi&#231;os</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">??</span>Usu&#225;rios</a>` : ''}
-      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugest&#245;es</a>
-      <a href="creditos.html"><span class="nav-icon">?</span>Cr&#233;ditos</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#9642;</span>Usu&#225;rios</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#9642;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#9642;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#9642;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
@@ -227,18 +227,18 @@ async function loadData() {
 function renderTable(list) {
   const tbody = document.getElementById('list-tbody');
   if (list.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhum cliente</h3><p>Clique em "+ Novo Cliente" para come�ar.</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhum cliente</h3><p>Clique em "+ Novo Cliente" para comear.</p></div></td></tr>`;
     return;
   }
   tbody.innerHTML = list.map(d => `<tr>
-    <td>${d.nomeCompleto || '�'}</td>
-    <td>${d.tipo === 'PF' ? 'Pessoa F�sica' : d.tipo === 'PJ' ? 'Pessoa Jur�dica' : '�'}</td>
-    <td>${d.cpfCnpj || '�'}</td>
-    <td>${d.email || '�'}</td>
-    <td>${d.contato1 || '�'}</td>
+    <td>${d.nomeCompleto || ''}</td>
+    <td>${d.tipo === 'PF' ? 'Pessoa Fsica' : d.tipo === 'PJ' ? 'Pessoa Jurdica' : ''}</td>
+    <td>${d.cpfCnpj || ''}</td>
+    <td>${d.email || ''}</td>
+    <td>${d.contato1 || ''}</td>
     <td><div class="td-actions">
-      <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">??</button>
-      <button class="btn btn-danger btn-icon-sm"    onclick="deleteItem('${d.id}')">??</button>
+      <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
+      <button class="btn btn-danger btn-icon-sm"    onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
     </div></td>
   </tr>`).join('');
 }
@@ -282,7 +282,7 @@ window.deleteItem = async (id) => {
   await deleteDoc(doc(db, 'clientes', id));
   allItems = allItems.filter(d => d.id !== id);
   renderTable(allItems);
-  showToast('Cliente exclu�do!', 'success');
+  showToast('Cliente excludo!', 'success');
 };
 
 document.getElementById('btn-salvar').addEventListener('click', async () => {

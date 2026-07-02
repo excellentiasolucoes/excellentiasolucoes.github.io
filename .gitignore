@@ -17,6 +17,7 @@ Thumbs.db
 *.log
 
 # Temporários
+*.zip
 temp_*.txt
 *.tmp
 patch*.js

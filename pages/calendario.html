@@ -1,8 +1,8 @@
-﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Calend�rio � Excellentia Controll</title>
+  <title>Calend&#225;rio &#8212; Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 </head>
@@ -12,7 +12,7 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <div><div class="topbar-title">Calend�rio</div><div class="topbar-subtitle">Servi�os por data</div></div>
+      <div><div class="topbar-title">Calend&#225;rio</div><div class="topbar-subtitle">Servi&#231;os por data</div></div>
       <div class="topbar-actions"><a href="nova-demanda.html" class="btn btn-primary">+ Novo Projeto</a></div>
     </div>
     <div class="page-content">
@@ -156,13 +156,13 @@ async function loadCalendar(){
         <div style="display:flex;flex-direction:column;gap:10px">
           <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Status</span><br>
             ${buildStatusBadge(demanda.statusNome||'�',status?.cor)}</div>
-          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Tipo de Servi�o</span><br>
+          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Tipo de Servi&#231;o</span><br>
             <span style="font-size:14px">${demanda.tipoServicoNome||'�'}</span></div>
-          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Data do Servi�o</span><br>
+          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Data do Servi&#231;o</span><br>
             <span style="font-size:14px">${formatDate(demanda.dataServico)}</span></div>
           <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Data de Entrega</span><br>
             <span style="font-size:14px">${formatDate(demanda.dataEntrega)}</span></div>
-          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Descri��o</span><br>
+          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Descri&#231;&#227;o</span><br>
             <span style="font-size:13px;color:var(--text-2)">${demanda.descricao||'�'}</span></div>
         </div>`;
       document.getElementById('modal-detail').classList.add('open'); document.body.style.overflow='hidden';

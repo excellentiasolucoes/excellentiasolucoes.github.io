@@ -1,8 +1,8 @@
-﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Or�amentos � Excellentia Controll</title>
+  <title>Or&#231;amentos &#8212; Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -13,14 +13,14 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <div><div class="topbar-title">Or�amentos</div><div class="topbar-subtitle">Gest�o de or�amentos</div></div>
-      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Or�amento</button></div>
+      <div><div class="topbar-title">Or&#231;amentos</div><div class="topbar-subtitle">Gest�o de or&#231;amentos</div></div>
+      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Or&#231;amento</button></div>
     </div>
     <div class="page-content">
       <div class="card" style="padding:0">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Com Desconto</th><th>Entrega</th><th>Status</th><th>A��es</th></tr></thead>
+            <thead><tr><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Com Desconto</th><th>Entrega</th><th>Status</th><th>A&#231;&#245;es</th></tr></thead>
             <tbody id="list-tbody"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
           </table>
         </div>
@@ -29,10 +29,10 @@
   </div>
 </div>
 
-<!-- Modal: Novo/Editar Or�amento -->
+<!-- Modal: Novo/Editar Or&#231;amento -->
 <div class="modal-overlay" id="modal-form">
   <div class="modal modal-lg">
-    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Or�amento</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Or&#231;amento</span></span><button class="modal-close" id="close-modal">?</button></div>
     <div class="modal-body">
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-grid">
@@ -41,16 +41,16 @@
           <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-cliente" placeholder="Nome do cliente"><div class="autocomplete-list" id="cli-auto"></div></div>
           <input type="hidden" id="f-cliente-id">
         </div>
-        <div class="form-group"><label class="form-label">Tipo de Servi�o</label>
-          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-tipo" placeholder="Tipo de servi�o"><div class="autocomplete-list" id="tipo-auto"></div></div>
+        <div class="form-group"><label class="form-label">Tipo de Servi&#231;o</label>
+          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-tipo" placeholder="Tipo de servi&#231;o"><div class="autocomplete-list" id="tipo-auto"></div></div>
         </div>
         <div class="form-group"><label class="form-label">Status</label>
           <select class="form-select" id="f-status"><option value="">Selecionar</option></select>
         </div>
-        <div class="form-group col-span-2"><label class="form-label">Descri��o do Servi�o</label>
-          <textarea class="form-control" id="f-desc" rows="3" placeholder="Descreva o servi�o..."></textarea>
+        <div class="form-group col-span-2"><label class="form-label">Descri&#231;&#227;o do Servi&#231;o</label>
+          <textarea class="form-control" id="f-desc" rows="3" placeholder="Descreva o servi&#231;o..."></textarea>
         </div>
-        <div class="form-group"><label class="form-label">Data do Servi�o</label>
+        <div class="form-group"><label class="form-label">Data do Servi&#231;o</label>
           <input type="date" class="form-control" id="f-data">
         </div>
         <div class="form-group"><label class="form-label">Prazo (dias)</label>
@@ -59,7 +59,7 @@
         <div class="form-group"><label class="form-label">Data de Entrega (calculada)</label>
           <input type="text" class="form-control" id="f-entrega" readonly style="opacity:0.6">
         </div>
-        <div class="form-group"><label class="form-label">Valor do Servi�o (R$)</label>
+        <div class="form-group"><label class="form-label">Valor do Servi&#231;o (R$)</label>
           <input type="number" class="form-control" id="f-valor" placeholder="0,00" step="0.01" min="0">
         </div>
 
@@ -84,7 +84,7 @@
 
       <!-- Alerta de prazo -->
       <div id="alerta-prazo" style="display:none" class="alert alert-warning">
-        ? Aten��o: o prazo de entrega est� pr�ximo ou vencido!
+        ? Aten&#231;&#227;o: o prazo de entrega est� pr&#243;ximo ou vencido!
       </div>
     </div>
     <div class="modal-footer">
@@ -99,7 +99,7 @@
 <div class="modal-overlay" id="modal-preview">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <span class="modal-title">Preview do Or�amento</span>
+      <span class="modal-title">Preview do Or&#231;amento</span>
       <button class="modal-close" id="close-preview">?</button>
     </div>
     <div class="modal-body">
@@ -216,7 +216,7 @@ function renderSidebar(nome, perfil) {
 
 function renderTable(list){
   const tbody=document.getElementById('list-tbody');
-  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhum or�amento</h3></div></td></tr>`;return;}
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhum or&#231;amento</h3></div></td></tr>`;return;}
   tbody.innerHTML=list.map(d=>{
     const st=statusList.find(s=>s.id===d.statusId);
     return `<tr>
@@ -226,8 +226,8 @@ function renderTable(list){
       <td>${buildStatusBadge(d.statusNome||'�',st?.cor)}</td>
       <td><div class="td-actions">
         <button class="btn btn-info btn-icon-sm" onclick="previewOrc('${d.id}')">??</button>
-        <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">??</button>
-        <button class="btn btn-danger btn-icon-sm" onclick="deleteItem('${d.id}')">??</button>
+        <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
+        <button class="btn btn-danger btn-icon-sm" onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
       </div></td></tr>`;
   }).join('');
 }
@@ -257,7 +257,7 @@ function calcEntrega(){
 
 function openModal(id=null){
   editId=id; document.getElementById('form-alert').style.display='none'; document.getElementById('alerta-prazo').style.display='none';
-  document.getElementById('modal-titulo').textContent=id?'Editar Or�amento':'Novo Or�amento';
+  document.getElementById('modal-titulo').textContent=id?'Editar Or&#231;amento':'Novo Or&#231;amento';
   if(!id){['f-cliente','f-cliente-id','f-tipo','f-desc','f-entrega'].forEach(i=>document.getElementById(i).value='');
     ['f-data','f-prazo','f-valor','f-desconto'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('f-status').value=''; calcDesconto();}
@@ -278,8 +278,8 @@ window.editItem=async(id)=>{
 };
 
 window.deleteItem=async(id)=>{
-  if(!await confirmDialog('Excluir este or�amento?'))return;
-  await deleteDoc(doc(db,'orcamentos',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Or�amento exclu�do!','success');
+  if(!await confirmDialog('Excluir este or&#231;amento?'))return;
+  await deleteDoc(doc(db,'orcamentos',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Or&#231;amento exclu�do!','success');
 };
 
 window.previewOrc=async(id)=>{
@@ -296,24 +296,24 @@ function renderPreview(d){
   const st=statusList.find(s=>s.id===d.statusId);
   document.getElementById('orcamento-preview-content').innerHTML=`
     <div style="border-bottom:3px solid #C9A84C;padding-bottom:20px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-start">
-      <div><h1 style="font-size:24px;color:#1A1A2E;margin:0">OR�AMENTO</h1>
-      <p style="color:#666;margin:4px 0">Excellentia Controll � Sistema de Gest�o</p></div>
+      <div><h1 style="font-size:24px;color:#1A1A2E;margin:0">OR&#199;AMENTO</h1>
+      <p style="color:#666;margin:4px 0">Excellentia Controll &#8212; Sistema de Gest�o</p></div>
       <div style="text-align:right"><div style="font-size:12px;color:#888">Data: ${new Date().toLocaleDateString('pt-BR')}</div></div>
     </div>
     <table style="width:100%;border-collapse:collapse;margin-bottom:24px">
       <tr><td style="padding:8px 0;font-weight:600;width:150px;color:#444">Cliente:</td><td>${d.clienteNome||'�'}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;color:#444">Tipo de Servi�o:</td><td>${d.tipoServico||'�'}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;color:#444">Tipo de Servi&#231;o:</td><td>${d.tipoServico||'�'}</td></tr>
       <tr><td style="padding:8px 0;font-weight:600;color:#444">Status:</td><td>${d.statusNome||'�'}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;color:#444">Data do Servi�o:</td><td>${formatDate(d.dataServico)}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;color:#444">Data do Servi&#231;o:</td><td>${formatDate(d.dataServico)}</td></tr>
       <tr><td style="padding:8px 0;font-weight:600;color:#444">Data de Entrega:</td><td>${formatDate(d.dataEntrega)}</td></tr>
     </table>
     <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin-bottom:24px">
-      <div style="font-weight:600;color:#444;margin-bottom:8px">Descri��o do Servi�o:</div>
+      <div style="font-weight:600;color:#444;margin-bottom:8px">Descri&#231;&#227;o do Servi&#231;o:</div>
       <p style="color:#333;line-height:1.6">${d.descricao||'�'}</p>
     </div>
     <div style="background:#1A1A2E;color:white;border-radius:8px;padding:20px">
       <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-        <span>Valor do Servi�o:</span><span>${formatCurrency(d.valorServico)}</span>
+        <span>Valor do Servi&#231;o:</span><span>${formatCurrency(d.valorServico)}</span>
       </div>
       ${d.percentualDesconto?`<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:#C9A84C">
         <span>Desconto (${d.percentualDesconto}%):</span><span>- ${formatCurrency(d.valorServico*(d.percentualDesconto/100))}</span>
@@ -323,7 +323,7 @@ function renderPreview(d){
       </div>
     </div>
     <div style="margin-top:40px;text-align:center;font-size:11px;color:#888;border-top:1px solid #ddd;padding-top:16px">
-      Excellentia Controll � 2026 � Este documento foi gerado eletronicamente e � v�lido sem assinatura.
+      Excellentia Controll &#8212; 2026 &#8212; Este documento foi gerado eletronicamente e � v&#225;lido sem assinatura.
     </div>`;
 }
 
@@ -375,7 +375,7 @@ document.getElementById('btn-salvar').addEventListener('click',async()=>{
   try{
     if(editId){await updateDoc(doc(db,'orcamentos',editId),payload);allItems=allItems.map(d=>d.id===editId?{...d,...payload}:d);}
     else{const ref=await addDoc(collection(db,'orcamentos'),{...payload,criadoEm:serverTimestamp()});allItems.push({id:ref.id,...payload});}
-    renderTable(allItems);closeModalFn();showToast(editId?'Or�amento atualizado!':'Or�amento salvo!','success');
+    renderTable(allItems);closeModalFn();showToast(editId?'Or&#231;amento atualizado!':'Or&#231;amento salvo!','success');
   }catch(err){document.getElementById('form-alert').textContent=err.message;document.getElementById('form-alert').style.display='flex';}
 });
 </script>

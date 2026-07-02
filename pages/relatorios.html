@@ -1,8 +1,8 @@
-﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Relat�rios � Excellentia Controll</title>
+  <title>Relat&#243;rios &#8212; Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -15,22 +15,22 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <div><div class="topbar-title">Relat�rios</div><div class="topbar-subtitle">An�lise e exporta��o</div></div>
+      <div><div class="topbar-title">Relat&#243;rios</div><div class="topbar-subtitle">An&#225;lise e exporta&#231;&#227;o</div></div>
       <div class="topbar-actions">
         <button class="btn btn-secondary" onclick="window.print()">?&#128424; Imprimir</button>
         <button class="btn btn-danger" id="btn-pdf">?? PDF</button>
-        <button class="btn btn-success" id="btn-excel">?? Excel</button>
+        <button class="btn btn-success" id="btn-excel">&#128229; Excel</button>
       </div>
     </div>
     <div class="page-content" id="relatorio-area">
       <!-- Filters -->
       <div class="card no-print" style="margin-bottom:20px">
-        <div class="card-header"><div class="card-title"><span class="icon">??</span>Filtros</div></div>
+        <div class="card-header"><div class="card-title"><span class="icon">&#128200;</span>Filtros</div></div>
         <div class="form-grid form-grid-3">
-          <div class="form-group"><label class="form-label">Data In�cio</label><input type="date" class="form-control" id="f-inicio"></div>
+          <div class="form-group"><label class="form-label">Data In&#237;cio</label><input type="date" class="form-control" id="f-inicio"></div>
           <div class="form-group"><label class="form-label">Data Fim</label><input type="date" class="form-control" id="f-fim"></div>
           <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="f-status"><option value="">Todos</option></select></div>
-          <div class="form-group"><label class="form-label">Tipo de Servi�o</label><select class="form-select" id="f-tipo"><option value="">Todos</option></select></div>
+          <div class="form-group"><label class="form-label">Tipo de Servi&#231;o</label><select class="form-select" id="f-tipo"><option value="">Todos</option></select></div>
           <div class="form-group"><label class="form-label">Cliente</label><input type="text" class="form-control" id="f-cliente" placeholder="Nome do cliente"></div>
           <div class="form-group" style="display:flex;align-items:flex-end">
             <button class="btn btn-primary" id="btn-filtrar" style="width:100%;justify-content:center">&#128269; Filtrar</button>
@@ -45,7 +45,7 @@
       <div class="chart-grid" id="charts-area">
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><span class="icon">??</span>Por Status</div>
+            <div class="card-title"><span class="icon">&#128202;</span>Por Status</div>
             <div class="chart-type-btns" id="chart1-btns">
               <button class="chart-type-btn active" data-type="bar">Barra</button>
               <button class="chart-type-btn" data-type="pie">Pizza</button>
@@ -56,7 +56,7 @@
         </div>
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><span class="icon">??</span>Por Tipo</div>
+            <div class="card-title"><span class="icon">&#128203;</span>Por Tipo</div>
             <div class="chart-type-btns" id="chart2-btns">
               <button class="chart-type-btn active" data-type="pie">Pizza</button>
               <button class="chart-type-btn" data-type="bar">Barra</button>
@@ -70,12 +70,12 @@
       <!-- Table -->
       <div class="card" style="padding:0">
         <div class="card-header" style="padding:16px 20px">
-          <div class="card-title"><span class="icon">??</span>Listagem Detalhada</div>
+          <div class="card-title"><span class="icon">&#128200;</span>Listagem Detalhada</div>
           <span id="rel-count" style="color:var(--text-3);font-size:13px"></span>
         </div>
         <div class="table-wrapper">
           <table class="data-table" id="rel-table">
-            <thead><tr><th>N�</th><th>Data</th><th>Cliente</th><th>Tipo</th><th>Status</th><th>Entrega</th></tr></thead>
+            <thead><tr><th>N&#186;</th><th>Data</th><th>Cliente</th><th>Tipo</th><th>Status</th><th>Entrega</th></tr></thead>
             <tbody id="rel-tbody"></tbody>
           </table>
         </div>
@@ -192,10 +192,10 @@ document.getElementById('btn-filtrar').addEventListener('click',()=>{
 function renderReport(list){
   // Stats
   document.getElementById('rel-stats').innerHTML=`
-    <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">TOTAL</div><div class="stat-value">${list.length}</div></div>
-    <div class="stat-card"><span class="stat-icon">?</span><div class="stat-label">ATIVOS</div><div class="stat-value">${list.filter(d=>!d.arquivada).length}</div></div>
-    <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">ARQUIVADOS</div><div class="stat-value">${list.filter(d=>d.arquivada).length}</div></div>
-    <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">COM OR�AMENTO</div><div class="stat-value">${list.filter(d=>d.temOrcamento).length}</div></div>`;
+    <div class="stat-card"><span class="stat-icon">&#128202;</span><div class="stat-label">TOTAL</div><div class="stat-value">${list.length}</div></div>
+    <div class="stat-card"><span class="stat-icon">&#128229;</span><div class="stat-label">ATIVOS</div><div class="stat-value">${list.filter(d=>!d.arquivada).length}</div></div>
+    <div class="stat-card"><span class="stat-icon">&#128229;</span><div class="stat-label">ARQUIVADOS</div><div class="stat-value">${list.filter(d=>d.arquivada).length}</div></div>
+    <div class="stat-card"><span class="stat-icon">&#128176;</span><div class="stat-label">COM OR&#199;AMENTO</div><div class="stat-value">${list.filter(d=>d.temOrcamento).length}</div></div>`;
 
   // Charts
   const byStatus={},byTipo={};
@@ -209,7 +209,7 @@ function renderReport(list){
   // Table
   document.getElementById('rel-count').textContent=list.length+' registro(s)';
   const tbody=document.getElementById('rel-tbody');
-  if(!list.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-3)">Nenhum dado no per�odo</td></tr>';return;}
+  if(!list.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-3)">Nenhum dado no per&#237;odo</td></tr>';return;}
   tbody.innerHTML=list.map(d=>{
     const st=allStatus.find(s=>s.id===d.statusId);
     return `<tr><td>#${d.numero||'�'}</td><td>${formatDate(d.criadoEm)}</td><td>${d.clienteNome||'�'}</td>
@@ -236,7 +236,7 @@ function buildChart(canvasId,type,labels,data,btnsId,onTypeChange){
 // Excel
 document.getElementById('btn-excel').addEventListener('click',()=>{
   const list=allDemandas;
-  exportToExcel(list.map(d=>({'N�':d.numero,'Data':formatDate(d.criadoEm),'Cliente':d.clienteNome||'','Tipo':d.tipoServicoNome||'','Status':d.statusNome||'','Arquivada':d.arquivada?'Sim':'N�o','Entrega':formatDate(d.dataEntrega)})),'relatorio-excellentia');
+  exportToExcel(list.map(d=>({'N&#186;':d.numero,'Data':formatDate(d.criadoEm),'Cliente':d.clienteNome||'','Tipo':d.tipoServicoNome||'','Status':d.statusNome||'','Arquivada':d.arquivada?'Sim':'N&#227;o','Entrega':formatDate(d.dataEntrega)})),'relatorio-excellentia');
   showToast('Excel exportado!','success');
 });
 

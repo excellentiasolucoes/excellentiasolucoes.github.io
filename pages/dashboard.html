@@ -1,9 +1,9 @@
-﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard � Excellentia Controll</title>
+  <title>Dashboard &#8212; Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" href="../assets/logo.png">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -28,17 +28,17 @@
     <div class="page-content">
       <!-- STAT CARDS -->
       <div class="stat-grid" id="stat-grid">
-        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">SERVI�OS</div><div class="stat-value" id="s-total">�</div><div class="stat-sub">Total registrado</div></div>
-        <div class="stat-card"><span class="stat-icon">?</span><div class="stat-label">EM ANDAMENTO</div><div class="stat-value" id="s-andamento">�</div><div class="stat-sub">Ativos</div></div>
-        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">ARQUIVADOS</div><div class="stat-value" id="s-arquivados">�</div><div class="stat-sub">Encerrados</div></div>
-        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">COM OR�AMENTO</div><div class="stat-value" id="s-orcamento">�</div><div class="stat-sub">Or�amentados</div></div>
+        <div class="stat-card"><span class="stat-icon">&#128202;</span><div class="stat-label">PROJETOS</div><div class="stat-value" id="s-total">-</div><div class="stat-sub">Total registrado</div></div>
+        <div class="stat-card"><span class="stat-icon">&#9201;</span><div class="stat-label">EM ANDAMENTO</div><div class="stat-value" id="s-andamento">-</div><div class="stat-sub">Ativos</div></div>
+        <div class="stat-card"><span class="stat-icon">&#128229;</span><div class="stat-label">ARQUIVADOS</div><div class="stat-value" id="s-arquivados">-</div><div class="stat-sub">Encerrados</div></div>
+        <div class="stat-card"><span class="stat-icon">&#128176;</span><div class="stat-label">COM OR&#199;AMENTO</div><div class="stat-value" id="s-orcamento">-</div><div class="stat-sub">Or&#231;amentados</div></div>
       </div>
 
       <!-- CHARTS -->
       <div class="chart-grid">
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><span class="icon">??</span>Servi�os por Status</div>
+            <div class="card-title"><span class="icon">&#128202;</span>Projetos por Status</div>
             <div class="chart-type-btns" id="chart1-btns">
               <button class="chart-type-btn active" data-type="bar">Barra</button>
               <button class="chart-type-btn" data-type="pie">Pizza</button>
@@ -49,7 +49,7 @@
         </div>
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><span class="icon">??</span>Servi�os por Tipo</div>
+            <div class="card-title"><span class="icon">&#128203;</span>Projetos por Tipo</div>
             <div class="chart-type-btns" id="chart2-btns">
               <button class="chart-type-btn active" data-type="pie">Pizza</button>
               <button class="chart-type-btn" data-type="bar">Barra</button>
@@ -64,13 +64,13 @@
       <div style="display:grid;grid-template-columns:1fr 380px;gap:20px">
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><span class="icon">??</span>Calend�rio de Servi�os</div>
+            <div class="card-title"><span class="icon">&#128197;</span>Calend&#225;rio de Projetos</div>
           </div>
           <div id="dashboard-calendar"></div>
         </div>
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><span class="icon">?</span>Prazos Pr�ximos</div>
+            <div class="card-title"><span class="icon">&#8987;</span>Prazos Pr&#243;ximos</div>
           </div>
           <div id="prazos-list" style="display:flex;flex-direction:column;gap:10px"></div>
         </div>
@@ -248,7 +248,7 @@ async function loadDashboard() {
   });
   cal.render();
 
-  // Prazos pr�ximos (pr�ximos 30 dias)
+  // Prazos pr&#243;ximos (pr&#243;ximos 30 dias)
   const now = nowManaus();
   const soon = demandas
     .filter(d => !d.arquivada && d.dataEntrega)
@@ -259,7 +259,7 @@ async function loadDashboard() {
 
   const prazosEl = document.getElementById('prazos-list');
   if (soon.length === 0) {
-    prazosEl.innerHTML = '<div class="empty-state"><div class="empty-icon">?</div><h3>Nenhum prazo pr�ximo</h3></div>';
+    prazosEl.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhum prazo pr&#243;ximo</h3></div>';
   } else {
     prazosEl.innerHTML = soon.map(d => {
       const daysLeft = Math.ceil((d.entregaDate - now) / (1000*60*60*24));

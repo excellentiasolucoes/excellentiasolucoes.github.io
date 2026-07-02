@@ -1,8 +1,8 @@
-﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Servi�os � Excellentia Controll</title>
+  <title>Servi&#231;os &#8212; Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
 </head>
 <body>
@@ -11,15 +11,15 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <div><div class="topbar-title">Servi�os</div><div class="topbar-subtitle">Tabela de pre�os</div></div>
-      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Servi�o</button></div>
+      <div><div class="topbar-title">Servi&#231;os</div><div class="topbar-subtitle">Tabela de pre&#231;os</div></div>
+      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Servi&#231;o</button></div>
     </div>
     <div class="page-content">
-      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">&#128269;</span><input type="text" class="form-control" id="search-input" placeholder="Buscar servi�o..."></div></div>
+      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">&#128269;</span><input type="text" class="form-control" id="search-input" placeholder="Buscar servi&#231;o..."></div></div>
       <div class="card" style="padding:0">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Nome</th><th>Tipo</th><th>Valor</th><th>A��es</th></tr></thead>
+            <thead><tr><th>Nome</th><th>Tipo</th><th>Valor</th><th>A&#231;&#245;es</th></tr></thead>
             <tbody id="list-tbody"><tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
           </table>
         </div>
@@ -30,13 +30,13 @@
 
 <div class="modal-overlay" id="modal-form">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Servi�o</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Servi&#231;o</span></span><button class="modal-close" id="close-modal">?</button></div>
     <div class="modal-body">
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
-      <div class="form-group"><label class="form-label">Nome do Servi�o</label>
-        <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-nome" placeholder="Ex: Projeto Arquitet�nico"><div class="autocomplete-list" id="nome-auto"></div></div>
+      <div class="form-group"><label class="form-label">Nome do Servi&#231;o</label>
+        <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-nome" placeholder="Ex: Projeto Arquitet&#250;nico"><div class="autocomplete-list" id="nome-auto"></div></div>
       </div>
-      <div class="form-group"><label class="form-label">Tipo de Servi�o</label>
+      <div class="form-group"><label class="form-label">Tipo de Servi&#231;o</label>
         <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-tipo" placeholder="Ex: Projeto Completo"><div class="autocomplete-list" id="tipo-auto"></div></div>
       </div>
       <div class="form-group"><label class="form-label">Valor (R$)</label>
@@ -142,12 +142,12 @@ function renderSidebar(nome, perfil) {
 
 function renderTable(list){
   const tbody=document.getElementById('list-tbody');
-  if(!list.length){tbody.innerHTML=`<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhum servi�o</h3></div></td></tr>`;return;}
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhum servi&#231;o</h3></div></td></tr>`;return;}
   tbody.innerHTML=list.map(d=>`<tr>
     <td>${d.nomeServico||'�'}</td><td>${d.tipoServico||'�'}</td><td>${formatCurrency(d.valorServico)}</td>
     <td><div class="td-actions">
-      <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">??</button>
-      <button class="btn btn-danger btn-icon-sm" onclick="deleteItem('${d.id}')">??</button>
+      <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
+      <button class="btn btn-danger btn-icon-sm" onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
     </div></td></tr>`).join('');
 }
 
@@ -158,7 +158,7 @@ document.getElementById('search-input').addEventListener('input',e=>{
 
 function openModal(id=null){
   editId=id; document.getElementById('form-alert').style.display='none';
-  document.getElementById('modal-titulo').textContent=id?'Editar Servi�o':'Novo Servi�o';
+  document.getElementById('modal-titulo').textContent=id?'Editar Servi&#231;o':'Novo Servi&#231;o';
   if(!id){['f-nome','f-tipo'].forEach(i=>document.getElementById(i).value='');document.getElementById('f-valor').value='';}
   document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
 }
@@ -171,8 +171,8 @@ window.editItem=async(id)=>{
   document.getElementById('f-nome').value=d.nomeServico||'';document.getElementById('f-tipo').value=d.tipoServico||'';document.getElementById('f-valor').value=d.valorServico||'';
 };
 window.deleteItem=async(id)=>{
-  if(!await confirmDialog('Excluir este servi�o?'))return;
-  await deleteDoc(doc(db,'servicos',id));allItems=allItems.filter(d=>d.id!==id);renderTable(allItems);showToast('Servi�o exclu�do!','success');
+  if(!await confirmDialog('Excluir este servi&#231;o?'))return;
+  await deleteDoc(doc(db,'servicos',id));allItems=allItems.filter(d=>d.id!==id);renderTable(allItems);showToast('Servi&#231;o exclu�do!','success');
 };
 document.getElementById('btn-salvar').addEventListener('click',async()=>{
   const payload={nomeServico:document.getElementById('f-nome').value.trim(),tipoServico:document.getElementById('f-tipo').value.trim(),
@@ -180,7 +180,7 @@ document.getElementById('btn-salvar').addEventListener('click',async()=>{
   try{
     if(editId){await updateDoc(doc(db,'servicos',editId),payload);allItems=allItems.map(d=>d.id===editId?{...d,...payload}:d);}
     else{const ref=await addDoc(collection(db,'servicos'),{...payload,criadoEm:serverTimestamp()});allItems.push({id:ref.id,...payload});}
-    renderTable(allItems);closeModalFn();showToast(editId?'Servi�o atualizado!':'Servi�o cadastrado!','success');
+    renderTable(allItems);closeModalFn();showToast(editId?'Servi&#231;o atualizado!':'Servi&#231;o cadastrado!','success');
   }catch(err){document.getElementById('form-alert').textContent=err.message;document.getElementById('form-alert').style.display='flex';}
 });
 </script>

@@ -1,9 +1,9 @@
-﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fornecedores � Excellentia Controll</title>
+  <title>Fornecedores &#8212; Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" href="../assets/logo.png">
 </head>
@@ -21,7 +21,7 @@
       <div class="card" style="padding:0">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Nome</th><th>Tipo</th><th>CPF/CNPJ</th><th>E-mail</th><th>Contato</th><th>A��es</th></tr></thead>
+            <thead><tr><th>Nome</th><th>Tipo</th><th>CPF/CNPJ</th><th>E-mail</th><th>Contato</th><th>A&#231;&#245;es</th></tr></thead>
             <tbody id="list-tbody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
           </table>
         </div>
@@ -39,7 +39,7 @@
         <div class="form-group col-span-2"><label class="form-label">Nome Completo</label><input type="text" class="form-control" id="f-nome" placeholder="Nome completo"></div>
         <div class="form-group"><label class="form-label">Tipo</label><select class="form-select" id="f-tipo"><option value="">Selecionar</option><option value="PF">Pessoa F�sica</option><option value="PJ">Pessoa Jur�dica</option></select></div>
         <div class="form-group"><label class="form-label">CPF / CNPJ</label><input type="text" class="form-control" id="f-cpf" placeholder="000.000.000-00"></div>
-        <div class="form-group col-span-2"><label class="form-label">Endere�o Completo</label><input type="text" class="form-control" id="f-endereco"></div>
+        <div class="form-group col-span-2"><label class="form-label">Endere&#231;o Completo</label><input type="text" class="form-control" id="f-endereco"></div>
         <div class="form-group col-span-2"><label class="form-label">E-mail</label><input type="email" class="form-control" id="f-email"></div>
         <div class="form-group"><label class="form-label">Contato 1</label><input type="text" class="form-control" id="f-contato1"></div>
         <div class="form-group"><label class="form-label">Contato 2</label><input type="text" class="form-control" id="f-contato2"></div>
@@ -148,13 +148,13 @@ async function loadData() {
 
 function renderTable(list) {
   const tbody = document.getElementById('list-tbody');
-  if (!list.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhum fornecedor</h3><p>Clique em "+ Novo Fornecedor".</p></div></td></tr>`; return; }
+  if (!list.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhum fornecedor</h3><p>Clique em "+ Novo Fornecedor".</p></div></td></tr>`; return; }
   tbody.innerHTML = list.map(d => `<tr>
     <td>${d.nomeCompleto||'�'}</td><td>${d.tipo==='PF'?'Pessoa F�sica':d.tipo==='PJ'?'Pessoa Jur�dica':'�'}</td>
     <td>${d.cpfCnpj||'�'}</td><td>${d.email||'�'}</td><td>${d.contato1||'�'}</td>
     <td><div class="td-actions">
-      <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">??</button>
-      <button class="btn btn-danger btn-icon-sm"    onclick="deleteItem('${d.id}')">??</button>
+      <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
+      <button class="btn btn-danger btn-icon-sm"    onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
     </div></td></tr>`).join('');
 }
 

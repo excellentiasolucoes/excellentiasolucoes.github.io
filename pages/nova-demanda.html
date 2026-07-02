@@ -1,9 +1,9 @@
-﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Novo Projeto � Excellentia Controll</title>
+  <title>Novo Projeto &#8212; Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" href="../assets/logo.png">
 </head>
@@ -13,7 +13,7 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <div><div class="topbar-title" id="page-title">Novo Projeto</div><div class="topbar-subtitle">Preencha os dados do servi�o</div></div>
+      <div><div class="topbar-title" id="page-title">Novo Projeto</div><div class="topbar-subtitle">Preencha os dados do servi&#231;o</div></div>
       <div class="topbar-actions">
         <a href="demandas.html" class="btn btn-secondary">? Voltar</a>
       </div>
@@ -23,7 +23,7 @@
         <div id="form-alert" class="alert alert-danger" style="display:none"></div>
 
         <div class="form-grid">
-          <!-- N� e data (auto) -->
+          <!-- N&#186; e data (auto) -->
           <div class="form-group">
             <label class="form-label">N&#250; do Projeto</label>
             <input type="text" class="form-control" id="numero" readonly placeholder="Gerado automaticamente" style="opacity:0.6">
@@ -56,15 +56,15 @@
             <input type="text" class="form-control" id="cpf-cnpj" placeholder="000.000.000-00">
           </div>
 
-          <!-- Tipo de Servi�o -->
+          <!-- Tipo de Servi&#231;o -->
           <div class="form-group">
-            <label class="form-label">Tipo de Servi�o</label>
+            <label class="form-label">Tipo de Servi&#231;o</label>
             <select class="form-select" id="tipo-servico">
               <option value="">Selecionar</option>
             </select>
           </div>
           <div class="form-group" id="novo-tipo-grupo" style="display:none">
-            <label class="form-label">Novo Tipo de Servi�o</label>
+            <label class="form-label">Novo Tipo de Servi&#231;o</label>
             <div class="form-row">
               <div class="form-group"><input type="text" class="form-control" id="novo-tipo-nome" placeholder="Nome do novo tipo"></div>
               <button class="btn btn-primary" id="btn-add-tipo">+ Adicionar</button>
@@ -89,7 +89,7 @@
 
           <!-- Datas e Prazo -->
           <div class="form-group">
-            <label class="form-label">Data do Servi�o</label>
+            <label class="form-label">Data do Servi&#231;o</label>
             <input type="date" class="form-control" id="data-servico">
           </div>
           <div class="form-group">
@@ -101,10 +101,10 @@
             <input type="text" class="form-control" id="data-entrega-calc" readonly style="opacity:0.6">
           </div>
 
-          <!-- Descri��o -->
+          <!-- Descri&#231;&#227;o -->
           <div class="form-group col-span-2">
-            <label class="form-label">Descri��o do Servi�o</label>
-            <textarea class="form-control" id="descricao" rows="4" placeholder="Descreva o servi�o solicitado..."></textarea>
+            <label class="form-label">Descri&#231;&#227;o do Servi&#231;o</label>
+            <textarea class="form-control" id="descricao" rows="4" placeholder="Descreva o servi&#231;o solicitado..."></textarea>
           </div>
         </div>
 
@@ -242,7 +242,7 @@ async function loadRefs() {
     }
   );
 
-  // Tipo de servi�o select
+  // Tipo de servi&#231;o select
   const tipoSel = document.getElementById('tipo-servico');
   tiposServico.forEach(t => tipoSel.appendChild(new Option(t.nome, t.id)));
   tipoSel.appendChild(new Option('+ Cadastrar novo tipo...', '__novo__'));

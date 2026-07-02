@@ -1,8 +1,8 @@
-﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Agenda de Contatos � Excellentia Controll</title>
+  <title>Agenda de Contatos &#8212; Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
 </head>
 <body>
@@ -29,7 +29,7 @@
       <div class="form-grid">
         <div class="form-group col-span-2"><label class="form-label">Nome</label><input type="text" class="form-control" id="f-nome" placeholder="Nome completo"></div>
         <div class="form-group"><label class="form-label">Cargo</label><input type="text" class="form-control" id="f-cargo" placeholder="Ex: Diretor"></div>
-        <div class="form-group"><label class="form-label">Fun��o</label><input type="text" class="form-control" id="f-funcao" placeholder="Ex: Aprova��o de projetos"></div>
+        <div class="form-group"><label class="form-label">Fun&#231;&#227;o</label><input type="text" class="form-control" id="f-funcao" placeholder="Ex: Aprova&#231;&#227;o de projetos"></div>
         <div class="form-group col-span-2"><label class="form-label">Empresa</label><input type="text" class="form-control" id="f-empresa" placeholder="Nome da empresa"></div>
         <div class="form-group"><label class="form-label">Contato 1</label><input type="text" class="form-control" id="f-c1" placeholder="(92) 99999-9999"></div>
         <div class="form-group"><label class="form-label">Contato 2</label><input type="text" class="form-control" id="f-c2" placeholder="(92) 99999-9999"></div>
@@ -135,7 +135,7 @@ async function loadData(){
 
 function renderGrid(list){
   const grid=document.getElementById('contatos-grid');
-  if(!list.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">??</div><h3>Nenhum contato</h3><p>Clique em "+ Novo Contato".</p></div>`;return;}
+  if(!list.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">&#128203;</div><h3>Nenhum contato</h3><p>Clique em "+ Novo Contato".</p></div>`;return;}
   grid.innerHTML=list.map(d=>{
     const ini=(d.nome||'?').charAt(0).toUpperCase();
     return `<div class="card" style="padding:18px">
@@ -151,7 +151,7 @@ function renderGrid(list){
       ${d.contato2?`<div style="font-size:12px;color:var(--text-2);margin-bottom:8px">?? ${d.contato2}</div>`:''}
       <div style="display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-subtle)">
         <button class="btn btn-secondary btn-sm" onclick="editItem('${d.id}')">&#9999;&#65039; Editar</button>
-        <button class="btn btn-danger btn-sm"    onclick="deleteItem('${d.id}')">??</button>
+        <button class="btn btn-danger btn-sm"    onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
       </div>
     </div>`;
   }).join('');

@@ -174,6 +174,7 @@ export async function getNextDemandaNum(db) {
   const { doc, getDoc, updateDoc, increment } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
   const ref = doc(db, 'configuracoes', 'sistema');
   const snap = await getDoc(ref);
+  const year = new Date().getFullYear();
   let num = 1;
   if (snap.exists()) {
     num = (snap.data().proximoNumero || 1);
@@ -182,7 +183,13 @@ export async function getNextDemandaNum(db) {
     const { setDoc } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
     await setDoc(ref, { proximoNumero: 2, numeracaoInicial: 1, fusoHorario: 'America/Manaus' });
   }
-  return num;
+  return `${String(num).padStart(3, '0')}/${year}`;
+}
+
+export async function resetDemandaNum(db) {
+  const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+  const ref = doc(db, 'configuracoes', 'sistema');
+  await updateDoc(ref, { proximoNumero: 1 });
 }
 
 // ── STATUS BADGE ──────────────────────────────────────────────

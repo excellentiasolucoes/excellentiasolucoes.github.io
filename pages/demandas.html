@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -14,9 +14,9 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <div><div class="topbar-title">Projetos</div><div class="topbar-subtitle">Gest�o de servi�os</div></div>
+      <div><div class="topbar-title">Projetos</div><div class="topbar-subtitle">Gest�o de servi&#231;os</div></div>
       <div class="topbar-actions">
-        <button class="btn btn-secondary btn-sm" id="btn-export-excel">?? Excel</button>
+        <button class="btn btn-secondary btn-sm" id="btn-export-excel">&#128229; Excel</button>
         <a href="nova-demanda.html" class="btn btn-primary">+ Novo Projeto</a>
       </div>
     </div>
@@ -41,25 +41,25 @@
           <input type="checkbox" id="chk-arquivados"> Mostrar Arquivados
         </label>
         <label class="filter-tag" id="tag-orcamento">
-          <input type="checkbox" id="chk-orcamento"> Com Or�amento
+          <input type="checkbox" id="chk-orcamento"> Com Or&#231;amento
         </label>
         <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
           <select class="form-select" id="sort-by" style="width:160px;font-size:12px">
             <option value="criadoEm-desc">Mais recente</option>
             <option value="criadoEm-asc">Mais antigo</option>
-            <option value="numero-asc">N� crescente</option>
-            <option value="numero-desc">N� decrescente</option>
+            <option value="numero-asc">N&#186; crescente</option>
+            <option value="numero-desc">N&#186; decrescente</option>
           </select>
           <div class="col-visibility-menu">
-            <button class="btn btn-secondary btn-sm" id="btn-col-toggle">? Colunas</button>
+            <button class="btn btn-secondary btn-sm" id="btn-col-toggle">&#128209; Colunas</button>
             <div class="col-visibility-dropdown" id="col-dropdown">
-              <label class="col-visibility-item"><input type="checkbox" data-col="numero" checked> N�</label>
+              <label class="col-visibility-item"><input type="checkbox" data-col="numero" checked> N&#186;</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="data" checked> Data</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="status" checked> Status</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="tipo" checked> Tipo</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="cliente" checked> Cliente</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="entrega"> Data Entrega</label>
-              <label class="col-visibility-item"><input type="checkbox" data-col="orcamento"> Or�amento</label>
+              <label class="col-visibility-item"><input type="checkbox" data-col="orcamento"> Or&#231;amento</label>
             </div>
           </div>
         </div>
@@ -71,14 +71,14 @@
           <table class="data-table" id="demandas-table">
             <thead>
               <tr>
-                <th data-col="numero">N�</th>
+                <th data-col="numero">N&#186;</th>
                 <th data-col="data">Data</th>
                 <th data-col="status">Status</th>
                 <th data-col="tipo">Tipo</th>
                 <th data-col="cliente">Cliente</th>
                 <th data-col="entrega" style="display:none">Entrega</th>
-                <th data-col="orcamento" style="display:none">Or�amento</th>
-                <th>A��es</th>
+                <th data-col="orcamento" style="display:none">Or&#231;amento</th>
+                <th>A&#231;&#245;es</th>
               </tr>
             </thead>
             <tbody id="demandas-tbody">
@@ -103,11 +103,11 @@
 
       <!-- Tabs -->
       <div class="tabs">
-        <button class="tab-btn active" data-tab="acoes">?? Registro de A��es</button>
-        <button class="tab-btn" data-tab="hist">?? Hist�rico</button>
+        <button class="tab-btn active" data-tab="acoes">&#128221; Registro de A&#231;&#245;es</button>
+        <button class="tab-btn" data-tab="hist">&#128336; Hist&#243;rico</button>
       </div>
 
-      <!-- Tab: A��es -->
+      <!-- Tab: A&#231;&#245;es -->
       <div class="tab-content active" id="tab-acoes">
         <div class="acoes-form">
           <div class="form-grid">
@@ -120,8 +120,8 @@
               <select class="form-select" id="acao-status"><option value="">Selecione o status</option></select>
             </div>
             <div class="form-group col-span-2">
-              <label class="form-label">Descri��o da A��o</label>
-              <input type="text" class="form-control" id="acao-desc" placeholder="Descreva a a��o realizada">
+              <label class="form-label">Descri&#231;&#227;o da A&#231;&#227;o</label>
+              <input type="text" class="form-control" id="acao-desc" placeholder="Descreva a a&#231;&#227;o realizada">
             </div>
             <div class="form-group">
               <label class="form-label">Funcion�rio Respons�vel</label>
@@ -129,7 +129,7 @@
             </div>
             <div class="form-group" style="display:flex;align-items:flex-end">
               <button class="btn btn-primary" id="btn-save-acao" style="width:100%;justify-content:center">
-                + Registrar A��o
+                + Registrar A&#231;&#227;o
               </button>
             </div>
           </div>
@@ -137,11 +137,11 @@
         <div id="acoes-list" class="acoes-list"></div>
       </div>
 
-      <!-- Tab: Hist�rico -->
+      <!-- Tab: Hist&#243;rico -->
       <div class="tab-content" id="tab-hist">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Data</th><th>A��o</th><th>Funcion�rio</th><th>Status</th></tr></thead>
+            <thead><tr><th>Data</th><th>A&#231;&#227;o</th><th>Funcion�rio</th><th>Status</th></tr></thead>
             <tbody id="hist-tbody"></tbody>
           </table>
         </div>
@@ -329,7 +329,7 @@ function renderTable() {
 
   const tbody = document.getElementById('demandas-tbody');
   if (list.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhuma demanda encontrada</h3><p>Tente ajustar os filtros ou cadastre uma novo projeto.</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhuma demanda encontrada</h3><p>Tente ajustar os filtros ou cadastre uma novo projeto.</p></div></td></tr>`;
     return;
   }
 
@@ -346,12 +346,12 @@ function renderTable() {
       <td data-col="orcamento" style="${colConfig.orcamento ? '' : 'display:none'}">${d.temOrcamento ? '?' : '�'}</td>
       <td>
         <div class="td-actions">
-          <button class="btn btn-info btn-icon-sm" title="Ver detalhes" onclick="openDetail('${d.id}')">??</button>
-          <a class="btn btn-secondary btn-icon-sm" href="nova-demanda.html?id=${d.id}" title="Editar">??</a>
+          <button class="btn btn-info btn-icon-sm" title="Ver detalhes" onclick="openDetail('${d.id}')">&#8227;</button>
+          <a class="btn btn-secondary btn-icon-sm" href="nova-demanda.html?id=${d.id}" title="Editar">&#9999;&#65039;</a>
           ${d.arquivada
-            ? `<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar('${d.id}', false)">??</button>`
-            : `<button class="btn btn-warning btn-icon-sm" title="Arquivar"    onclick="toggleArquivar('${d.id}', true)">??</button>`}
-          ${userPerfil === 'admin' ? `<button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="excluirDemanda('${d.id}')">??</button>` : ''}
+            ? `<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar('${d.id}', false)">&#128229;</button>`
+            : `<button class="btn btn-warning btn-icon-sm" title="Arquivar"    onclick="toggleArquivar('${d.id}', true)">&#128229;</button>`}
+          ${userPerfil === 'admin' ? `<button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="excluirDemanda('${d.id}')">&#128465;&#65039;</button>` : ''}
         </div>
       </td>
     </tr>`;
@@ -381,14 +381,14 @@ document.querySelectorAll('#col-dropdown input').forEach(cb => cb.addEventListen
 // Excel export
 document.getElementById('btn-export-excel').addEventListener('click', () => {
   const data = getFiltered().map(d => ({
-    'N�': d.numero,
+    'N&#186;': d.numero,
     'Data': formatDate(d.dataRegistro || d.criadoEm),
     'Cliente': d.clienteNome || '',
     'Tipo': d.tipoServicoNome || '',
     'Status': d.statusNome || '',
-    'Arquivada': d.arquivada ? 'Sim' : 'N�o',
-    'Com Or�amento': d.temOrcamento ? 'Sim' : 'N�o',
-    'Descri��o': d.descricao || '',
+    'Arquivada': d.arquivada ? 'Sim' : 'N&#227;o',
+    'Com Or&#231;amento': d.temOrcamento ? 'Sim' : 'N&#227;o',
+    'Descri&#231;&#227;o': d.descricao || '',
     'Data Entrega': formatDate(d.dataEntrega)
   }));
   exportToExcel(data, 'demandas-excellentia');
@@ -424,15 +424,15 @@ window.openDetail = async (id) => {
   document.getElementById('modal-titulo').textContent = `Projeto #${d.numero || '�'}`;
   document.getElementById('btn-edit-demanda').href = `nova-demanda.html?id=${id}`;
   document.getElementById('demanda-info-grid').innerHTML = `
-    <div class="demanda-info-item"><label>N�</label><span>#${d.numero || '�'}</span></div>
+    <div class="demanda-info-item"><label>N&#186;</label><span>#${d.numero || '�'}</span></div>
     <div class="demanda-info-item"><label>Data</label><span>${formatDate(d.dataRegistro || d.criadoEm)}</span></div>
     <div class="demanda-info-item"><label>Status</label><span>${badge}</span></div>
     <div class="demanda-info-item"><label>Cliente</label><span>${d.clienteNome || '�'}</span></div>
     <div class="demanda-info-item"><label>Tipo</label><span>${d.tipoServicoNome || '�'}</span></div>
     <div class="demanda-info-item"><label>CPF/CNPJ</label><span>${d.cpfCnpj || '�'}</span></div>
     <div class="demanda-info-item"><label>Entrega</label><span>${formatDate(d.dataEntrega)}</span></div>
-    <div class="demanda-info-item"><label>Or�amento</label><span>${d.temOrcamento ? '? Sim' : '�'}</span></div>
-    <div class="demanda-info-item col-span-2" style="grid-column:span 3"><label>Descri��o</label><span>${d.descricao || '�'}</span></div>`;
+    <div class="demanda-info-item"><label>Or&#231;amento</label><span>${d.temOrcamento ? '? Sim' : '�'}</span></div>
+    <div class="demanda-info-item col-span-2" style="grid-column:span 3"><label>Descri&#231;&#227;o</label><span>${d.descricao || '�'}</span></div>`;
 
   // Set default datetime for acao
   const now = new Date().toLocaleString('sv-SE', { timeZone: 'America/Manaus' }).replace(' ', 'T').slice(0,16);
@@ -453,7 +453,7 @@ async function loadAcoes(demandaId) {
 function renderAcoes(acoes) {
   const container = document.getElementById('acoes-list');
   if (acoes.length === 0) {
-    container.innerHTML = '<div class="empty-state" style="padding:20px"><div class="empty-icon">??</div><p>Nenhuma a��o registrada</p></div>';
+    container.innerHTML = '<div class="empty-state" style="padding:20px"><div class="empty-icon">&#128203;</div><p>Nenhuma a&#231;&#227;o registrada</p></div>';
     return;
   }
   container.innerHTML = acoes.map(a => `
@@ -463,8 +463,8 @@ function renderAcoes(acoes) {
       <span class="acao-func">${a.funcionario || '�'}</span>
       <span>${buildStatusBadge(a.statusNome || '�', allStatus.find(s => s.id === a.statusId)?.cor)}</span>
       <div style="display:flex;gap:5px">
-        <button class="btn btn-secondary btn-icon-sm" onclick="editAcao('${a.id}','${a.descricao?.replace(/'/g,"\\'")}','${a.funcionario?.replace(/'/g,"\\'")}')">??</button>
-        <button class="btn btn-danger btn-icon-sm"    onclick="deleteAcao('${a.id}')">??</button>
+        <button class="btn btn-secondary btn-icon-sm" onclick="editAcao('${a.id}','${a.descricao?.replace(/'/g,"\\'")}','${a.funcionario?.replace(/'/g,"\\'")}')">&#9999;&#65039;</button>
+        <button class="btn btn-danger btn-icon-sm"    onclick="deleteAcao('${a.id}')">&#128465;&#65039;</button>
       </div>
     </div>`).join('');
 }
@@ -488,7 +488,7 @@ document.getElementById('btn-save-acao').addEventListener('click', async () => {
   const stId   = stEl.value;
   const stNome = stEl.options[stEl.selectedIndex]?.text || '';
 
-  if (!desc) { showToast('Informe a descri��o da a��o', 'warning'); return; }
+  if (!desc) { showToast('Informe a descri&#231;&#227;o da a&#231;&#227;o', 'warning'); return; }
 
   await addDoc(collection(db, 'demandas', currentDemandaId, 'acoes'), {
     data: data ? Timestamp.fromDate(new Date(data)) : serverTimestamp(),
@@ -501,7 +501,7 @@ document.getElementById('btn-save-acao').addEventListener('click', async () => {
 
   document.getElementById('acao-desc').value = '';
   document.getElementById('acao-func').value = '';
-  showToast('A��o registrada!', 'success');
+  showToast('A&#231;&#227;o registrada!', 'success');
   await loadAcoes(currentDemandaId);
   // refresh table
   allDemandas = allDemandas.map(d => d.id === currentDemandaId ? { ...d, statusId: stId, statusNome: stNome } : d);
@@ -509,21 +509,21 @@ document.getElementById('btn-save-acao').addEventListener('click', async () => {
 });
 
 window.editAcao = async (acaoId, desc, func) => {
-  const novaDesc = prompt('Editar descri��o:', desc);
+  const novaDesc = prompt('Editar descri&#231;&#227;o:', desc);
   if (novaDesc === null) return;
   const novaFunc = prompt('Editar funcion�rio:', func);
   if (novaFunc === null) return;
   await updateDoc(doc(db, 'demandas', currentDemandaId, 'acoes', acaoId), {
     descricao: novaDesc, funcionario: novaFunc, editadoEm: serverTimestamp()
   });
-  showToast('A��o atualizada!', 'success');
+  showToast('A&#231;&#227;o atualizada!', 'success');
   await loadAcoes(currentDemandaId);
 };
 
 window.deleteAcao = async (acaoId) => {
-  if (!await confirmDialog('Deseja excluir este registro de a��o?')) return;
+  if (!await confirmDialog('Deseja excluir este registro de a&#231;&#227;o?')) return;
   await deleteDoc(doc(db, 'demandas', currentDemandaId, 'acoes', acaoId));
-  showToast('A��o exclu�da!', 'success');
+  showToast('A&#231;&#227;o exclu�da!', 'success');
   await loadAcoes(currentDemandaId);
 };
 

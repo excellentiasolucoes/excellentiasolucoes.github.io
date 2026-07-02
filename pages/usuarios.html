@@ -113,7 +113,32 @@
         </div>
       </div>
 
-    </div>
+    
+        <div class="card" style="margin-top:16px">
+          <div style="font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:12px">
+            &#128203; Numera&#231;&#227;o de Projetos
+          </div>
+          <div style="font-size:13px;color:var(--text-3);line-height:1.8;margin-bottom:16px">
+            O pr&#243;ximo projeto ser&#225; numerado como: 
+            <strong style="color:var(--gold)" id="next-num-preview">...</strong><br>
+            O formato utilizado &#233; <strong>NNN/ANO</strong> (ex: 001/2026).<br>
+            Reiniciar zera o contador — use com cuidado.
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div>
+              <label class="form-label" style="margin-bottom:4px">Reiniciar a partir de:</label>
+              <input type="number" class="form-control" id="reset-start-num"
+                min="1" max="999" value="1" style="width:100px">
+            </div>
+            <div style="padding-top:22px">
+              <button class="btn btn-danger" id="btn-reset-seq">
+                &#128260; Reiniciar Numera&#231;&#227;o
+              </button>
+            </div>
+          </div>
+          <div id="reset-status" style="margin-top:12px;font-size:13px;display:none"></div>
+        </div>
+</div>
   </div>
 </div>
 
@@ -188,6 +213,7 @@ onAuthStateChanged(auth, async (user) => {
   renderSidebar(uData.nome || user.email, 'admin');
   await loadUsuarios();
   await loadEmailsAutorizados();
+  await loadNextNumPreview();
 });
 
 // ── Sidebar ───────────────────────────────────────────────────
@@ -435,6 +461,52 @@ document.getElementById('btn-salvar-emails').addEventListener('click', async () 
 
 window.closeModal = closeModal;
 window.openModal  = openModal;
+
+// ── Numeracao de Projetos ─────────────────────────────────────
+async function loadNextNumPreview() {
+  try {
+    const snap = await getDoc(doc(db, 'configuracoes', 'sistema'));
+    const year = new Date().getFullYear();
+    if (snap.exists()) {
+      const n = snap.data().proximoNumero || 1;
+      document.getElementById('next-num-preview').textContent =
+        String(n).padStart(3,'0') + '/' + year;
+    } else {
+      document.getElementById('next-num-preview').textContent = '001/' + year;
+    }
+  } catch(e) { /* ignora */ }
+}
+
+document.getElementById('btn-reset-seq').addEventListener('click', async () => {
+  const startFrom = parseInt(document.getElementById('reset-start-num').value) || 1;
+  const year = new Date().getFullYear();
+  const preview = String(startFrom).padStart(3,'0') + '/' + year;
+  const ok = await confirmDialog(
+    'Reiniciar a numera&#231;&#227;o a partir de ' + preview + '?\n\nEsta a&#231;&#227;o n&#227;o pode ser desfeita.'
+  );
+  if (!ok) return;
+  showLoading('Reiniciando...');
+  try {
+    await setDoc(doc(db, 'configuracoes', 'sistema'), {
+      proximoNumero: startFrom,
+      anoAtual: year,
+      fusoHorario: 'America/Manaus',
+      resetadoEm: new Date().toISOString(),
+      resetadoPor: currentUser?.email || ''
+    });
+    hideLoading();
+    const status = document.getElementById('reset-status');
+    status.style.color = 'var(--success)';
+    status.textContent = '&#10003; Reiniciado! O pr&#243;ximo projeto ser&#225; ' + preview;
+    status.style.display = 'block';
+    showToast('Numera&#231;&#227;o reiniciada para ' + preview, 'success');
+    await loadNextNumPreview();
+    setTimeout(() => { status.style.display = 'none'; }, 4000);
+  } catch(e) {
+    hideLoading();
+    showToast('Erro: ' + e.message, 'error');
+  }
+});
 </script>
 </body>
 </html>
