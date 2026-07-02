@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Excellentia Controll</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="../assets/logo.png">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-placeholder"></div>
+  <div class="main-content">
+    <div class="topbar">
+      <div>
+        <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
+      </div>
+      <div>
+        <div class="topbar-title">Dashboard</div>
+        <div class="topbar-subtitle" id="dash-datetime"></div>
+      </div>
+      <div class="topbar-actions">
+        <a href="nova-demanda.html" class="btn btn-primary">+ Nova Demanda</a>
+      </div>
+    </div>
+    <div class="page-content">
+      <!-- STAT CARDS -->
+      <div class="stat-grid" id="stat-grid">
+        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">SERVIÇOS</div><div class="stat-value" id="s-total">—</div><div class="stat-sub">Total registrado</div></div>
+        <div class="stat-card"><span class="stat-icon">?</span><div class="stat-label">EM ANDAMENTO</div><div class="stat-value" id="s-andamento">—</div><div class="stat-sub">Ativos</div></div>
+        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">ARQUIVADOS</div><div class="stat-value" id="s-arquivados">—</div><div class="stat-sub">Encerrados</div></div>
+        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">COM ORÇAMENTO</div><div class="stat-value" id="s-orcamento">—</div><div class="stat-sub">Orçamentados</div></div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="chart-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">??</span>Serviços por Status</div>
+            <div class="chart-type-btns" id="chart1-btns">
+              <button class="chart-type-btn active" data-type="bar">Barra</button>
+              <button class="chart-type-btn" data-type="pie">Pizza</button>
+              <button class="chart-type-btn" data-type="doughnut">Donut</button>
+            </div>
+          </div>
+          <div class="chart-wrapper"><canvas id="chart-status"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">??</span>Serviços por Tipo</div>
+            <div class="chart-type-btns" id="chart2-btns">
+              <button class="chart-type-btn active" data-type="pie">Pizza</button>
+              <button class="chart-type-btn" data-type="bar">Barra</button>
+              <button class="chart-type-btn" data-type="doughnut">Donut</button>
+            </div>
+          </div>
+          <div class="chart-wrapper"><canvas id="chart-tipo"></canvas></div>
+        </div>
+      </div>
+
+      <!-- CALENDAR + PRAZO -->
+      <div style="display:grid;grid-template-columns:1fr 380px;gap:20px">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">??</span>Calendário de Serviços</div>
+          </div>
+          <div id="dashboard-calendar"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">?</span>Prazos Próximos</div>
+          </div>
+          <div id="prazos-list" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast-container"></div>
+
+<script type="module">
+import { firebaseConfig } from '../js/firebase/config.js';
+import { showToast, formatDate, formatDateTime, nowManaus, buildStatusBadge, buildPrazoBar, setupMobileSidebar, setActiveNav } from '../js/utils.js';
+
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, collection, getDocs, doc, getDoc, query, orderBy }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+let currentUser = null;
+
+// Auth guard
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = '../login.html'; return; }
+  currentUser = user;
+  const snap = await getDoc(doc(db, 'usuarios', user.uid));
+  const uData = snap.exists() ? snap.data() : {};
+  renderSidebar(uData.nome || user.email, uData.perfil || 'usuario');
+  await loadDashboard();
+  startClock();
+});
+
+function renderSidebar(nome, perfil) {
+  const isAdmin = perfil === 'admin';
+  const ini = nome.charAt(0).toUpperCase();
+  document.getElementById('sidebar-placeholder').innerHTML = `
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+      <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
+      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a>
+      <a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+      <div class="sidebar-section-label">Cadastros</div>
+      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <div class="sidebar-section-label">Outros</div>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a>
+      <a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">${ini}</div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usuário'}</div></div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '../login.html';
+  });
+  setActiveNav();
+  setupMobileSidebar();
+}
+
+function startClock() {
+  function update() {
+    document.getElementById('dash-datetime').textContent =
+      formatDateTime(new Date());
+  }
+  update();
+  setInterval(update, 1000);
+}
+
+let chartStatus = null, chartTipo = null;
+const COLORS = ['#C9A84C','#3498DB','#2ECC71','#E74C3C','#9B59B6','#F39C12','#1ABC9C','#E67E22','#34495E','#16A085'];
+
+async function loadDashboard() {
+  const [demandasSnap, statusSnap, tiposSnap] = await Promise.all([
+    getDocs(query(collection(db, 'demandas'), orderBy('criadoEm', 'desc'))),
+    getDocs(collection(db, 'statusServico')),
+    getDocs(collection(db, 'tiposServico'))
+  ]);
+
+  const demandas  = demandasSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const statusMap = {};
+  statusSnap.docs.forEach(d => { statusMap[d.id] = d.data(); });
+  const tipoMap = {};
+  tiposSnap.docs.forEach(d => { tipoMap[d.id] = d.data(); });
+
+  // Stats
+  document.getElementById('s-total').textContent      = demandas.length;
+  document.getElementById('s-andamento').textContent  = demandas.filter(d => !d.arquivada).length;
+  document.getElementById('s-arquivados').textContent = demandas.filter(d => d.arquivada).length;
+  document.getElementById('s-orcamento').textContent  = demandas.filter(d => d.temOrcamento).length;
+
+  // Status chart data
+  const byStatus = {};
+  demandas.forEach(d => {
+    const key = d.statusNome || 'Sem status';
+    byStatus[key] = (byStatus[key] || 0) + 1;
+  });
+  const statusLabels = Object.keys(byStatus);
+  const statusData   = Object.values(byStatus);
+
+  // Tipo chart data
+  const byTipo = {};
+  demandas.forEach(d => {
+    const key = d.tipoServicoNome || 'Sem tipo';
+    byTipo[key] = (byTipo[key] || 0) + 1;
+  });
+  const tipoLabels = Object.keys(byTipo);
+  const tipoData   = Object.values(byTipo);
+
+  buildChart('chart-status', 'bar', statusLabels, statusData, 'chart1-btns', (type) => {
+    buildChart('chart-status', type, statusLabels, statusData, null, null);
+  });
+  buildChart('chart-tipo', 'pie', tipoLabels, tipoData, 'chart2-btns', (type) => {
+    buildChart('chart-tipo', type, tipoLabels, tipoData, null, null);
+  });
+
+  // Calendar events
+  const events = demandas
+    .filter(d => d.dataServico)
+    .map(d => ({
+      title: `#${d.numero} ${d.clienteNome || 'Sem cliente'}`,
+      start: d.dataServico?.toDate ? d.dataServico.toDate().toISOString().split('T')[0] : d.dataServico,
+      color: statusMap[d.statusId]?.cor || '#C9A84C'
+    }));
+
+  const calEl = document.getElementById('dashboard-calendar');
+  const cal = new FullCalendar.Calendar(calEl, {
+    initialView: 'dayGridMonth',
+    locale: 'pt-br',
+    headerToolbar: { left: 'prev,next', center: 'title', right: 'today' },
+    height: 380,
+    events
+  });
+  cal.render();
+
+  // Prazos próximos (próximos 30 dias)
+  const now = nowManaus();
+  const soon = demandas
+    .filter(d => !d.arquivada && d.dataEntrega)
+    .map(d => ({ ...d, entregaDate: d.dataEntrega?.toDate ? d.dataEntrega.toDate() : new Date(d.dataEntrega) }))
+    .filter(d => d.entregaDate >= now)
+    .sort((a, b) => a.entregaDate - b.entregaDate)
+    .slice(0, 8);
+
+  const prazosEl = document.getElementById('prazos-list');
+  if (soon.length === 0) {
+    prazosEl.innerHTML = '<div class="empty-state"><div class="empty-icon">?</div><h3>Nenhum prazo próximo</h3></div>';
+  } else {
+    prazosEl.innerHTML = soon.map(d => {
+      const daysLeft = Math.ceil((d.entregaDate - now) / (1000*60*60*24));
+      const color = daysLeft <= 3 ? 'var(--danger)' : daysLeft <= 7 ? 'var(--warning)' : 'var(--success)';
+      return `<div style="background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:8px;padding:12px 14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:13px;font-weight:600">#${d.numero} — ${d.clienteNome || 'Sem cliente'}</div>
+          <span style="font-size:12px;font-weight:700;color:${color}">${daysLeft}d</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:4px">Entrega: ${formatDate(d.dataEntrega)}</div>
+        ${buildPrazoBar(d.dataServico, d.dataEntrega)}
+      </div>`;
+    }).join('');
+  }
+}
+
+let charts = {};
+function buildChart(canvasId, type, labels, data, btnsId, onTypeChange) {
+  const ctx = document.getElementById(canvasId);
+  if (!ctx) return;
+  if (charts[canvasId]) { charts[canvasId].destroy(); }
+
+  const isPie = type === 'pie' || type === 'doughnut';
+  charts[canvasId] = new Chart(ctx, {
+    type,
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: COLORS.slice(0, data.length).map(c => c + 'CC'),
+        borderColor: COLORS.slice(0, data.length),
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: isPie,
+          position: 'right',
+          labels: { color: '#B0B3C8', font: { size: 11 }, padding: 14, boxWidth: 14, usePointStyle: true }
+        },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}` } }
+      },
+      scales: isPie ? {} : {
+        x: { ticks: { color: '#6E7191' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: '#6E7191', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true }
+      }
+    }
+  });
+
+  if (btnsId && onTypeChange) {
+    document.getElementById(btnsId)?.querySelectorAll('.chart-type-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.type === type);
+      btn.onclick = () => {
+        document.getElementById(btnsId).querySelectorAll('.chart-type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        onTypeChange(btn.dataset.type);
+      };
+    });
+  }
+}
+</script>
+</body>
+</html>
+

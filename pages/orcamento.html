@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Orçamentos — Excellentia Controll</title>
+  <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-placeholder"></div>
+  <div class="main-content">
+    <div class="topbar">
+      <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
+      <div><div class="topbar-title">Orçamentos</div><div class="topbar-subtitle">Gestão de orçamentos</div></div>
+      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Orçamento</button></div>
+    </div>
+    <div class="page-content">
+      <div class="card" style="padding:0">
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead><tr><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Com Desconto</th><th>Entrega</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="list-tbody"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Novo/Editar Orçamento -->
+<div class="modal-overlay" id="modal-form">
+  <div class="modal modal-lg">
+    <div class="modal-header"><span class="modal-title">?? <span id="modal-titulo">Novo Orçamento</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-body">
+      <div id="form-alert" class="alert alert-danger" style="display:none"></div>
+      <div class="form-grid">
+        <div class="form-group col-span-2">
+          <label class="form-label">Cliente</label>
+          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-cliente" placeholder="Nome do cliente"><div class="autocomplete-list" id="cli-auto"></div></div>
+          <input type="hidden" id="f-cliente-id">
+        </div>
+        <div class="form-group"><label class="form-label">Tipo de Serviço</label>
+          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-tipo" placeholder="Tipo de serviço"><div class="autocomplete-list" id="tipo-auto"></div></div>
+        </div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select" id="f-status"><option value="">Selecionar</option></select>
+        </div>
+        <div class="form-group col-span-2"><label class="form-label">Descrição do Serviço</label>
+          <textarea class="form-control" id="f-desc" rows="3" placeholder="Descreva o serviço..."></textarea>
+        </div>
+        <div class="form-group"><label class="form-label">Data do Serviço</label>
+          <input type="date" class="form-control" id="f-data">
+        </div>
+        <div class="form-group"><label class="form-label">Prazo (dias)</label>
+          <input type="number" class="form-control" id="f-prazo" placeholder="Ex: 30" min="0">
+        </div>
+        <div class="form-group"><label class="form-label">Data de Entrega (calculada)</label>
+          <input type="text" class="form-control" id="f-entrega" readonly style="opacity:0.6">
+        </div>
+        <div class="form-group"><label class="form-label">Valor do Serviço (R$)</label>
+          <input type="number" class="form-control" id="f-valor" placeholder="0,00" step="0.01" min="0">
+        </div>
+
+        <!-- Calculadora de desconto -->
+        <div class="form-group col-span-2">
+          <div class="desconto-calc">
+            <label class="form-label">Calculadora de Desconto</label>
+            <div class="form-row" style="align-items:center;gap:16px">
+              <div class="form-group" style="flex:1;margin:0"><label class="form-label">Desconto (%)</label>
+                <input type="number" class="form-control" id="f-desconto" placeholder="0" min="0" max="100" step="0.1">
+              </div>
+              <div style="font-size:13px;color:var(--text-3)">?</div>
+              <div style="flex:2">
+                <div style="font-size:12px;color:var(--text-3);margin-bottom:4px">Valor com desconto:</div>
+                <div class="desconto-result" id="valor-desc">R$ 0,00</div>
+                <div style="font-size:11px;color:var(--text-3)" id="economia-desc"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerta de prazo -->
+      <div id="alerta-prazo" style="display:none" class="alert alert-warning">
+        ? Atenção: o prazo de entrega está próximo ou vencido!
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
+      <button class="btn btn-info" id="btn-preview">?? Preview</button>
+      <button class="btn btn-primary" id="btn-salvar">?? Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Preview/Impressão -->
+<div class="modal-overlay" id="modal-preview">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">?? Preview do Orçamento</span>
+      <button class="modal-close" id="close-preview">?</button>
+    </div>
+    <div class="modal-body">
+      <div class="no-print" style="display:flex;gap:10px;margin-bottom:16px">
+        <button class="btn btn-secondary" onclick="window.print()">??? Imprimir</button>
+        <button class="btn btn-danger" id="btn-pdf">?? Baixar PDF</button>
+      </div>
+      <div id="orcamento-preview-content" style="background:white;color:#111;padding:40px;border-radius:8px;font-family:'Inter',sans-serif"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script type="module">
+import { firebaseConfig } from '../js/firebase/config.js';
+import { showToast, formatCurrency, formatDate, setupAutocomplete, setActiveNav, setupMobileSidebar, confirmDialog, buildStatusBadge } from '../js/utils.js';
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, Timestamp, query, orderBy }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
+let allItems=[], clientes=[], tiposServico=[], statusList=[], editId=null;
+
+onAuthStateChanged(auth, async(user)=>{
+  if(!user){window.location.href='../login.html';return;}
+  const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
+  renderSidebar(u.nome||user.email,u.perfil||'usuario');
+  const [oSnap,cSnap,tSnap,sSnap]=await Promise.all([
+    getDocs(query(collection(db,'orcamentos'),orderBy('criadoEm','desc'))),
+    getDocs(collection(db,'clientes')), getDocs(collection(db,'tiposServico')),
+    getDocs(query(collection(db,'statusServico'),orderBy('ordem')))
+  ]);
+  allItems=oSnap.docs.map(d=>({id:d.id,...d.data()}));
+  clientes=cSnap.docs.map(d=>({id:d.id,...d.data()}));
+  tiposServico=tSnap.docs.map(d=>({id:d.id,...d.data()}));
+  statusList=sSnap.docs.map(d=>({id:d.id,...d.data()}));
+  renderTable(allItems);
+
+  const stSel=document.getElementById('f-status');
+  statusList.forEach(s=>stSel.appendChild(new Option(s.nome,s.id)));
+
+  setupAutocomplete(document.getElementById('f-cliente'),document.getElementById('cli-auto'),
+    clientes.map(c=>({id:c.id,label:c.nomeCompleto})), (i)=>document.getElementById('f-cliente-id').value=i.id);
+  setupAutocomplete(document.getElementById('f-tipo'),document.getElementById('tipo-auto'),
+    tiposServico.map(t=>({id:t.id,label:t.nome})), (i)=>document.getElementById('f-tipo').value=i.label);
+});
+
+function renderSidebar(nome,perfil){
+  const isAdmin=perfil==='admin'; const ini=nome.charAt(0).toUpperCase();
+  document.getElementById('sidebar-placeholder').innerHTML=`<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+    <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
+    <nav class="sidebar-nav"><div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a><a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
+      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a><a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a><a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+      <div class="sidebar-section-label">Cadastros</div>
+      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a><a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a><a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <div class="sidebar-section-label">Outros</div>
+      ${isAdmin?`<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>`:''}
+      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a><a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
+    <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin?'Administrador':'Usuário'}</div></div></div>
+    <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button></div>
+  </aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+  document.getElementById('btn-logout').addEventListener('click',async()=>{await signOut(auth);window.location.href='../login.html';});
+  setActiveNav(); setupMobileSidebar();
+}
+
+function renderTable(list){
+  const tbody=document.getElementById('list-tbody');
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhum orçamento</h3></div></td></tr>`;return;}
+  tbody.innerHTML=list.map(d=>{
+    const st=statusList.find(s=>s.id===d.statusId);
+    return `<tr>
+      <td>${d.clienteNome||'—'}</td><td>${d.tipoServico||'—'}</td>
+      <td>${formatCurrency(d.valorServico)}</td><td><strong style="color:var(--gold)">${formatCurrency(d.valorComDesconto)}</strong></td>
+      <td>${formatDate(d.dataEntrega)}</td>
+      <td>${buildStatusBadge(d.statusNome||'—',st?.cor)}</td>
+      <td><div class="td-actions">
+        <button class="btn btn-info btn-icon-sm" onclick="previewOrc('${d.id}')">??</button>
+        <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">??</button>
+        <button class="btn btn-danger btn-icon-sm" onclick="deleteItem('${d.id}')">??</button>
+      </div></td></tr>`;
+  }).join('');
+}
+
+// Calculadora de desconto em tempo real
+['f-valor','f-desconto'].forEach(id=>document.getElementById(id).addEventListener('input',calcDesconto));
+function calcDesconto(){
+  const val=parseFloat(document.getElementById('f-valor').value)||0;
+  const pct=parseFloat(document.getElementById('f-desconto').value)||0;
+  const desc=val*(pct/100);
+  const final=val-desc;
+  document.getElementById('valor-desc').textContent=final.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  document.getElementById('economia-desc').textContent=pct>0?`Economia: ${desc.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}`:'';
+}
+
+// Calcular data de entrega
+['f-data','f-prazo'].forEach(id=>document.getElementById(id).addEventListener('input',calcEntrega));
+function calcEntrega(){
+  const ds=document.getElementById('f-data').value; const dias=parseInt(document.getElementById('f-prazo').value);
+  if(ds&&!isNaN(dias)){
+    const d=new Date(ds+'T12:00:00'); d.setDate(d.getDate()+dias);
+    document.getElementById('f-entrega').value=d.toLocaleDateString('pt-BR');
+    const now=new Date(); const alertEl=document.getElementById('alerta-prazo');
+    alertEl.style.display=d<=now?'flex':'none';
+  } else document.getElementById('f-entrega').value='';
+}
+
+function openModal(id=null){
+  editId=id; document.getElementById('form-alert').style.display='none'; document.getElementById('alerta-prazo').style.display='none';
+  document.getElementById('modal-titulo').textContent=id?'Editar Orçamento':'Novo Orçamento';
+  if(!id){['f-cliente','f-cliente-id','f-tipo','f-desc','f-entrega'].forEach(i=>document.getElementById(i).value='');
+    ['f-data','f-prazo','f-valor','f-desconto'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('f-status').value=''; calcDesconto();}
+  document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
+}
+function closeModalFn(){document.getElementById('modal-form').classList.remove('open');document.body.style.overflow='';editId=null;}
+document.getElementById('btn-novo').addEventListener('click',()=>openModal());
+['close-modal','close-modal-2'].forEach(id=>document.getElementById(id).addEventListener('click',closeModalFn));
+
+window.editItem=async(id)=>{
+  const d=allItems.find(x=>x.id===id); if(!d)return; openModal(id);
+  document.getElementById('f-cliente').value=d.clienteNome||''; document.getElementById('f-cliente-id').value=d.clienteId||'';
+  document.getElementById('f-tipo').value=d.tipoServico||''; document.getElementById('f-status').value=d.statusId||'';
+  document.getElementById('f-desc').value=d.descricao||''; document.getElementById('f-valor').value=d.valorServico||'';
+  document.getElementById('f-desconto').value=d.percentualDesconto||''; document.getElementById('f-prazo').value=d.prazo||'';
+  if(d.dataServico){const dt=d.dataServico.toDate?d.dataServico.toDate():new Date(d.dataServico);document.getElementById('f-data').value=dt.toISOString().split('T')[0];}
+  calcDesconto(); calcEntrega();
+};
+
+window.deleteItem=async(id)=>{
+  if(!await confirmDialog('Excluir este orçamento?'))return;
+  await deleteDoc(doc(db,'orcamentos',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Orçamento excluído!','success');
+};
+
+window.previewOrc=async(id)=>{
+  const d=allItems.find(x=>x.id===id); if(!d)return;
+  renderPreview(d);
+  document.getElementById('modal-preview').classList.add('open'); document.body.style.overflow='hidden';
+};
+
+document.getElementById('close-preview').addEventListener('click',()=>{
+  document.getElementById('modal-preview').classList.remove('open'); document.body.style.overflow='';
+});
+
+function renderPreview(d){
+  const st=statusList.find(s=>s.id===d.statusId);
+  document.getElementById('orcamento-preview-content').innerHTML=`
+    <div style="border-bottom:3px solid #C9A84C;padding-bottom:20px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-start">
+      <div><h1 style="font-size:24px;color:#1A1A2E;margin:0">ORÇAMENTO</h1>
+      <p style="color:#666;margin:4px 0">Excellentia Controll · Sistema de Gestão</p></div>
+      <div style="text-align:right"><div style="font-size:12px;color:#888">Data: ${new Date().toLocaleDateString('pt-BR')}</div></div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:24px">
+      <tr><td style="padding:8px 0;font-weight:600;width:150px;color:#444">Cliente:</td><td>${d.clienteNome||'—'}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;color:#444">Tipo de Serviço:</td><td>${d.tipoServico||'—'}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;color:#444">Status:</td><td>${d.statusNome||'—'}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;color:#444">Data do Serviço:</td><td>${formatDate(d.dataServico)}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;color:#444">Data de Entrega:</td><td>${formatDate(d.dataEntrega)}</td></tr>
+    </table>
+    <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin-bottom:24px">
+      <div style="font-weight:600;color:#444;margin-bottom:8px">Descrição do Serviço:</div>
+      <p style="color:#333;line-height:1.6">${d.descricao||'—'}</p>
+    </div>
+    <div style="background:#1A1A2E;color:white;border-radius:8px;padding:20px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span>Valor do Serviço:</span><span>${formatCurrency(d.valorServico)}</span>
+      </div>
+      ${d.percentualDesconto?`<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:#C9A84C">
+        <span>Desconto (${d.percentualDesconto}%):</span><span>- ${formatCurrency(d.valorServico*(d.percentualDesconto/100))}</span>
+      </div>`:''}
+      <div style="display:flex;justify-content:space-between;font-size:22px;font-weight:800;border-top:1px solid rgba(255,255,255,0.2);padding-top:12px;margin-top:8px">
+        <span>TOTAL:</span><span style="color:#C9A84C">${formatCurrency(d.valorComDesconto||d.valorServico)}</span>
+      </div>
+    </div>
+    <div style="margin-top:40px;text-align:center;font-size:11px;color:#888;border-top:1px solid #ddd;padding-top:16px">
+      Excellentia Controll © 2026 · Este documento foi gerado eletronicamente e é válido sem assinatura.
+    </div>`;
+}
+
+// Preview do form atual
+document.getElementById('btn-preview').addEventListener('click',()=>{
+  const stSel=document.getElementById('f-status');
+  const fakeData={
+    clienteNome:document.getElementById('f-cliente').value,
+    tipoServico:document.getElementById('f-tipo').value,
+    statusNome:stSel.options[stSel.selectedIndex]?.text||'',
+    descricao:document.getElementById('f-desc').value,
+    valorServico:parseFloat(document.getElementById('f-valor').value)||0,
+    percentualDesconto:parseFloat(document.getElementById('f-desconto').value)||0,
+    valorComDesconto:parseFloat(document.getElementById('f-valor').value||0)*(1-(parseFloat(document.getElementById('f-desconto').value||0)/100)),
+    dataServico:{toDate:()=>document.getElementById('f-data').value?new Date(document.getElementById('f-data').value+'T12:00:00'):null},
+    dataEntrega:null
+  };
+  renderPreview(fakeData);
+  document.getElementById('modal-preview').classList.add('open'); document.body.style.overflow='hidden';
+});
+
+// PDF
+document.getElementById('btn-pdf').addEventListener('click', async()=>{
+  const el=document.getElementById('orcamento-preview-content');
+  const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff'});
+  const {jsPDF}=window.jspdf;
+  const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const imgData=canvas.toDataURL('image/png');
+  const w=pdf.internal.pageSize.getWidth(); const h=(canvas.height/canvas.width)*w;
+  pdf.addImage(imgData,'PNG',0,0,w,h);
+  pdf.save(`orcamento-${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.pdf`);
+});
+
+document.getElementById('btn-salvar').addEventListener('click',async()=>{
+  const stSel=document.getElementById('f-status');
+  const ds=document.getElementById('f-data').value;
+  const prazo=parseInt(document.getElementById('f-prazo').value)||0;
+  const valor=parseFloat(document.getElementById('f-valor').value)||0;
+  const pctDesc=parseFloat(document.getElementById('f-desconto').value)||0;
+  const valorDesc=valor*(1-pctDesc/100);
+  let dataServico=null,dataEntrega=null;
+  if(ds){dataServico=Timestamp.fromDate(new Date(ds+'T12:00:00'));const de=new Date(ds+'T12:00:00');de.setDate(de.getDate()+prazo);dataEntrega=Timestamp.fromDate(de);}
+  const payload={
+    clienteNome:document.getElementById('f-cliente').value.trim(),clienteId:document.getElementById('f-cliente-id').value,
+    tipoServico:document.getElementById('f-tipo').value.trim(),statusId:stSel.value,
+    statusNome:stSel.options[stSel.selectedIndex]?.text||'',descricao:document.getElementById('f-desc').value.trim(),
+    dataServico,prazo,dataEntrega,valorServico:valor,percentualDesconto:pctDesc,valorComDesconto:valorDesc,atualizadoEm:serverTimestamp()
+  };
+  try{
+    if(editId){await updateDoc(doc(db,'orcamentos',editId),payload);allItems=allItems.map(d=>d.id===editId?{...d,...payload}:d);}
+    else{const ref=await addDoc(collection(db,'orcamentos'),{...payload,criadoEm:serverTimestamp()});allItems.push({id:ref.id,...payload});}
+    renderTable(allItems);closeModalFn();showToast(editId?'Orçamento atualizado!':'Orçamento salvo!','success');
+  }catch(err){document.getElementById('form-alert').textContent=err.message;document.getElementById('form-alert').style.display='flex';}
+});
+</script>
+</body>
+</html>
+

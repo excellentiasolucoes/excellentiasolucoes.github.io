@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Usuários — Excellentia Controll</title>
+  <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-placeholder"></div>
+  <div class="main-content">
+    <div class="topbar">
+      <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
+      <div><div class="topbar-title">Usuários</div><div class="topbar-subtitle">Gestão de acesso</div></div>
+      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Usuário</button></div>
+    </div>
+    <div class="page-content">
+      <div class="alert alert-info" style="margin-bottom:16px">
+        ?? Para criar usuários, vá ao <strong>Firebase Console ? Authentication ? Adicionar usuário</strong>, depois cadastre aqui o perfil.
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Método</th><th>1º Login</th><th>Ações</th></tr></thead>
+            <tbody id="list-tbody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-form">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">?? <span id="modal-titulo">Novo Usuário</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-body">
+      <div id="form-alert" class="alert alert-danger" style="display:none"></div>
+      <div class="form-group"><label class="form-label">UID do Firebase</label>
+        <input type="text" class="form-control" id="f-uid" placeholder="Cole o UID do Firebase Auth">
+        <small style="color:var(--text-3);font-size:11px">Firebase Console ? Authentication ? copie o UID do usuário</small>
+      </div>
+      <div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-control" id="f-nome" placeholder="Nome completo"></div>
+      <div class="form-group"><label class="form-label">E-mail</label><input type="email" class="form-control" id="f-email"></div>
+      <div class="form-group"><label class="form-label">Perfil</label>
+        <select class="form-select" id="f-perfil"><option value="usuario">Usuário</option><option value="admin">Administrador</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Método de Acesso</label>
+        <select class="form-select" id="f-metodo"><option value="email">E-mail/Senha</option><option value="google">Google</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Forçar troca de senha no próximo login?</label>
+        <select class="form-select" id="f-primeiro"><option value="true">Sim</option><option value="false">Não</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
+      <button class="btn btn-primary" id="btn-salvar">?? Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal-overlay" id="modal-reset">
+  <div class="modal modal-sm">
+    <div class="modal-header"><span class="modal-title">?? Resetar Senha</span><button class="modal-close" id="close-reset">?</button></div>
+    <div class="modal-body">
+      <p style="color:var(--text-2);margin-bottom:16px;font-size:14px">O usuário receberá um e-mail para redefinir a senha. Confirmar?</p>
+      <div id="reset-alert" class="alert alert-danger" style="display:none"></div>
+      <p id="reset-email" style="font-weight:700;color:var(--gold)"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="close-reset-2">Cancelar</button>
+      <button class="btn btn-warning" id="btn-confirm-reset">?? Enviar E-mail de Reset</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script type="module">
+import { firebaseConfig } from '../js/firebase/config.js';
+import { showToast, confirmDialog, setActiveNav, setupMobileSidebar } from '../js/utils.js';
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, onAuthStateChanged, signOut, sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
+let allItems=[], editId=null, resetEmailVal='';
+
+onAuthStateChanged(auth, async(user)=>{
+  if(!user){window.location.href='../login.html';return;}
+  const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
+  if(u.perfil!=='admin'){showToast('Acesso restrito a administradores','error');setTimeout(()=>history.back(),1500);return;}
+  renderSidebar(u.nome||user.email,'admin');
+  await loadData();
+});
+
+function renderSidebar(nome,perfil){
+  const isAdmin=true; const ini=nome.charAt(0).toUpperCase();
+  document.getElementById('sidebar-placeholder').innerHTML=`<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+    <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
+    <nav class="sidebar-nav"><div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a><a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
+      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a><a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a><a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+      <div class="sidebar-section-label">Cadastros</div>
+      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a><a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a><a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <div class="sidebar-section-label">Outros</div>
+      <a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>
+      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a><a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
+    <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">Administrador</div></div></div>
+    <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button></div>
+  </aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+  document.getElementById('btn-logout').addEventListener('click',async()=>{await signOut(auth);window.location.href='../login.html';});
+  setActiveNav(); setupMobileSidebar();
+}
+
+async function loadData(){
+  const snap=await getDocs(collection(db,'usuarios'));
+  allItems=snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderTable();
+}
+
+function renderTable(){
+  const tbody=document.getElementById('list-tbody');
+  if(!allItems.length){tbody.innerHTML=`<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhum usuário</h3></div></td></tr>`;return;}
+  tbody.innerHTML=allItems.map(d=>`<tr>
+    <td>${d.nome||'—'}</td><td>${d.email||'—'}</td>
+    <td><span class="badge" style="${d.perfil==='admin'?'background:#C9A84C22;color:#C9A84C;border:1px solid #C9A84C44':'background:var(--surface-2);color:var(--text-2);border:1px solid var(--border-subtle)'}">${d.perfil==='admin'?'Admin':'Usuário'}</span></td>
+    <td>${d.metodoAcesso||'email'}</td>
+    <td>${d.primeiroLogin?'<span style="color:var(--warning)">? Pendente</span>':'?'}</td>
+    <td><div class="td-actions">
+      <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')" title="Editar">??</button>
+      <button class="btn btn-warning btn-icon-sm"   onclick="resetSenha('${d.id}','${d.email}')" title="Resetar senha">??</button>
+      <button class="btn btn-danger btn-icon-sm"    onclick="deleteItem('${d.id}')" title="Excluir">??</button>
+    </div></td></tr>`).join('');
+}
+
+function openModal(id=null){
+  editId=id; document.getElementById('form-alert').style.display='none';
+  document.getElementById('modal-titulo').textContent=id?'Editar Usuário':'Novo Usuário';
+  document.getElementById('f-uid').readOnly=!!id;
+  if(!id){['f-uid','f-nome','f-email'].forEach(i=>document.getElementById(i).value='');document.getElementById('f-perfil').value='usuario';document.getElementById('f-metodo').value='email';document.getElementById('f-primeiro').value='true';}
+  document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
+}
+function closeModalFn(){document.getElementById('modal-form').classList.remove('open');document.body.style.overflow='';editId=null;}
+document.getElementById('btn-novo').addEventListener('click',()=>openModal());
+['close-modal','close-modal-2'].forEach(id=>document.getElementById(id).addEventListener('click',closeModalFn));
+
+window.editItem=async(id)=>{
+  const d=allItems.find(x=>x.id===id); if(!d)return; openModal(id);
+  document.getElementById('f-uid').value=d.id; document.getElementById('f-nome').value=d.nome||'';
+  document.getElementById('f-email').value=d.email||''; document.getElementById('f-perfil').value=d.perfil||'usuario';
+  document.getElementById('f-metodo').value=d.metodoAcesso||'email'; document.getElementById('f-primeiro').value=d.primeiroLogin?'true':'false';
+};
+
+window.resetSenha=(id,email)=>{
+  resetEmailVal=email; document.getElementById('reset-email').textContent=email;
+  document.getElementById('reset-alert').style.display='none';
+  document.getElementById('modal-reset').classList.add('open'); document.body.style.overflow='hidden';
+};
+['close-reset','close-reset-2'].forEach(id=>document.getElementById(id).addEventListener('click',()=>{document.getElementById('modal-reset').classList.remove('open');document.body.style.overflow='';}));
+
+document.getElementById('btn-confirm-reset').addEventListener('click',async()=>{
+  try{
+    await sendPasswordResetEmail(auth,resetEmailVal);
+    document.getElementById('modal-reset').classList.remove('open'); document.body.style.overflow='';
+    showToast('E-mail de reset enviado para '+resetEmailVal,'success');
+  }catch(err){document.getElementById('reset-alert').textContent=err.message;document.getElementById('reset-alert').style.display='flex';}
+});
+
+window.deleteItem=async(id)=>{
+  if(!await confirmDialog('Deseja excluir este usuário do banco?'))return;
+  await deleteDoc(doc(db,'usuarios',id));allItems=allItems.filter(d=>d.id!==id);renderTable();showToast('Usuário excluído!','success');
+};
+
+document.getElementById('btn-salvar').addEventListener('click',async()=>{
+  const uid=editId||document.getElementById('f-uid').value.trim();
+  if(!uid){document.getElementById('form-alert').textContent='Informe o UID.';document.getElementById('form-alert').style.display='flex';return;}
+  const payload={nome:document.getElementById('f-nome').value.trim(),email:document.getElementById('f-email').value.trim(),
+    perfil:document.getElementById('f-perfil').value,metodoAcesso:document.getElementById('f-metodo').value,
+    primeiroLogin:document.getElementById('f-primeiro').value==='true',atualizadoEm:serverTimestamp()};
+  try{
+    if(editId){await updateDoc(doc(db,'usuarios',editId),payload);allItems=allItems.map(d=>d.id===editId?{...d,...payload}:d);}
+    else{await setDoc(doc(db,'usuarios',uid),{...payload,criadoEm:serverTimestamp()});allItems.push({id:uid,...payload});}
+    renderTable();closeModalFn();showToast(editId?'Usuário atualizado!':'Usuário cadastrado!','success');
+  }catch(err){document.getElementById('form-alert').textContent=err.message;document.getElementById('form-alert').style.display='flex';}
+});
+</script>
+</body>
+</html>
+

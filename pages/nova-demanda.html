@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nova Demanda — Excellentia Controll</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="../assets/logo.png">
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-placeholder"></div>
+  <div class="main-content">
+    <div class="topbar">
+      <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
+      <div><div class="topbar-title" id="page-title">Nova Demanda</div><div class="topbar-subtitle">Preencha os dados do serviço</div></div>
+      <div class="topbar-actions">
+        <a href="demandas.html" class="btn btn-secondary">? Voltar</a>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="card" style="max-width:900px">
+        <div id="form-alert" class="alert alert-danger" style="display:none"></div>
+
+        <div class="form-grid">
+          <!-- Nº e data (auto) -->
+          <div class="form-group">
+            <label class="form-label">Nº da Demanda</label>
+            <input type="text" class="form-control" id="numero" readonly placeholder="Gerado automaticamente" style="opacity:0.6">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Data do Registro</label>
+            <input type="text" class="form-control" id="data-registro" readonly style="opacity:0.6">
+          </div>
+
+          <!-- Cliente -->
+          <div class="form-group col-span-2">
+            <label class="form-label">Cliente</label>
+            <div class="autocomplete-wrapper">
+              <input type="text" class="form-control" id="cliente-nome" placeholder="Digite o nome ou selecione">
+              <div class="autocomplete-list" id="cliente-auto"></div>
+            </div>
+            <input type="hidden" id="cliente-id">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tipo de Cliente</label>
+            <select class="form-select" id="tipo-cliente">
+              <option value="">Selecionar</option>
+              <option value="PF">Pessoa Física</option>
+              <option value="PJ">Pessoa Jurídica</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">CPF / CNPJ</label>
+            <input type="text" class="form-control" id="cpf-cnpj" placeholder="000.000.000-00">
+          </div>
+
+          <!-- Tipo de Serviço -->
+          <div class="form-group">
+            <label class="form-label">Tipo de Serviço</label>
+            <select class="form-select" id="tipo-servico">
+              <option value="">Selecionar</option>
+            </select>
+          </div>
+          <div class="form-group" id="novo-tipo-grupo" style="display:none">
+            <label class="form-label">Novo Tipo de Serviço</label>
+            <div class="form-row">
+              <div class="form-group"><input type="text" class="form-control" id="novo-tipo-nome" placeholder="Nome do novo tipo"></div>
+              <button class="btn btn-primary" id="btn-add-tipo">+ Adicionar</button>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="form-group">
+            <label class="form-label">Status do Atendimento</label>
+            <select class="form-select" id="status-id">
+              <option value="">Selecionar</option>
+            </select>
+          </div>
+          <div class="form-group" id="novo-status-grupo" style="display:none">
+            <label class="form-label">Novo Status</label>
+            <div class="form-row">
+              <div class="form-group"><input type="text" class="form-control" id="novo-status-nome" placeholder="Nome do novo status"></div>
+              <input type="color" id="novo-status-cor" value="#3498DB" style="width:44px;height:42px;border:none;background:none;cursor:pointer">
+              <button class="btn btn-primary" id="btn-add-status">+ Adicionar</button>
+            </div>
+          </div>
+
+          <!-- Datas e Prazo -->
+          <div class="form-group">
+            <label class="form-label">Data do Serviço</label>
+            <input type="date" class="form-control" id="data-servico">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Prazo (dias)</label>
+            <input type="number" class="form-control" id="prazo" placeholder="Ex: 30" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Data de Entrega (calculada)</label>
+            <input type="text" class="form-control" id="data-entrega-calc" readonly style="opacity:0.6">
+          </div>
+
+          <!-- Descrição -->
+          <div class="form-group col-span-2">
+            <label class="form-label">Descrição do Serviço</label>
+            <textarea class="form-control" id="descricao" rows="4" placeholder="Descreva o serviço solicitado..."></textarea>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px">
+          <a href="demandas.html" class="btn btn-secondary">Cancelar</a>
+          <button class="btn btn-primary" id="btn-salvar">?? Salvar Demanda</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast-container"></div>
+
+<script type="module">
+import { firebaseConfig } from '../js/firebase/config.js';
+import { showToast, showLoading, hideLoading, formatDate, nowManaus, setupAutocomplete,
+         getNextDemandaNum, applyCpfCnpjMask, setActiveNav, setupMobileSidebar } from '../js/utils.js';
+
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, setDoc,
+        query, orderBy, serverTimestamp, Timestamp, increment }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const params    = new URLSearchParams(location.search);
+const editId    = params.get('id');
+let currentUser = null, clientes = [], tiposServico = [], statusList = [];
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = '../login.html'; return; }
+  currentUser = user;
+  const snap = await getDoc(doc(db, 'usuarios', user.uid));
+  const u = snap.exists() ? snap.data() : {};
+  renderSidebar(u.nome || user.email, u.perfil || 'usuario');
+  await loadRefs();
+  if (editId) await loadDemanda(editId);
+  else initNovo();
+});
+
+function renderSidebar(nome, perfil) {
+  const isAdmin = perfil === 'admin';
+  const ini = nome.charAt(0).toUpperCase();
+  document.getElementById('sidebar-placeholder').innerHTML = `
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+      <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
+      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a>
+      <a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+      <div class="sidebar-section-label">Cadastros</div>
+      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <div class="sidebar-section-label">Outros</div>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a>
+      <a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">${ini}</div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usuário'}</div></div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+  document.getElementById('btn-logout').addEventListener('click', async () => { await signOut(auth); window.location.href = '../login.html'; });
+  setActiveNav(); setupMobileSidebar();
+}
+
+async function loadRefs() {
+  const [cliSnap, tipoSnap, stSnap] = await Promise.all([
+    getDocs(collection(db, 'clientes')),
+    getDocs(collection(db, 'tiposServico')),
+    getDocs(query(collection(db, 'statusServico'), orderBy('ordem')))
+  ]);
+
+  clientes      = cliSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  tiposServico  = tipoSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  statusList    = stSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  // Autocomplete clientes
+  const clienteItems = clientes.map(c => ({ id: c.id, label: c.nomeCompleto }));
+  setupAutocomplete(
+    document.getElementById('cliente-nome'),
+    document.getElementById('cliente-auto'),
+    clienteItems,
+    (item) => {
+      document.getElementById('cliente-id').value = item.id;
+      const cli = clientes.find(c => c.id === item.id);
+      if (cli) {
+        if (cli.tipo) document.getElementById('tipo-cliente').value = cli.tipo;
+        if (cli.cpfCnpj) document.getElementById('cpf-cnpj').value = cli.cpfCnpj;
+      }
+    }
+  );
+
+  // Tipo de serviço select
+  const tipoSel = document.getElementById('tipo-servico');
+  tiposServico.forEach(t => tipoSel.appendChild(new Option(t.nome, t.id)));
+  tipoSel.appendChild(new Option('+ Cadastrar novo tipo...', '__novo__'));
+  tipoSel.addEventListener('change', () => {
+    document.getElementById('novo-tipo-grupo').style.display = tipoSel.value === '__novo__' ? 'block' : 'none';
+  });
+
+  // Status select
+  const stSel = document.getElementById('status-id');
+  statusList.forEach(s => {
+    const op = new Option(s.nome, s.id);
+    op.style.background = s.cor + '33';
+    stSel.appendChild(op);
+  });
+  stSel.appendChild(new Option('+ Cadastrar novo status...', '__novo__'));
+  stSel.addEventListener('change', () => {
+    document.getElementById('novo-status-grupo').style.display = stSel.value === '__novo__' ? 'block' : 'none';
+  });
+
+  applyCpfCnpjMask(document.getElementById('cpf-cnpj'));
+}
+
+async function initNovo() {
+  const num = await getNextDemandaNum(db);
+  document.getElementById('numero').value = num;
+  const now = new Date().toLocaleString('pt-BR', { timeZone: 'America/Manaus' });
+  document.getElementById('data-registro').value = now;
+}
+
+async function loadDemanda(id) {
+  document.getElementById('page-title').textContent = 'Editar Demanda';
+  const snap = await getDoc(doc(db, 'demandas', id));
+  if (!snap.exists()) { showToast('Demanda não encontrada', 'error'); return; }
+  const d = snap.data();
+  document.getElementById('numero').value       = d.numero || '';
+  document.getElementById('data-registro').value = formatDate(d.dataRegistro || d.criadoEm);
+  document.getElementById('cliente-nome').value  = d.clienteNome || '';
+  document.getElementById('cliente-id').value    = d.clienteId   || '';
+  document.getElementById('tipo-cliente').value  = d.tipoCliente || '';
+  document.getElementById('cpf-cnpj').value      = d.cpfCnpj     || '';
+  document.getElementById('tipo-servico').value  = d.tipoServicoId || '';
+  document.getElementById('status-id').value     = d.statusId    || '';
+  document.getElementById('descricao').value     = d.descricao   || '';
+  if (d.prazo) document.getElementById('prazo').value = d.prazo;
+  if (d.dataServico) {
+    const dt = d.dataServico.toDate ? d.dataServico.toDate() : new Date(d.dataServico);
+    document.getElementById('data-servico').value = dt.toISOString().split('T')[0];
+  }
+  updateEntrega();
+}
+
+// Calcular data de entrega
+function updateEntrega() {
+  const ds   = document.getElementById('data-servico').value;
+  const dias = parseInt(document.getElementById('prazo').value);
+  if (ds && !isNaN(dias)) {
+    const d = new Date(ds + 'T12:00:00');
+    d.setDate(d.getDate() + dias);
+    document.getElementById('data-entrega-calc').value = d.toLocaleDateString('pt-BR');
+  } else {
+    document.getElementById('data-entrega-calc').value = '';
+  }
+}
+document.getElementById('data-servico').addEventListener('change', updateEntrega);
+document.getElementById('prazo').addEventListener('input', updateEntrega);
+
+// Add new tipo
+document.getElementById('btn-add-tipo').addEventListener('click', async () => {
+  const nome = document.getElementById('novo-tipo-nome').value.trim();
+  if (!nome) { showToast('Informe o nome do tipo', 'warning'); return; }
+  const ref = await addDoc(collection(db, 'tiposServico'), { nome, ativo: true, criadoEm: serverTimestamp() });
+  const tipoSel = document.getElementById('tipo-servico');
+  const op = new Option(nome, ref.id);
+  tipoSel.insertBefore(op, tipoSel.lastElementChild);
+  tipoSel.value = ref.id;
+  document.getElementById('novo-tipo-nome').value = '';
+  document.getElementById('novo-tipo-grupo').style.display = 'none';
+  showToast('Tipo cadastrado!', 'success');
+});
+
+// Add new status
+document.getElementById('btn-add-status').addEventListener('click', async () => {
+  const nome = document.getElementById('novo-status-nome').value.trim();
+  const cor  = document.getElementById('novo-status-cor').value;
+  if (!nome) { showToast('Informe o nome do status', 'warning'); return; }
+  const ref = await addDoc(collection(db, 'statusServico'), { nome, cor, ativo: true, ordem: 99, criadoEm: serverTimestamp() });
+  const stSel = document.getElementById('status-id');
+  const op = new Option(nome, ref.id);
+  stSel.insertBefore(op, stSel.lastElementChild);
+  stSel.value = ref.id;
+  document.getElementById('novo-status-nome').value = '';
+  document.getElementById('novo-status-grupo').style.display = 'none';
+  showToast('Status cadastrado!', 'success');
+});
+
+// Salvar
+document.getElementById('btn-salvar').addEventListener('click', async () => {
+  showLoading('Salvando...');
+  try {
+    const tipoSel = document.getElementById('tipo-servico');
+    const stSel   = document.getElementById('status-id');
+    const dsVal   = document.getElementById('data-servico').value;
+    const prazo   = parseInt(document.getElementById('prazo').value) || 0;
+
+    let dataServico = null, dataEntrega = null;
+    if (dsVal) {
+      dataServico = Timestamp.fromDate(new Date(dsVal + 'T12:00:00'));
+      const de = new Date(dsVal + 'T12:00:00');
+      de.setDate(de.getDate() + prazo);
+      dataEntrega = Timestamp.fromDate(de);
+    }
+
+    const payload = {
+      clienteNome:      document.getElementById('cliente-nome').value.trim(),
+      clienteId:        document.getElementById('cliente-id').value,
+      tipoCliente:      document.getElementById('tipo-cliente').value,
+      cpfCnpj:          document.getElementById('cpf-cnpj').value,
+      tipoServicoId:    tipoSel.value !== '__novo__' ? tipoSel.value : '',
+      tipoServicoNome:  tipoSel.value !== '__novo__' ? tipoSel.options[tipoSel.selectedIndex]?.text : '',
+      statusId:         stSel.value !== '__novo__' ? stSel.value : '',
+      statusNome:       stSel.value !== '__novo__' ? stSel.options[stSel.selectedIndex]?.text : '',
+      descricao:        document.getElementById('descricao').value.trim(),
+      dataServico,
+      prazo,
+      dataEntrega,
+      atualizadoEm:     serverTimestamp()
+    };
+
+    if (editId) {
+      await updateDoc(doc(db, 'demandas', editId), payload);
+    } else {
+      const num = parseInt(document.getElementById('numero').value) || 1;
+      await addDoc(collection(db, 'demandas'), {
+        ...payload,
+        numero:       num,
+        arquivada:    false,
+        temOrcamento: false,
+        dataRegistro: serverTimestamp(),
+        criadoEm:     serverTimestamp(),
+        criadoPor:    currentUser.uid
+      });
+    }
+
+    hideLoading();
+    showToast(editId ? 'Demanda atualizada!' : 'Demanda cadastrada!', 'success');
+    setTimeout(() => { window.location.href = 'demandas.html'; }, 1000);
+  } catch (err) {
+    hideLoading();
+    document.getElementById('form-alert').textContent = 'Erro ao salvar: ' + err.message;
+    document.getElementById('form-alert').style.display = 'flex';
+  }
+});
+</script>
+</body>
+</html>
+

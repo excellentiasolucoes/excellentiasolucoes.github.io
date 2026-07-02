@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Calendário — Excellentia Controll</title>
+  <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-placeholder"></div>
+  <div class="main-content">
+    <div class="topbar">
+      <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
+      <div><div class="topbar-title">Calendário</div><div class="topbar-subtitle">Serviços por data</div></div>
+      <div class="topbar-actions"><a href="nova-demanda.html" class="btn btn-primary">+ Nova Demanda</a></div>
+    </div>
+    <div class="page-content">
+      <div class="card">
+        <div id="main-calendar"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal modal-sm">
+    <div class="modal-header"><span class="modal-title">?? <span id="ev-title">Detalhes</span></span><button class="modal-close" id="close-detail">?</button></div>
+    <div class="modal-body" id="ev-body"></div>
+    <div class="modal-footer"><a id="ev-edit" href="#" class="btn btn-secondary">?? Editar</a><button class="modal-close btn btn-primary" id="close-detail-2">Fechar</button></div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script type="module">
+import { firebaseConfig } from '../js/firebase/config.js';
+import { formatDate, formatDateTime, buildStatusBadge, setActiveNav, setupMobileSidebar } from '../js/utils.js';
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, collection, getDocs, doc, getDoc, query, orderBy }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
+
+onAuthStateChanged(auth, async(user)=>{
+  if(!user){window.location.href='../login.html';return;}
+  const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
+  renderSidebar(u.nome||user.email,u.perfil||'usuario');
+  await loadCalendar();
+});
+
+function renderSidebar(nome,perfil){
+  const isAdmin=perfil==='admin'; const ini=nome.charAt(0).toUpperCase();
+  document.getElementById('sidebar-placeholder').innerHTML=`<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+    <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
+    <nav class="sidebar-nav"><div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a><a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
+      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a><a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a><a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+      <div class="sidebar-section-label">Cadastros</div>
+      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a><a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a><a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <div class="sidebar-section-label">Outros</div>
+      ${isAdmin?`<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>`:''}
+      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a><a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
+    <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin?'Administrador':'Usuário'}</div></div></div>
+    <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button></div>
+  </aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+  document.getElementById('btn-logout').addEventListener('click',async()=>{await signOut(auth);window.location.href='../login.html';});
+  setActiveNav(); setupMobileSidebar();
+}
+
+async function loadCalendar(){
+  const [dSnap,sSnap]=await Promise.all([getDocs(collection(db,'demandas')),getDocs(collection(db,'statusServico'))]);
+  const statusMap={};
+  sSnap.docs.forEach(d=>{ statusMap[d.id]=d.data(); });
+  const demandas=dSnap.docs.map(d=>({id:d.id,...d.data()}));
+
+  const events=[];
+  demandas.forEach(d=>{
+    if(d.dataServico){
+      const dt=d.dataServico.toDate?d.dataServico.toDate():new Date(d.dataServico);
+      events.push({
+        id:d.id, title:`#${d.numero} ${d.clienteNome||'Sem cliente'}`,
+        start:dt.toISOString().split('T')[0],
+        color:statusMap[d.statusId]?.cor||'#C9A84C',
+        extendedProps:{demanda:d,status:statusMap[d.statusId]}
+      });
+    }
+    if(d.dataEntrega){
+      const de=d.dataEntrega.toDate?d.dataEntrega.toDate():new Date(d.dataEntrega);
+      events.push({
+        id:d.id+'_e', title:`? Entrega: #${d.numero} ${d.clienteNome||''}`,
+        start:de.toISOString().split('T')[0],
+        color:'#E74C3C', textColor:'#fff',
+        extendedProps:{demanda:d,status:statusMap[d.statusId],isEntrega:true}
+      });
+    }
+  });
+
+  const cal=new FullCalendar.Calendar(document.getElementById('main-calendar'),{
+    initialView:'dayGridMonth', locale:'pt-br',
+    headerToolbar:{left:'prev,next today',center:'title',right:'dayGridMonth,timeGridWeek,listWeek'},
+    events, height:'auto',
+    eventClick:(info)=>{
+      const {demanda,status,isEntrega}=info.event.extendedProps;
+      document.getElementById('ev-title').textContent=(isEntrega?'? Entrega: ':'')+`#${demanda.numero} — ${demanda.clienteNome||'Sem cliente'}`;
+      document.getElementById('ev-edit').href=`nova-demanda.html?id=${demanda.id}`;
+      document.getElementById('ev-body').innerHTML=`
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Status</span><br>
+            ${buildStatusBadge(demanda.statusNome||'—',status?.cor)}</div>
+          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Tipo de Serviço</span><br>
+            <span style="font-size:14px">${demanda.tipoServicoNome||'—'}</span></div>
+          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Data do Serviço</span><br>
+            <span style="font-size:14px">${formatDate(demanda.dataServico)}</span></div>
+          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Data de Entrega</span><br>
+            <span style="font-size:14px">${formatDate(demanda.dataEntrega)}</span></div>
+          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Descrição</span><br>
+            <span style="font-size:13px;color:var(--text-2)">${demanda.descricao||'—'}</span></div>
+        </div>`;
+      document.getElementById('modal-detail').classList.add('open'); document.body.style.overflow='hidden';
+    }
+  });
+  cal.render();
+}
+
+['close-detail','close-detail-2'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('click',()=>{
+    document.getElementById('modal-detail').classList.remove('open'); document.body.style.overflow='';
+  });
+});
+</script>
+</body>
+</html>
+

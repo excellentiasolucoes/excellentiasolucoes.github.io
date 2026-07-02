@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demandas — Excellentia Controll</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="../assets/logo.png">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-placeholder"></div>
+  <div class="main-content">
+    <div class="topbar">
+      <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
+      <div><div class="topbar-title">Demandas</div><div class="topbar-subtitle">Gestão de serviços</div></div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary btn-sm" id="btn-export-excel">?? Excel</button>
+        <a href="nova-demanda.html" class="btn btn-primary">+ Nova Demanda</a>
+      </div>
+    </div>
+    <div class="page-content">
+
+      <!-- Search + Filters -->
+      <div class="search-bar">
+        <div class="search-input-wrapper">
+          <span class="search-icon">??</span>
+          <input type="text" class="form-control" id="search-input" placeholder="Buscar por cliente, tipo, nº...">
+        </div>
+        <select class="form-select" id="filter-status" style="width:180px">
+          <option value="">Todos os status</option>
+        </select>
+        <select class="form-select" id="filter-tipo" style="width:180px">
+          <option value="">Todos os tipos</option>
+        </select>
+        <input type="date" class="form-control" id="filter-data" style="width:160px" title="Filtrar por data">
+      </div>
+      <div class="filter-bar">
+        <label class="filter-tag" id="tag-arquivados">
+          <input type="checkbox" id="chk-arquivados"> Mostrar Arquivados
+        </label>
+        <label class="filter-tag" id="tag-orcamento">
+          <input type="checkbox" id="chk-orcamento"> Com Orçamento
+        </label>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <select class="form-select" id="sort-by" style="width:160px;font-size:12px">
+            <option value="criadoEm-desc">Mais recente</option>
+            <option value="criadoEm-asc">Mais antigo</option>
+            <option value="numero-asc">Nº crescente</option>
+            <option value="numero-desc">Nº decrescente</option>
+          </select>
+          <div class="col-visibility-menu">
+            <button class="btn btn-secondary btn-sm" id="btn-col-toggle">? Colunas</button>
+            <div class="col-visibility-dropdown" id="col-dropdown">
+              <label class="col-visibility-item"><input type="checkbox" data-col="numero" checked> Nº</label>
+              <label class="col-visibility-item"><input type="checkbox" data-col="data" checked> Data</label>
+              <label class="col-visibility-item"><input type="checkbox" data-col="status" checked> Status</label>
+              <label class="col-visibility-item"><input type="checkbox" data-col="tipo" checked> Tipo</label>
+              <label class="col-visibility-item"><input type="checkbox" data-col="cliente" checked> Cliente</label>
+              <label class="col-visibility-item"><input type="checkbox" data-col="entrega"> Data Entrega</label>
+              <label class="col-visibility-item"><input type="checkbox" data-col="orcamento"> Orçamento</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card" style="padding:0">
+        <div class="table-wrapper">
+          <table class="data-table" id="demandas-table">
+            <thead>
+              <tr>
+                <th data-col="numero">Nº</th>
+                <th data-col="data">Data</th>
+                <th data-col="status">Status</th>
+                <th data-col="tipo">Tipo</th>
+                <th data-col="cliente">Cliente</th>
+                <th data-col="entrega" style="display:none">Entrega</th>
+                <th data-col="orcamento" style="display:none">Orçamento</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="demandas-tbody">
+              <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Detalhes da Demanda -->
+<div class="modal-overlay" id="modal-detalhes">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">?? <span id="modal-titulo">Detalhes da Demanda</span></span>
+      <button class="modal-close" id="close-detalhes">?</button>
+    </div>
+    <div class="modal-body">
+      <div class="demanda-header-info" id="demanda-info-grid"></div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="acoes">?? Registro de Ações</button>
+        <button class="tab-btn" data-tab="hist">?? Histórico</button>
+      </div>
+
+      <!-- Tab: Ações -->
+      <div class="tab-content active" id="tab-acoes">
+        <div class="acoes-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Data</label>
+              <input type="datetime-local" class="form-control" id="acao-data">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select class="form-select" id="acao-status"><option value="">Selecione o status</option></select>
+            </div>
+            <div class="form-group col-span-2">
+              <label class="form-label">Descrição da Ação</label>
+              <input type="text" class="form-control" id="acao-desc" placeholder="Descreva a ação realizada">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Funcionário Responsável</label>
+              <input type="text" class="form-control" id="acao-func" placeholder="Nome do funcionário">
+            </div>
+            <div class="form-group" style="display:flex;align-items:flex-end">
+              <button class="btn btn-primary" id="btn-save-acao" style="width:100%;justify-content:center">
+                + Registrar Ação
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="acoes-list" class="acoes-list"></div>
+      </div>
+
+      <!-- Tab: Histórico -->
+      <div class="tab-content" id="tab-hist">
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead><tr><th>Data</th><th>Ação</th><th>Funcionário</th><th>Status</th></tr></thead>
+            <tbody id="hist-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a id="btn-edit-demanda" href="#" class="btn btn-secondary">?? Editar</a>
+      <button class="btn btn-secondary" id="close-detalhes-2">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script type="module">
+import { firebaseConfig } from '../js/firebase/config.js';
+import { showToast, formatDate, formatDateTime, buildStatusBadge, setActiveNav, setupMobileSidebar, confirmDialog, exportToExcel } from '../js/utils.js';
+
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc,
+        query, orderBy, serverTimestamp, Timestamp }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+let allDemandas = [], allStatus = [], currentDemandaId = null, currentUser = null, userPerfil = 'usuario';
+
+// Auth
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = '../login.html'; return; }
+  currentUser = user;
+  const snap = await getDoc(doc(db, 'usuarios', user.uid));
+  const u = snap.exists() ? snap.data() : {};
+  userPerfil = u.perfil || 'usuario';
+  renderSidebar(u.nome || user.email, u.perfil || 'usuario');
+  await loadData();
+});
+
+function renderSidebar(nome, perfil) {
+  const isAdmin = perfil === 'admin';
+  const ini = nome.charAt(0).toUpperCase();
+  document.getElementById('sidebar-placeholder').innerHTML = `
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+      <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
+      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a>
+      <a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+      <div class="sidebar-section-label">Cadastros</div>
+      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <div class="sidebar-section-label">Outros</div>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a>
+      <a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">${ini}</div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usuário'}</div></div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+  document.getElementById('btn-logout').addEventListener('click', async () => { await signOut(auth); window.location.href = '../login.html'; });
+  setActiveNav(); setupMobileSidebar();
+}
+
+async function loadData() {
+  const [demandasSnap, statusSnap, tiposSnap] = await Promise.all([
+    getDocs(query(collection(db, 'demandas'), orderBy('criadoEm', 'desc'))),
+    getDocs(collection(db, 'statusServico')),
+    getDocs(collection(db, 'tiposServico'))
+  ]);
+
+  allDemandas = demandasSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  allStatus   = statusSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  // Populate filter selects
+  const fStatus = document.getElementById('filter-status');
+  const fTipo   = document.getElementById('filter-tipo');
+  const acaoSt  = document.getElementById('acao-status');
+  statusSnap.docs.forEach(d => {
+    const op = new Option(d.data().nome, d.id);
+    fStatus.appendChild(op.cloneNode(true));
+    acaoSt.appendChild(op);
+  });
+  tiposSnap.docs.forEach(d => {
+    fTipo.appendChild(new Option(d.data().nome, d.id));
+  });
+
+  renderTable();
+}
+
+function getFiltered() {
+  const q         = document.getElementById('search-input').value.toLowerCase();
+  const stFilter  = document.getElementById('filter-status').value;
+  const tpFilter  = document.getElementById('filter-tipo').value;
+  const dtFilter  = document.getElementById('filter-data').value;
+  const chkArq    = document.getElementById('chk-arquivados').checked;
+  const chkOrc    = document.getElementById('chk-orcamento').checked;
+  const sortVal   = document.getElementById('sort-by').value;
+
+  let list = [...allDemandas];
+
+  if (chkArq)  list = list.filter(d => d.arquivada);
+  else if (!chkArq && !chkOrc) list = list.filter(d => !d.arquivada || !chkArq);
+  if (chkOrc)  list = list.filter(d => d.temOrcamento);
+  if (stFilter) list = list.filter(d => d.statusId === stFilter);
+  if (tpFilter) list = list.filter(d => d.tipoServicoId === tpFilter);
+  if (dtFilter) list = list.filter(d => {
+    const dt = d.dataRegistro?.toDate ? d.dataRegistro.toDate() : new Date(d.dataRegistro || d.criadoEm?.toDate?.() || 0);
+    return dt.toISOString().startsWith(dtFilter);
+  });
+  if (q) list = list.filter(d =>
+    (d.clienteNome || '').toLowerCase().includes(q) ||
+    (d.descricao   || '').toLowerCase().includes(q) ||
+    (d.tipoServicoNome || '').toLowerCase().includes(q) ||
+    String(d.numero || '').includes(q)
+  );
+
+  const [field, dir] = sortVal.split('-');
+  list.sort((a, b) => {
+    let va = a[field], vb = b[field];
+    if (va?.toDate) va = va.toDate();
+    if (vb?.toDate) vb = vb.toDate();
+    if (va < vb) return dir === 'asc' ? -1 : 1;
+    if (va > vb) return dir === 'asc' ?  1 : -1;
+    return 0;
+  });
+  return list;
+}
+
+function renderTable() {
+  const list = getFiltered();
+  const colConfig = {};
+  document.querySelectorAll('#col-dropdown input[type=checkbox]').forEach(cb => {
+    colConfig[cb.dataset.col] = cb.checked;
+  });
+
+  // Update header visibility
+  document.querySelectorAll('#demandas-table th[data-col]').forEach(th => {
+    th.style.display = colConfig[th.dataset.col] === false ? 'none' : '';
+  });
+
+  const tbody = document.getElementById('demandas-tbody');
+  if (list.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhuma demanda encontrada</h3><p>Tente ajustar os filtros ou cadastre uma nova demanda.</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(d => {
+    const status = allStatus.find(s => s.id === d.statusId);
+    const badge  = buildStatusBadge(d.statusNome || '—', status?.cor || '#888');
+    return `<tr>
+      <td data-col="numero" style="${colConfig.numero === false ? 'display:none' : ''}">#${d.numero || '—'}</td>
+      <td data-col="data"   style="${colConfig.data   === false ? 'display:none' : ''}">${formatDate(d.dataRegistro || d.criadoEm)}</td>
+      <td data-col="status" style="${colConfig.status === false ? 'display:none' : ''}">${badge}${d.arquivada ? ' <span class="badge" style="background:#e74c3c22;color:#e74c3c;border:1px solid #e74c3c44">Arquivada</span>' : ''}</td>
+      <td data-col="tipo"   style="${colConfig.tipo   === false ? 'display:none' : ''}">${d.tipoServicoNome || '—'}</td>
+      <td data-col="cliente" style="${colConfig.cliente === false ? 'display:none' : ''}">${d.clienteNome || '—'}</td>
+      <td data-col="entrega" style="${colConfig.entrega ? '' : 'display:none'}">${formatDate(d.dataEntrega)}</td>
+      <td data-col="orcamento" style="${colConfig.orcamento ? '' : 'display:none'}">${d.temOrcamento ? '?' : '—'}</td>
+      <td>
+        <div class="td-actions">
+          <button class="btn btn-info btn-icon-sm" title="Ver detalhes" onclick="openDetail('${d.id}')">??</button>
+          <a class="btn btn-secondary btn-icon-sm" href="nova-demanda.html?id=${d.id}" title="Editar">??</a>
+          ${d.arquivada
+            ? `<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar('${d.id}', false)">??</button>`
+            : `<button class="btn btn-warning btn-icon-sm" title="Arquivar"    onclick="toggleArquivar('${d.id}', true)">??</button>`}
+          ${userPerfil === 'admin' ? `<button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="excluirDemanda('${d.id}')">??</button>` : ''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// Column visibility toggle
+document.getElementById('btn-col-toggle').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.getElementById('col-dropdown').classList.toggle('open');
+});
+document.addEventListener('click', () => document.getElementById('col-dropdown').classList.remove('open'));
+document.querySelectorAll('#col-dropdown input').forEach(cb => cb.addEventListener('change', renderTable));
+
+// Filter events
+['search-input','filter-status','filter-tipo','filter-data','sort-by'].forEach(id =>
+  document.getElementById(id).addEventListener('input', renderTable)
+);
+['chk-arquivados','chk-orcamento'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('change', () => {
+    el.closest('.filter-tag').classList.toggle('active', el.checked);
+    renderTable();
+  });
+});
+
+// Excel export
+document.getElementById('btn-export-excel').addEventListener('click', () => {
+  const data = getFiltered().map(d => ({
+    'Nº': d.numero,
+    'Data': formatDate(d.dataRegistro || d.criadoEm),
+    'Cliente': d.clienteNome || '',
+    'Tipo': d.tipoServicoNome || '',
+    'Status': d.statusNome || '',
+    'Arquivada': d.arquivada ? 'Sim' : 'Não',
+    'Com Orçamento': d.temOrcamento ? 'Sim' : 'Não',
+    'Descrição': d.descricao || '',
+    'Data Entrega': formatDate(d.dataEntrega)
+  }));
+  exportToExcel(data, 'demandas-excellentia');
+  showToast('Planilha exportada!', 'success');
+});
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Modal close
+['close-detalhes','close-detalhes-2'].forEach(id => {
+  document.getElementById(id).addEventListener('click', () => {
+    document.getElementById('modal-detalhes').classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+// Global functions
+window.openDetail = async (id) => {
+  currentDemandaId = id;
+  const d = allDemandas.find(x => x.id === id);
+  if (!d) return;
+  const status = allStatus.find(s => s.id === d.statusId);
+  const badge  = buildStatusBadge(d.statusNome || '—', status?.cor || '#888');
+
+  document.getElementById('modal-titulo').textContent = `Demanda #${d.numero || '—'}`;
+  document.getElementById('btn-edit-demanda').href = `nova-demanda.html?id=${id}`;
+  document.getElementById('demanda-info-grid').innerHTML = `
+    <div class="demanda-info-item"><label>Nº</label><span>#${d.numero || '—'}</span></div>
+    <div class="demanda-info-item"><label>Data</label><span>${formatDate(d.dataRegistro || d.criadoEm)}</span></div>
+    <div class="demanda-info-item"><label>Status</label><span>${badge}</span></div>
+    <div class="demanda-info-item"><label>Cliente</label><span>${d.clienteNome || '—'}</span></div>
+    <div class="demanda-info-item"><label>Tipo</label><span>${d.tipoServicoNome || '—'}</span></div>
+    <div class="demanda-info-item"><label>CPF/CNPJ</label><span>${d.cpfCnpj || '—'}</span></div>
+    <div class="demanda-info-item"><label>Entrega</label><span>${formatDate(d.dataEntrega)}</span></div>
+    <div class="demanda-info-item"><label>Orçamento</label><span>${d.temOrcamento ? '? Sim' : '—'}</span></div>
+    <div class="demanda-info-item col-span-2" style="grid-column:span 3"><label>Descrição</label><span>${d.descricao || '—'}</span></div>`;
+
+  // Set default datetime for acao
+  const now = new Date().toLocaleString('sv-SE', { timeZone: 'America/Manaus' }).replace(' ', 'T').slice(0,16);
+  document.getElementById('acao-data').value = now;
+
+  await loadAcoes(id);
+  document.getElementById('modal-detalhes').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+async function loadAcoes(demandaId) {
+  const snap = await getDocs(query(collection(db, 'demandas', demandaId, 'acoes'), orderBy('data', 'desc')));
+  const acoes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderAcoes(acoes);
+  renderHistorico(acoes);
+}
+
+function renderAcoes(acoes) {
+  const container = document.getElementById('acoes-list');
+  if (acoes.length === 0) {
+    container.innerHTML = '<div class="empty-state" style="padding:20px"><div class="empty-icon">??</div><p>Nenhuma ação registrada</p></div>';
+    return;
+  }
+  container.innerHTML = acoes.map(a => `
+    <div class="acao-item" id="acao-${a.id}">
+      <span class="acao-date">${formatDateTime(a.data)}</span>
+      <span class="acao-desc" id="desc-${a.id}">${a.descricao || '—'}</span>
+      <span class="acao-func">${a.funcionario || '—'}</span>
+      <span>${buildStatusBadge(a.statusNome || '—', allStatus.find(s => s.id === a.statusId)?.cor)}</span>
+      <div style="display:flex;gap:5px">
+        <button class="btn btn-secondary btn-icon-sm" onclick="editAcao('${a.id}','${a.descricao?.replace(/'/g,"\\'")}','${a.funcionario?.replace(/'/g,"\\'")}')">??</button>
+        <button class="btn btn-danger btn-icon-sm"    onclick="deleteAcao('${a.id}')">??</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderHistorico(acoes) {
+  document.getElementById('hist-tbody').innerHTML = acoes.map(a => `
+    <tr>
+      <td>${formatDateTime(a.data)}</td>
+      <td>${a.descricao || '—'}</td>
+      <td>${a.funcionario || '—'}</td>
+      <td>${buildStatusBadge(a.statusNome || '—', allStatus.find(s => s.id === a.statusId)?.cor)}</td>
+    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-3)">Nenhum registro</td></tr>';
+}
+
+document.getElementById('btn-save-acao').addEventListener('click', async () => {
+  if (!currentDemandaId) return;
+  const data   = document.getElementById('acao-data').value;
+  const desc   = document.getElementById('acao-desc').value.trim();
+  const func   = document.getElementById('acao-func').value.trim();
+  const stEl   = document.getElementById('acao-status');
+  const stId   = stEl.value;
+  const stNome = stEl.options[stEl.selectedIndex]?.text || '';
+
+  if (!desc) { showToast('Informe a descrição da ação', 'warning'); return; }
+
+  await addDoc(collection(db, 'demandas', currentDemandaId, 'acoes'), {
+    data: data ? Timestamp.fromDate(new Date(data)) : serverTimestamp(),
+    descricao: desc, funcionario: func, statusId: stId, statusNome: stNome,
+    criadoPor: currentUser.uid, criadoEm: serverTimestamp()
+  });
+
+  // Update demanda status
+  if (stId) await updateDoc(doc(db, 'demandas', currentDemandaId), { statusId: stId, statusNome: stNome, atualizadoEm: serverTimestamp() });
+
+  document.getElementById('acao-desc').value = '';
+  document.getElementById('acao-func').value = '';
+  showToast('Ação registrada!', 'success');
+  await loadAcoes(currentDemandaId);
+  // refresh table
+  allDemandas = allDemandas.map(d => d.id === currentDemandaId ? { ...d, statusId: stId, statusNome: stNome } : d);
+  renderTable();
+});
+
+window.editAcao = async (acaoId, desc, func) => {
+  const novaDesc = prompt('Editar descrição:', desc);
+  if (novaDesc === null) return;
+  const novaFunc = prompt('Editar funcionário:', func);
+  if (novaFunc === null) return;
+  await updateDoc(doc(db, 'demandas', currentDemandaId, 'acoes', acaoId), {
+    descricao: novaDesc, funcionario: novaFunc, editadoEm: serverTimestamp()
+  });
+  showToast('Ação atualizada!', 'success');
+  await loadAcoes(currentDemandaId);
+};
+
+window.deleteAcao = async (acaoId) => {
+  if (!await confirmDialog('Deseja excluir este registro de ação?')) return;
+  await deleteDoc(doc(db, 'demandas', currentDemandaId, 'acoes', acaoId));
+  showToast('Ação excluída!', 'success');
+  await loadAcoes(currentDemandaId);
+};
+
+window.toggleArquivar = async (id, arquivar) => {
+  const msg = arquivar ? 'Deseja arquivar esta demanda?' : 'Deseja desarquivar esta demanda?';
+  if (!await confirmDialog(msg)) return;
+  await updateDoc(doc(db, 'demandas', id), { arquivada: arquivar, atualizadoEm: serverTimestamp() });
+  allDemandas = allDemandas.map(d => d.id === id ? { ...d, arquivada: arquivar } : d);
+  showToast(arquivar ? 'Demanda arquivada!' : 'Demanda desarquivada!', 'success');
+  renderTable();
+};
+
+window.excluirDemanda = async (id) => {
+  if (!await confirmDialog('Deseja EXCLUIR permanentemente esta demanda? Esta ação não pode ser desfeita.')) return;
+  await deleteDoc(doc(db, 'demandas', id));
+  allDemandas = allDemandas.filter(d => d.id !== id);
+  showToast('Demanda excluída!', 'success');
+  renderTable();
+};
+</script>
+</body>
+</html>
+

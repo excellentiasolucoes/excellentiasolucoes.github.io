@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Agenda de Contatos — Excellentia Controll</title>
+  <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-placeholder"></div>
+  <div class="main-content">
+    <div class="topbar">
+      <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
+      <div><div class="topbar-title">Agenda de Contatos</div><div class="topbar-subtitle">Contatos profissionais</div></div>
+      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Contato</button></div>
+    </div>
+    <div class="page-content">
+      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">??</span><input type="text" class="form-control" id="search-input" placeholder="Buscar por nome, empresa..."></div></div>
+      <div id="contatos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-form">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">?? <span id="modal-titulo">Novo Contato</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-body">
+      <div id="form-alert" class="alert alert-danger" style="display:none"></div>
+      <div class="form-grid">
+        <div class="form-group col-span-2"><label class="form-label">Nome</label><input type="text" class="form-control" id="f-nome" placeholder="Nome completo"></div>
+        <div class="form-group"><label class="form-label">Cargo</label><input type="text" class="form-control" id="f-cargo" placeholder="Ex: Diretor"></div>
+        <div class="form-group"><label class="form-label">Função</label><input type="text" class="form-control" id="f-funcao" placeholder="Ex: Aprovação de projetos"></div>
+        <div class="form-group col-span-2"><label class="form-label">Empresa</label><input type="text" class="form-control" id="f-empresa" placeholder="Nome da empresa"></div>
+        <div class="form-group"><label class="form-label">Contato 1</label><input type="text" class="form-control" id="f-c1" placeholder="(92) 99999-9999"></div>
+        <div class="form-group"><label class="form-label">Contato 2</label><input type="text" class="form-control" id="f-c2" placeholder="(92) 99999-9999"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
+      <button class="btn btn-primary" id="btn-salvar">?? Salvar</button>
+    </div>
+  </div>
+</div>
+<div id="toast-container"></div>
+<script type="module">
+import { firebaseConfig } from '../js/firebase/config.js';
+import { showToast, applyPhoneMask, setActiveNav, setupMobileSidebar, confirmDialog } from '../js/utils.js';
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
+let allItems=[], editId=null;
+
+onAuthStateChanged(auth, async(user)=>{
+  if(!user){window.location.href='../login.html';return;}
+  const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
+  renderSidebar(u.nome||user.email,u.perfil||'usuario');
+  await loadData();
+  applyPhoneMask(document.getElementById('f-c1')); applyPhoneMask(document.getElementById('f-c2'));
+});
+
+function renderSidebar(nome,perfil){
+  const isAdmin=perfil==='admin'; const ini=nome.charAt(0).toUpperCase();
+  document.getElementById('sidebar-placeholder').innerHTML=`<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+    <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
+    <nav class="sidebar-nav"><div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a><a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
+      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a><a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a><a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+      <div class="sidebar-section-label">Cadastros</div>
+      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a><a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a><a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <div class="sidebar-section-label">Outros</div>
+      ${isAdmin?`<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>`:''}
+      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a><a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
+    <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin?'Administrador':'Usuário'}</div></div></div>
+    <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button></div>
+  </aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+  document.getElementById('btn-logout').addEventListener('click',async()=>{await signOut(auth);window.location.href='../login.html';});
+  setActiveNav(); setupMobileSidebar();
+}
+
+async function loadData(){
+  const snap=await getDocs(query(collection(db,'agendaContatos'),orderBy('nome')));
+  allItems=snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderGrid(allItems);
+}
+
+function renderGrid(list){
+  const grid=document.getElementById('contatos-grid');
+  if(!list.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">??</div><h3>Nenhum contato</h3><p>Clique em "+ Novo Contato".</p></div>`;return;}
+  grid.innerHTML=list.map(d=>{
+    const ini=(d.nome||'?').charAt(0).toUpperCase();
+    return `<div class="card" style="padding:18px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dark),var(--gold));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:var(--navy);flex-shrink:0">${ini}</div>
+        <div>
+          <div style="font-size:14px;font-weight:700">${d.nome||'Sem nome'}</div>
+          <div style="font-size:12px;color:var(--gold)">${d.cargo||''} ${d.cargo&&d.funcao?'·':''} ${d.funcao||''}</div>
+        </div>
+      </div>
+      ${d.empresa?`<div style="font-size:12px;color:var(--text-3);margin-bottom:8px">?? ${d.empresa}</div>`:''}
+      ${d.contato1?`<div style="font-size:12px;color:var(--text-2);margin-bottom:4px">?? ${d.contato1}</div>`:''}
+      ${d.contato2?`<div style="font-size:12px;color:var(--text-2);margin-bottom:8px">?? ${d.contato2}</div>`:''}
+      <div style="display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-subtle)">
+        <button class="btn btn-secondary btn-sm" onclick="editItem('${d.id}')">?? Editar</button>
+        <button class="btn btn-danger btn-sm"    onclick="deleteItem('${d.id}')">??</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('search-input').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  renderGrid(q?allItems.filter(d=>(d.nome||'').toLowerCase().includes(q)||(d.empresa||'').toLowerCase().includes(q)):allItems);
+});
+
+function openModal(id=null){
+  editId=id; document.getElementById('form-alert').style.display='none';
+  document.getElementById('modal-titulo').textContent=id?'Editar Contato':'Novo Contato';
+  if(!id){['f-nome','f-cargo','f-funcao','f-empresa','f-c1','f-c2'].forEach(i=>document.getElementById(i).value='');}
+  document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
+}
+function closeModalFn(){document.getElementById('modal-form').classList.remove('open');document.body.style.overflow='';editId=null;}
+document.getElementById('btn-novo').addEventListener('click',()=>openModal());
+['close-modal','close-modal-2'].forEach(id=>document.getElementById(id).addEventListener('click',closeModalFn));
+
+window.editItem=async(id)=>{
+  const d=allItems.find(x=>x.id===id); if(!d)return; openModal(id);
+  document.getElementById('f-nome').value=d.nome||''; document.getElementById('f-cargo').value=d.cargo||'';
+  document.getElementById('f-funcao').value=d.funcao||''; document.getElementById('f-empresa').value=d.empresa||'';
+  document.getElementById('f-c1').value=d.contato1||''; document.getElementById('f-c2').value=d.contato2||'';
+};
+window.deleteItem=async(id)=>{
+  if(!await confirmDialog('Excluir este contato?'))return;
+  await deleteDoc(doc(db,'agendaContatos',id)); allItems=allItems.filter(d=>d.id!==id); renderGrid(allItems); showToast('Contato excluído!','success');
+};
+document.getElementById('btn-salvar').addEventListener('click',async()=>{
+  const payload={nome:document.getElementById('f-nome').value.trim(),cargo:document.getElementById('f-cargo').value.trim(),
+    funcao:document.getElementById('f-funcao').value.trim(),empresa:document.getElementById('f-empresa').value.trim(),
+    contato1:document.getElementById('f-c1').value.trim(),contato2:document.getElementById('f-c2').value.trim(),atualizadoEm:serverTimestamp()};
+  try{
+    if(editId){await updateDoc(doc(db,'agendaContatos',editId),payload);allItems=allItems.map(d=>d.id===editId?{...d,...payload}:d);}
+    else{const ref=await addDoc(collection(db,'agendaContatos'),{...payload,criadoEm:serverTimestamp()});allItems.push({id:ref.id,...payload});}
+    allItems.sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+    renderGrid(allItems); closeModalFn(); showToast(editId?'Contato atualizado!':'Contato salvo!','success');
+  }catch(err){document.getElementById('form-alert').textContent=err.message;document.getElementById('form-alert').style.display='flex';}
+});
+</script>
+</body>
+</html>
+

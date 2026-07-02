@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excellentia Controll — Login</title>
+  <meta name="description" content="Sistema de Gestão de Demandas para Empresas de Arquitetura">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/logo.png">
+</head>
+<body>
+<div class="login-page">
+  <!-- Branding Left -->
+  <div class="login-brand">
+    <img src="assets/logo.png" alt="Logo Excellentia" onerror="this.style.display='none'">
+    <h1>Excellentia Controll</h1>
+    <p>Sistema de Gestão de Demandas para Empresas de Arquitetura</p>
+    <div style="margin-top:40px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
+        <span style="font-size:22px">??</span>
+        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Gestão de Demandas</div><div style="font-size:11px;color:var(--text-3)">Controle total dos seus atendimentos</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
+        <span style="font-size:22px">??</span>
+        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Relatórios & Gráficos</div><div style="font-size:11px;color:var(--text-3)">Dados em tempo real do seu negócio</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
+        <span style="font-size:22px">???</span>
+        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Exclusivo para Arquitetura</div><div style="font-size:11px;color:var(--text-3)">Pensado para o seu escritório</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Right -->
+  <div class="login-form-area">
+    <h2>Bem-vindo de volta</h2>
+    <p>Acesse o sistema com suas credenciais</p>
+
+    <div id="login-alert" class="alert alert-danger" style="display:none"></div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input type="email" class="form-control" id="login-email" placeholder="seu@email.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <div class="password-wrapper">
+          <input type="password" class="form-control" id="login-password" placeholder="••••••••" required>
+          <button type="button" class="password-toggle" id="toggle-password">??</button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:15px;margin-top:8px" id="btn-login">
+        Entrar no Sistema
+      </button>
+    </form>
+
+    <div class="login-legal">
+      Este sistema foi desenvolvido para organizar e otimizar seus atendimentos.<br>
+      Não é permitida a utilização por pessoas não autorizadas.<br>
+      <strong style="color:var(--gold)">Excellentia Controll © 2026</strong>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal (first login) -->
+<div class="modal-overlay" id="modal-change-pwd">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">?? Alterar Senha</span>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-2);margin-bottom:18px;font-size:14px">Por segurança, você precisa definir uma nova senha no primeiro acesso.</p>
+      <div id="change-pwd-alert" class="alert alert-danger" style="display:none"></div>
+      <div class="form-group">
+        <label class="form-label">Nova Senha</label>
+        <input type="password" class="form-control" id="new-password" placeholder="Mínimo 6 caracteres">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar Nova Senha</label>
+        <input type="password" class="form-control" id="confirm-password" placeholder="Repita a nova senha">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="btn-save-pwd">Salvar Nova Senha</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script type="module">
+import { firebaseConfig } from './js/firebase/config.js';
+import { showToast, showLoading, hideLoading } from './js/utils.js';
+
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, signInWithEmailAndPassword, onAuthStateChanged, updatePassword }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, doc, getDoc, updateDoc, serverTimestamp }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// Redirect if already logged in
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const snap = await getDoc(doc(db, 'usuarios', user.uid));
+    if (snap.exists() && snap.data().primeiroLogin) {
+      document.getElementById('modal-change-pwd').classList.add('open');
+    } else {
+      window.location.href = 'pages/dashboard.html';
+    }
+  }
+});
+
+// Toggle password visibility
+document.getElementById('toggle-password').addEventListener('click', () => {
+  const input = document.getElementById('login-password');
+  input.type = input.type === 'password' ? 'text' : 'password';
+});
+
+// Login form
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const alertEl  = document.getElementById('login-alert');
+  const btn      = document.getElementById('btn-login');
+
+  alertEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Entrando...';
+  showLoading('Autenticando...');
+
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    const snap = await getDoc(doc(db, 'usuarios', cred.user.uid));
+
+    hideLoading();
+    if (snap.exists() && snap.data().primeiroLogin) {
+      document.getElementById('modal-change-pwd').classList.add('open');
+    } else {
+      window.location.href = 'pages/dashboard.html';
+    }
+  } catch (err) {
+    hideLoading();
+    btn.disabled = false;
+    btn.textContent = 'Entrar no Sistema';
+    const msgs = {
+      'auth/user-not-found':    'Usuário não encontrado.',
+      'auth/wrong-password':    'Senha incorreta.',
+      'auth/invalid-email':     'E-mail inválido.',
+      'auth/too-many-requests': 'Muitas tentativas. Aguarde um momento.',
+      'auth/invalid-credential':'E-mail ou senha incorretos.'
+    };
+    alertEl.textContent = msgs[err.code] || 'Erro ao fazer login. Tente novamente.';
+    alertEl.style.display = 'flex';
+  }
+});
+
+// Change password (first login)
+document.getElementById('btn-save-pwd').addEventListener('click', async () => {
+  const np = document.getElementById('new-password').value;
+  const cp = document.getElementById('confirm-password').value;
+  const alertEl = document.getElementById('change-pwd-alert');
+
+  if (np.length < 6) {
+    alertEl.textContent = 'A senha deve ter pelo menos 6 caracteres.';
+    alertEl.style.display = 'flex'; return;
+  }
+  if (np !== cp) {
+    alertEl.textContent = 'As senhas não coincidem.';
+    alertEl.style.display = 'flex'; return;
+  }
+
+  try {
+    showLoading('Salvando senha...');
+    const user = auth.currentUser;
+    await updatePassword(user, np);
+    await updateDoc(doc(db, 'usuarios', user.uid), { primeiroLogin: false, atualizadoEm: serverTimestamp() });
+    hideLoading();
+    showToast('Senha alterada com sucesso!', 'success');
+    setTimeout(() => { window.location.href = 'pages/dashboard.html'; }, 1200);
+  } catch (err) {
+    hideLoading();
+    alertEl.textContent = 'Erro ao alterar senha: ' + err.message;
+    alertEl.style.display = 'flex';
+  }
+});
+</script>
+</body>
+</html>
+
