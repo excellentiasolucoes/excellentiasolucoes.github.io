@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ï»¿ï»¿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nova Demanda — Excellentia Controll</title>
+  <title>Novo Projeto ï¿½ Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" href="../assets/logo.png">
 </head>
@@ -13,7 +13,7 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
-      <div><div class="topbar-title" id="page-title">Nova Demanda</div><div class="topbar-subtitle">Preencha os dados do serviço</div></div>
+      <div><div class="topbar-title" id="page-title">Novo Projeto</div><div class="topbar-subtitle">Preencha os dados do serviï¿½o</div></div>
       <div class="topbar-actions">
         <a href="demandas.html" class="btn btn-secondary">? Voltar</a>
       </div>
@@ -23,9 +23,9 @@
         <div id="form-alert" class="alert alert-danger" style="display:none"></div>
 
         <div class="form-grid">
-          <!-- Nº e data (auto) -->
+          <!-- Nï¿½ e data (auto) -->
           <div class="form-group">
-            <label class="form-label">Nº da Demanda</label>
+            <label class="form-label">Nï¿½ da Demanda</label>
             <input type="text" class="form-control" id="numero" readonly placeholder="Gerado automaticamente" style="opacity:0.6">
           </div>
           <div class="form-group">
@@ -47,8 +47,8 @@
             <label class="form-label">Tipo de Cliente</label>
             <select class="form-select" id="tipo-cliente">
               <option value="">Selecionar</option>
-              <option value="PF">Pessoa Física</option>
-              <option value="PJ">Pessoa Jurídica</option>
+              <option value="PF">Pessoa Fï¿½sica</option>
+              <option value="PJ">Pessoa Jurï¿½dica</option>
             </select>
           </div>
           <div class="form-group">
@@ -56,15 +56,15 @@
             <input type="text" class="form-control" id="cpf-cnpj" placeholder="000.000.000-00">
           </div>
 
-          <!-- Tipo de Serviço -->
+          <!-- Tipo de Serviï¿½o -->
           <div class="form-group">
-            <label class="form-label">Tipo de Serviço</label>
+            <label class="form-label">Tipo de Serviï¿½o</label>
             <select class="form-select" id="tipo-servico">
               <option value="">Selecionar</option>
             </select>
           </div>
           <div class="form-group" id="novo-tipo-grupo" style="display:none">
-            <label class="form-label">Novo Tipo de Serviço</label>
+            <label class="form-label">Novo Tipo de Serviï¿½o</label>
             <div class="form-row">
               <div class="form-group"><input type="text" class="form-control" id="novo-tipo-nome" placeholder="Nome do novo tipo"></div>
               <button class="btn btn-primary" id="btn-add-tipo">+ Adicionar</button>
@@ -89,7 +89,7 @@
 
           <!-- Datas e Prazo -->
           <div class="form-group">
-            <label class="form-label">Data do Serviço</label>
+            <label class="form-label">Data do Serviï¿½o</label>
             <input type="date" class="form-control" id="data-servico">
           </div>
           <div class="form-group">
@@ -101,10 +101,10 @@
             <input type="text" class="form-control" id="data-entrega-calc" readonly style="opacity:0.6">
           </div>
 
-          <!-- Descrição -->
+          <!-- Descriï¿½ï¿½o -->
           <div class="form-group col-span-2">
-            <label class="form-label">Descrição do Serviço</label>
-            <textarea class="form-control" id="descricao" rows="4" placeholder="Descreva o serviço solicitado..."></textarea>
+            <label class="form-label">Descriï¿½ï¿½o do Serviï¿½o</label>
+            <textarea class="form-control" id="descricao" rows="4" placeholder="Descreva o serviï¿½o solicitado..."></textarea>
           </div>
         </div>
 
@@ -142,7 +142,7 @@ onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   const snap = await getDoc(doc(db, 'usuarios', user.uid));
   const u = snap.exists() ? snap.data() : {};
-  renderSidebar(u.nome || user.email, u.perfil || 'usuario');
+  renderSidebar(u.nome || user.email, u.perfil || 'Usu&#225;rio');
   await loadRefs();
   if (editId) await loadDemanda(editId);
   else initNovo();
@@ -151,6 +151,21 @@ onAuthStateChanged(auth, async (user) => {
 function renderSidebar(nome, perfil) {
   const isAdmin = perfil === 'admin';
   const ini = nome.charAt(0).toUpperCase();
+
+  // Aplica tema salvo
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light-mode');
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const icon  = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
+    if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
+  };
+
+  const isLight = document.body.classList.contains('light-mode');
+
   document.getElementById('sidebar-placeholder').innerHTML = `
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
@@ -159,34 +174,45 @@ function renderSidebar(nome, perfil) {
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a>
-      <a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
-      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a>
-      <a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
-      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a>
-      <a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a>
-      <a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a>
-      <a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>` : ''}
-      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a>
-      <a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
+          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+        </button>
+      </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usuário'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
-      <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
   </aside>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
-  document.getElementById('btn-logout').addEventListener('click', async () => { await signOut(auth); window.location.href = '../login.html'; });
-  setActiveNav(); setupMobileSidebar();
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '../login.html';
+  });
+  setActiveNav();
+  setupMobileSidebar();
 }
 
 async function loadRefs() {
@@ -216,7 +242,7 @@ async function loadRefs() {
     }
   );
 
-  // Tipo de serviço select
+  // Tipo de serviï¿½o select
   const tipoSel = document.getElementById('tipo-servico');
   tiposServico.forEach(t => tipoSel.appendChild(new Option(t.nome, t.id)));
   tipoSel.appendChild(new Option('+ Cadastrar novo tipo...', '__novo__'));
@@ -249,7 +275,7 @@ async function initNovo() {
 async function loadDemanda(id) {
   document.getElementById('page-title').textContent = 'Editar Demanda';
   const snap = await getDoc(doc(db, 'demandas', id));
-  if (!snap.exists()) { showToast('Demanda não encontrada', 'error'); return; }
+  if (!snap.exists()) { showToast('Demanda nï¿½o encontrada', 'error'); return; }
   const d = snap.data();
   document.getElementById('numero').value       = d.numero || '';
   document.getElementById('data-registro').value = formatDate(d.dataRegistro || d.criadoEm);

@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+ï»¿ï»¿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Orçamentos — Excellentia Controll</title>
+  <title>Orï¿½amentos ï¿½ Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -13,14 +13,14 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
-      <div><div class="topbar-title">Orçamentos</div><div class="topbar-subtitle">Gestão de orçamentos</div></div>
-      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Orçamento</button></div>
+      <div><div class="topbar-title">Orï¿½amentos</div><div class="topbar-subtitle">Gestï¿½o de orï¿½amentos</div></div>
+      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Orï¿½amento</button></div>
     </div>
     <div class="page-content">
       <div class="card" style="padding:0">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Com Desconto</th><th>Entrega</th><th>Status</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Com Desconto</th><th>Entrega</th><th>Status</th><th>Aï¿½ï¿½es</th></tr></thead>
             <tbody id="list-tbody"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
           </table>
         </div>
@@ -29,10 +29,10 @@
   </div>
 </div>
 
-<!-- Modal: Novo/Editar Orçamento -->
+<!-- Modal: Novo/Editar Orï¿½amento -->
 <div class="modal-overlay" id="modal-form">
   <div class="modal modal-lg">
-    <div class="modal-header"><span class="modal-title">?? <span id="modal-titulo">Novo Orçamento</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-header"><span class="modal-title">?? <span id="modal-titulo">Novo Orï¿½amento</span></span><button class="modal-close" id="close-modal">?</button></div>
     <div class="modal-body">
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-grid">
@@ -41,16 +41,16 @@
           <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-cliente" placeholder="Nome do cliente"><div class="autocomplete-list" id="cli-auto"></div></div>
           <input type="hidden" id="f-cliente-id">
         </div>
-        <div class="form-group"><label class="form-label">Tipo de Serviço</label>
-          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-tipo" placeholder="Tipo de serviço"><div class="autocomplete-list" id="tipo-auto"></div></div>
+        <div class="form-group"><label class="form-label">Tipo de Serviï¿½o</label>
+          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-tipo" placeholder="Tipo de serviï¿½o"><div class="autocomplete-list" id="tipo-auto"></div></div>
         </div>
         <div class="form-group"><label class="form-label">Status</label>
           <select class="form-select" id="f-status"><option value="">Selecionar</option></select>
         </div>
-        <div class="form-group col-span-2"><label class="form-label">Descrição do Serviço</label>
-          <textarea class="form-control" id="f-desc" rows="3" placeholder="Descreva o serviço..."></textarea>
+        <div class="form-group col-span-2"><label class="form-label">Descriï¿½ï¿½o do Serviï¿½o</label>
+          <textarea class="form-control" id="f-desc" rows="3" placeholder="Descreva o serviï¿½o..."></textarea>
         </div>
-        <div class="form-group"><label class="form-label">Data do Serviço</label>
+        <div class="form-group"><label class="form-label">Data do Serviï¿½o</label>
           <input type="date" class="form-control" id="f-data">
         </div>
         <div class="form-group"><label class="form-label">Prazo (dias)</label>
@@ -59,7 +59,7 @@
         <div class="form-group"><label class="form-label">Data de Entrega (calculada)</label>
           <input type="text" class="form-control" id="f-entrega" readonly style="opacity:0.6">
         </div>
-        <div class="form-group"><label class="form-label">Valor do Serviço (R$)</label>
+        <div class="form-group"><label class="form-label">Valor do Serviï¿½o (R$)</label>
           <input type="number" class="form-control" id="f-valor" placeholder="0,00" step="0.01" min="0">
         </div>
 
@@ -84,7 +84,7 @@
 
       <!-- Alerta de prazo -->
       <div id="alerta-prazo" style="display:none" class="alert alert-warning">
-        ? Atenção: o prazo de entrega está próximo ou vencido!
+        ? Atenï¿½ï¿½o: o prazo de entrega estï¿½ prï¿½ximo ou vencido!
       </div>
     </div>
     <div class="modal-footer">
@@ -95,11 +95,11 @@
   </div>
 </div>
 
-<!-- Modal Preview/Impressão -->
+<!-- Modal Preview/Impressï¿½o -->
 <div class="modal-overlay" id="modal-preview">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <span class="modal-title">?? Preview do Orçamento</span>
+      <span class="modal-title">?? Preview do Orï¿½amento</span>
       <button class="modal-close" id="close-preview">?</button>
     </div>
     <div class="modal-body">
@@ -126,7 +126,7 @@ let allItems=[], clientes=[], tiposServico=[], statusList=[], editId=null;
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.nome||user.email,u.perfil||'usuario');
+  renderSidebar(u.nome||user.email,u.perfil||'Usu&#225;rio');
   const [oSnap,cSnap,tSnap,sSnap]=await Promise.all([
     getDocs(query(collection(db,'orcamentos'),orderBy('criadoEm','desc'))),
     getDocs(collection(db,'clientes')), getDocs(collection(db,'tiposServico')),
@@ -147,41 +147,83 @@ onAuthStateChanged(auth, async(user)=>{
     tiposServico.map(t=>({id:t.id,label:t.nome})), (i)=>document.getElementById('f-tipo').value=i.label);
 });
 
-function renderSidebar(nome,perfil){
-  const isAdmin=perfil==='admin'; const ini=nome.charAt(0).toUpperCase();
-  document.getElementById('sidebar-placeholder').innerHTML=`<aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand"><img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
-    <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
-    <nav class="sidebar-nav"><div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a><a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
-      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a><a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
-      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a><a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+function renderSidebar(nome, perfil) {
+  const isAdmin = perfil === 'admin';
+  const ini = nome.charAt(0).toUpperCase();
+
+  // Aplica tema salvo
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light-mode');
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const icon  = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
+    if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
+  };
+
+  const isLight = document.body.classList.contains('light-mode');
+
+  document.getElementById('sidebar-placeholder').innerHTML = `
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+      <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a><a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a><a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin?`<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>`:''}
-      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a><a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
-    <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
-    <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin?'Administrador':'Usuário'}</div></div></div>
-    <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button></div>
-  </aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
-  document.getElementById('btn-logout').addEventListener('click',async()=>{await signOut(auth);window.location.href='../login.html';});
-  setActiveNav(); setupMobileSidebar();
+    <div class="sidebar-footer">
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
+          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+        </button>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">${ini}</div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '../login.html';
+  });
+  setActiveNav();
+  setupMobileSidebar();
 }
 
 function renderTable(list){
   const tbody=document.getElementById('list-tbody');
-  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhum orçamento</h3></div></td></tr>`;return;}
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhum orï¿½amento</h3></div></td></tr>`;return;}
   tbody.innerHTML=list.map(d=>{
     const st=statusList.find(s=>s.id===d.statusId);
     return `<tr>
-      <td>${d.clienteNome||'—'}</td><td>${d.tipoServico||'—'}</td>
+      <td>${d.clienteNome||'ï¿½'}</td><td>${d.tipoServico||'ï¿½'}</td>
       <td>${formatCurrency(d.valorServico)}</td><td><strong style="color:var(--gold)">${formatCurrency(d.valorComDesconto)}</strong></td>
       <td>${formatDate(d.dataEntrega)}</td>
-      <td>${buildStatusBadge(d.statusNome||'—',st?.cor)}</td>
+      <td>${buildStatusBadge(d.statusNome||'ï¿½',st?.cor)}</td>
       <td><div class="td-actions">
         <button class="btn btn-info btn-icon-sm" onclick="previewOrc('${d.id}')">??</button>
         <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">??</button>
@@ -215,7 +257,7 @@ function calcEntrega(){
 
 function openModal(id=null){
   editId=id; document.getElementById('form-alert').style.display='none'; document.getElementById('alerta-prazo').style.display='none';
-  document.getElementById('modal-titulo').textContent=id?'Editar Orçamento':'Novo Orçamento';
+  document.getElementById('modal-titulo').textContent=id?'Editar Orï¿½amento':'Novo Orï¿½amento';
   if(!id){['f-cliente','f-cliente-id','f-tipo','f-desc','f-entrega'].forEach(i=>document.getElementById(i).value='');
     ['f-data','f-prazo','f-valor','f-desconto'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('f-status').value=''; calcDesconto();}
@@ -236,8 +278,8 @@ window.editItem=async(id)=>{
 };
 
 window.deleteItem=async(id)=>{
-  if(!await confirmDialog('Excluir este orçamento?'))return;
-  await deleteDoc(doc(db,'orcamentos',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Orçamento excluído!','success');
+  if(!await confirmDialog('Excluir este orï¿½amento?'))return;
+  await deleteDoc(doc(db,'orcamentos',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Orï¿½amento excluï¿½do!','success');
 };
 
 window.previewOrc=async(id)=>{
@@ -254,24 +296,24 @@ function renderPreview(d){
   const st=statusList.find(s=>s.id===d.statusId);
   document.getElementById('orcamento-preview-content').innerHTML=`
     <div style="border-bottom:3px solid #C9A84C;padding-bottom:20px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-start">
-      <div><h1 style="font-size:24px;color:#1A1A2E;margin:0">ORÇAMENTO</h1>
-      <p style="color:#666;margin:4px 0">Excellentia Controll · Sistema de Gestão</p></div>
+      <div><h1 style="font-size:24px;color:#1A1A2E;margin:0">ORï¿½AMENTO</h1>
+      <p style="color:#666;margin:4px 0">Excellentia Controll ï¿½ Sistema de Gestï¿½o</p></div>
       <div style="text-align:right"><div style="font-size:12px;color:#888">Data: ${new Date().toLocaleDateString('pt-BR')}</div></div>
     </div>
     <table style="width:100%;border-collapse:collapse;margin-bottom:24px">
-      <tr><td style="padding:8px 0;font-weight:600;width:150px;color:#444">Cliente:</td><td>${d.clienteNome||'—'}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;color:#444">Tipo de Serviço:</td><td>${d.tipoServico||'—'}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;color:#444">Status:</td><td>${d.statusNome||'—'}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;color:#444">Data do Serviço:</td><td>${formatDate(d.dataServico)}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;width:150px;color:#444">Cliente:</td><td>${d.clienteNome||'ï¿½'}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;color:#444">Tipo de Serviï¿½o:</td><td>${d.tipoServico||'ï¿½'}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;color:#444">Status:</td><td>${d.statusNome||'ï¿½'}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;color:#444">Data do Serviï¿½o:</td><td>${formatDate(d.dataServico)}</td></tr>
       <tr><td style="padding:8px 0;font-weight:600;color:#444">Data de Entrega:</td><td>${formatDate(d.dataEntrega)}</td></tr>
     </table>
     <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin-bottom:24px">
-      <div style="font-weight:600;color:#444;margin-bottom:8px">Descrição do Serviço:</div>
-      <p style="color:#333;line-height:1.6">${d.descricao||'—'}</p>
+      <div style="font-weight:600;color:#444;margin-bottom:8px">Descriï¿½ï¿½o do Serviï¿½o:</div>
+      <p style="color:#333;line-height:1.6">${d.descricao||'ï¿½'}</p>
     </div>
     <div style="background:#1A1A2E;color:white;border-radius:8px;padding:20px">
       <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-        <span>Valor do Serviço:</span><span>${formatCurrency(d.valorServico)}</span>
+        <span>Valor do Serviï¿½o:</span><span>${formatCurrency(d.valorServico)}</span>
       </div>
       ${d.percentualDesconto?`<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:#C9A84C">
         <span>Desconto (${d.percentualDesconto}%):</span><span>- ${formatCurrency(d.valorServico*(d.percentualDesconto/100))}</span>
@@ -281,7 +323,7 @@ function renderPreview(d){
       </div>
     </div>
     <div style="margin-top:40px;text-align:center;font-size:11px;color:#888;border-top:1px solid #ddd;padding-top:16px">
-      Excellentia Controll © 2026 · Este documento foi gerado eletronicamente e é válido sem assinatura.
+      Excellentia Controll ï¿½ 2026 ï¿½ Este documento foi gerado eletronicamente e ï¿½ vï¿½lido sem assinatura.
     </div>`;
 }
 
@@ -333,7 +375,7 @@ document.getElementById('btn-salvar').addEventListener('click',async()=>{
   try{
     if(editId){await updateDoc(doc(db,'orcamentos',editId),payload);allItems=allItems.map(d=>d.id===editId?{...d,...payload}:d);}
     else{const ref=await addDoc(collection(db,'orcamentos'),{...payload,criadoEm:serverTimestamp()});allItems.push({id:ref.id,...payload});}
-    renderTable(allItems);closeModalFn();showToast(editId?'Orçamento atualizado!':'Orçamento salvo!','success');
+    renderTable(allItems);closeModalFn();showToast(editId?'Orï¿½amento atualizado!':'Orï¿½amento salvo!','success');
   }catch(err){document.getElementById('form-alert').textContent=err.message;document.getElementById('form-alert').style.display='flex';}
 });
 </script>

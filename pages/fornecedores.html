@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ï»¿ï»¿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fornecedores — Excellentia Controll</title>
+  <title>Fornecedores ï¿½ Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" href="../assets/logo.png">
 </head>
@@ -21,7 +21,7 @@
       <div class="card" style="padding:0">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Nome</th><th>Tipo</th><th>CPF/CNPJ</th><th>E-mail</th><th>Contato</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Nome</th><th>Tipo</th><th>CPF/CNPJ</th><th>E-mail</th><th>Contato</th><th>Aï¿½ï¿½es</th></tr></thead>
             <tbody id="list-tbody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
           </table>
         </div>
@@ -37,9 +37,9 @@
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-grid">
         <div class="form-group col-span-2"><label class="form-label">Nome Completo</label><input type="text" class="form-control" id="f-nome" placeholder="Nome completo"></div>
-        <div class="form-group"><label class="form-label">Tipo</label><select class="form-select" id="f-tipo"><option value="">Selecionar</option><option value="PF">Pessoa Física</option><option value="PJ">Pessoa Jurídica</option></select></div>
+        <div class="form-group"><label class="form-label">Tipo</label><select class="form-select" id="f-tipo"><option value="">Selecionar</option><option value="PF">Pessoa Fï¿½sica</option><option value="PJ">Pessoa Jurï¿½dica</option></select></div>
         <div class="form-group"><label class="form-label">CPF / CNPJ</label><input type="text" class="form-control" id="f-cpf" placeholder="000.000.000-00"></div>
-        <div class="form-group col-span-2"><label class="form-label">Endereço Completo</label><input type="text" class="form-control" id="f-endereco"></div>
+        <div class="form-group col-span-2"><label class="form-label">Endereï¿½o Completo</label><input type="text" class="form-control" id="f-endereco"></div>
         <div class="form-group col-span-2"><label class="form-label">E-mail</label><input type="email" class="form-control" id="f-email"></div>
         <div class="form-group"><label class="form-label">Contato 1</label><input type="text" class="form-control" id="f-contato1"></div>
         <div class="form-group"><label class="form-label">Contato 2</label><input type="text" class="form-control" id="f-contato2"></div>
@@ -66,7 +66,7 @@ onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = '../login.html'; return; }
   const snap = await getDoc(doc(db, 'usuarios', user.uid));
   const u = snap.exists() ? snap.data() : {};
-  renderSidebar(u.nome || user.email, u.perfil || 'usuario');
+  renderSidebar(u.nome || user.email, u.perfil || 'Usu&#225;rio');
   await loadData();
   applyCpfCnpjMask(document.getElementById('f-cpf'));
   applyPhoneMask(document.getElementById('f-contato1'));
@@ -74,30 +74,70 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 function renderSidebar(nome, perfil) {
-  const isAdmin = perfil === 'admin'; const ini = nome.charAt(0).toUpperCase();
-  document.getElementById('sidebar-placeholder').innerHTML = `<aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand"><img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
-    <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
+  const isAdmin = perfil === 'admin';
+  const ini = nome.charAt(0).toUpperCase();
+
+  // Aplica tema salvo
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light-mode');
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const icon  = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
+    if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
+  };
+
+  const isLight = document.body.classList.contains('light-mode');
+
+  document.getElementById('sidebar-placeholder').innerHTML = `
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+      <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div>
+    </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a><a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
-      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a><a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
-      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a><a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a><a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a><a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>` : ''}
-      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a><a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
-      <div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
-      <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usuário'}</div></div></div>
-      <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button>
-    </div></aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
-  document.getElementById('btn-logout').addEventListener('click', async () => { await signOut(auth); window.location.href = '../login.html'; });
-  setActiveNav(); setupMobileSidebar();
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
+          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+        </button>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">${ini}</div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '../login.html';
+  });
+  setActiveNav();
+  setupMobileSidebar();
 }
 
 async function loadData() {
@@ -110,8 +150,8 @@ function renderTable(list) {
   const tbody = document.getElementById('list-tbody');
   if (!list.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhum fornecedor</h3><p>Clique em "+ Novo Fornecedor".</p></div></td></tr>`; return; }
   tbody.innerHTML = list.map(d => `<tr>
-    <td>${d.nomeCompleto||'—'}</td><td>${d.tipo==='PF'?'Pessoa Física':d.tipo==='PJ'?'Pessoa Jurídica':'—'}</td>
-    <td>${d.cpfCnpj||'—'}</td><td>${d.email||'—'}</td><td>${d.contato1||'—'}</td>
+    <td>${d.nomeCompleto||'ï¿½'}</td><td>${d.tipo==='PF'?'Pessoa Fï¿½sica':d.tipo==='PJ'?'Pessoa Jurï¿½dica':'ï¿½'}</td>
+    <td>${d.cpfCnpj||'ï¿½'}</td><td>${d.email||'ï¿½'}</td><td>${d.contato1||'ï¿½'}</td>
     <td><div class="td-actions">
       <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">??</button>
       <button class="btn btn-danger btn-icon-sm"    onclick="deleteItem('${d.id}')">??</button>
@@ -143,7 +183,7 @@ window.editItem = async (id) => {
 };
 window.deleteItem = async (id) => {
   if (!await confirmDialog('Deseja excluir este fornecedor?')) return;
-  await deleteDoc(doc(db,'fornecedores',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Fornecedor excluído!','success');
+  await deleteDoc(doc(db,'fornecedores',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Fornecedor excluï¿½do!','success');
 };
 
 document.getElementById('btn-salvar').addEventListener('click', async () => {

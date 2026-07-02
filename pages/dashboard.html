@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ï»¿ï»¿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — Excellentia Controll</title>
+  <title>Dashboard ï¿½ Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" href="../assets/logo.png">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -22,23 +22,23 @@
         <div class="topbar-subtitle" id="dash-datetime"></div>
       </div>
       <div class="topbar-actions">
-        <a href="nova-demanda.html" class="btn btn-primary">+ Nova Demanda</a>
+        <a href="nova-demanda.html" class="btn btn-primary">+ Novo Projeto</a>
       </div>
     </div>
     <div class="page-content">
       <!-- STAT CARDS -->
       <div class="stat-grid" id="stat-grid">
-        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">SERVIÇOS</div><div class="stat-value" id="s-total">—</div><div class="stat-sub">Total registrado</div></div>
-        <div class="stat-card"><span class="stat-icon">?</span><div class="stat-label">EM ANDAMENTO</div><div class="stat-value" id="s-andamento">—</div><div class="stat-sub">Ativos</div></div>
-        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">ARQUIVADOS</div><div class="stat-value" id="s-arquivados">—</div><div class="stat-sub">Encerrados</div></div>
-        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">COM ORÇAMENTO</div><div class="stat-value" id="s-orcamento">—</div><div class="stat-sub">Orçamentados</div></div>
+        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">SERVIï¿½OS</div><div class="stat-value" id="s-total">ï¿½</div><div class="stat-sub">Total registrado</div></div>
+        <div class="stat-card"><span class="stat-icon">?</span><div class="stat-label">EM ANDAMENTO</div><div class="stat-value" id="s-andamento">ï¿½</div><div class="stat-sub">Ativos</div></div>
+        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">ARQUIVADOS</div><div class="stat-value" id="s-arquivados">ï¿½</div><div class="stat-sub">Encerrados</div></div>
+        <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">COM ORï¿½AMENTO</div><div class="stat-value" id="s-orcamento">ï¿½</div><div class="stat-sub">Orï¿½amentados</div></div>
       </div>
 
       <!-- CHARTS -->
       <div class="chart-grid">
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><span class="icon">??</span>Serviços por Status</div>
+            <div class="card-title"><span class="icon">??</span>Serviï¿½os por Status</div>
             <div class="chart-type-btns" id="chart1-btns">
               <button class="chart-type-btn active" data-type="bar">Barra</button>
               <button class="chart-type-btn" data-type="pie">Pizza</button>
@@ -49,7 +49,7 @@
         </div>
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><span class="icon">??</span>Serviços por Tipo</div>
+            <div class="card-title"><span class="icon">??</span>Serviï¿½os por Tipo</div>
             <div class="chart-type-btns" id="chart2-btns">
               <button class="chart-type-btn active" data-type="pie">Pizza</button>
               <button class="chart-type-btn" data-type="bar">Barra</button>
@@ -64,13 +64,13 @@
       <div style="display:grid;grid-template-columns:1fr 380px;gap:20px">
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><span class="icon">??</span>Calendário de Serviços</div>
+            <div class="card-title"><span class="icon">??</span>Calendï¿½rio de Serviï¿½os</div>
           </div>
           <div id="dashboard-calendar"></div>
         </div>
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><span class="icon">?</span>Prazos Próximos</div>
+            <div class="card-title"><span class="icon">?</span>Prazos Prï¿½ximos</div>
           </div>
           <div id="prazos-list" style="display:flex;flex-direction:column;gap:10px"></div>
         </div>
@@ -101,7 +101,7 @@ onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   const snap = await getDoc(doc(db, 'usuarios', user.uid));
   const uData = snap.exists() ? snap.data() : {};
-  renderSidebar(uData.nome || user.email, uData.perfil || 'usuario');
+  renderSidebar(uData.nome || user.email, uData.perfil || 'Usu&#225;rio');
   await loadDashboard();
   startClock();
 });
@@ -109,6 +109,21 @@ onAuthStateChanged(auth, async (user) => {
 function renderSidebar(nome, perfil) {
   const isAdmin = perfil === 'admin';
   const ini = nome.charAt(0).toUpperCase();
+
+  // Aplica tema salvo
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light-mode');
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const icon  = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
+    if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
+  };
+
+  const isLight = document.body.classList.contains('light-mode');
+
   document.getElementById('sidebar-placeholder').innerHTML = `
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
@@ -117,29 +132,35 @@ function renderSidebar(nome, perfil) {
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a>
-      <a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
-      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a>
-      <a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
-      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a>
-      <a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a>
-      <a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a>
-      <a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>` : ''}
-      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a>
-      <a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
+          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+        </button>
+      </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usuário'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
-      <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
   </aside>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
@@ -227,7 +248,7 @@ async function loadDashboard() {
   });
   cal.render();
 
-  // Prazos próximos (próximos 30 dias)
+  // Prazos prï¿½ximos (prï¿½ximos 30 dias)
   const now = nowManaus();
   const soon = demandas
     .filter(d => !d.arquivada && d.dataEntrega)
@@ -238,14 +259,14 @@ async function loadDashboard() {
 
   const prazosEl = document.getElementById('prazos-list');
   if (soon.length === 0) {
-    prazosEl.innerHTML = '<div class="empty-state"><div class="empty-icon">?</div><h3>Nenhum prazo próximo</h3></div>';
+    prazosEl.innerHTML = '<div class="empty-state"><div class="empty-icon">?</div><h3>Nenhum prazo prï¿½ximo</h3></div>';
   } else {
     prazosEl.innerHTML = soon.map(d => {
       const daysLeft = Math.ceil((d.entregaDate - now) / (1000*60*60*24));
       const color = daysLeft <= 3 ? 'var(--danger)' : daysLeft <= 7 ? 'var(--warning)' : 'var(--success)';
       return `<div style="background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:8px;padding:12px 14px">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-size:13px;font-weight:600">#${d.numero} — ${d.clienteNome || 'Sem cliente'}</div>
+          <div style="font-size:13px;font-weight:600">#${d.numero} ï¿½ ${d.clienteNome || 'Sem cliente'}</div>
           <span style="font-size:12px;font-weight:700;color:${color}">${daysLeft}d</span>
         </div>
         <div style="font-size:11px;color:var(--text-3);margin-top:4px">Entrega: ${formatDate(d.dataEntrega)}</div>

@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+ï»¿ï»¿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Relatórios — Excellentia Controll</title>
+  <title>Relatï¿½rios ï¿½ Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -15,7 +15,7 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
-      <div><div class="topbar-title">Relatórios</div><div class="topbar-subtitle">Análise e exportação</div></div>
+      <div><div class="topbar-title">Relatï¿½rios</div><div class="topbar-subtitle">Anï¿½lise e exportaï¿½ï¿½o</div></div>
       <div class="topbar-actions">
         <button class="btn btn-secondary" onclick="window.print()">??? Imprimir</button>
         <button class="btn btn-danger" id="btn-pdf">?? PDF</button>
@@ -27,10 +27,10 @@
       <div class="card no-print" style="margin-bottom:20px">
         <div class="card-header"><div class="card-title"><span class="icon">??</span>Filtros</div></div>
         <div class="form-grid form-grid-3">
-          <div class="form-group"><label class="form-label">Data Início</label><input type="date" class="form-control" id="f-inicio"></div>
+          <div class="form-group"><label class="form-label">Data Inï¿½cio</label><input type="date" class="form-control" id="f-inicio"></div>
           <div class="form-group"><label class="form-label">Data Fim</label><input type="date" class="form-control" id="f-fim"></div>
           <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="f-status"><option value="">Todos</option></select></div>
-          <div class="form-group"><label class="form-label">Tipo de Serviço</label><select class="form-select" id="f-tipo"><option value="">Todos</option></select></div>
+          <div class="form-group"><label class="form-label">Tipo de Serviï¿½o</label><select class="form-select" id="f-tipo"><option value="">Todos</option></select></div>
           <div class="form-group"><label class="form-label">Cliente</label><input type="text" class="form-control" id="f-cliente" placeholder="Nome do cliente"></div>
           <div class="form-group" style="display:flex;align-items:flex-end">
             <button class="btn btn-primary" id="btn-filtrar" style="width:100%;justify-content:center">?? Filtrar</button>
@@ -75,7 +75,7 @@
         </div>
         <div class="table-wrapper">
           <table class="data-table" id="rel-table">
-            <thead><tr><th>Nº</th><th>Data</th><th>Cliente</th><th>Tipo</th><th>Status</th><th>Entrega</th></tr></thead>
+            <thead><tr><th>Nï¿½</th><th>Data</th><th>Cliente</th><th>Tipo</th><th>Status</th><th>Entrega</th></tr></thead>
             <tbody id="rel-tbody"></tbody>
           </table>
         </div>
@@ -98,7 +98,7 @@ const COLORS=['#C9A84C','#3498DB','#2ECC71','#E74C3C','#9B59B6','#F39C12','#1ABC
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.nome||user.email,u.perfil||'usuario');
+  renderSidebar(u.nome||user.email,u.perfil||'Usu&#225;rio');
   const [dSnap,sSnap,tSnap]=await Promise.all([getDocs(query(collection(db,'demandas'),orderBy('criadoEm','desc'))),getDocs(collection(db,'statusServico')),getDocs(collection(db,'tiposServico'))]);
   allDemandas=dSnap.docs.map(d=>({id:d.id,...d.data()}));
   allStatus=sSnap.docs.map(d=>({id:d.id,...d.data()}));
@@ -107,29 +107,71 @@ onAuthStateChanged(auth, async(user)=>{
   renderReport(allDemandas);
 });
 
-function renderSidebar(nome,perfil){
-  const isAdmin=perfil==='admin'; const ini=nome.charAt(0).toUpperCase();
-  document.getElementById('sidebar-placeholder').innerHTML=`<aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand"><img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
-    <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
-    <nav class="sidebar-nav"><div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a><a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
-      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a><a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
-      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a><a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+function renderSidebar(nome, perfil) {
+  const isAdmin = perfil === 'admin';
+  const ini = nome.charAt(0).toUpperCase();
+
+  // Aplica tema salvo
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light-mode');
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const icon  = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
+    if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
+  };
+
+  const isLight = document.body.classList.contains('light-mode');
+
+  document.getElementById('sidebar-placeholder').innerHTML = `
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+      <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a><a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a><a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin?`<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>`:''}
-      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a><a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
-    <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
-    <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin?'Administrador':'Usuário'}</div></div></div>
-    <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button></div>
-  </aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
-  document.getElementById('btn-logout').addEventListener('click',async()=>{await signOut(auth);window.location.href='../login.html';});
-  setActiveNav(); setupMobileSidebar();
+    <div class="sidebar-footer">
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
+          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+        </button>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">${ini}</div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '../login.html';
+  });
+  setActiveNav();
+  setupMobileSidebar();
 }
 
 document.getElementById('btn-filtrar').addEventListener('click',()=>{
@@ -153,7 +195,7 @@ function renderReport(list){
     <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">TOTAL</div><div class="stat-value">${list.length}</div></div>
     <div class="stat-card"><span class="stat-icon">?</span><div class="stat-label">ATIVOS</div><div class="stat-value">${list.filter(d=>!d.arquivada).length}</div></div>
     <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">ARQUIVADOS</div><div class="stat-value">${list.filter(d=>d.arquivada).length}</div></div>
-    <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">COM ORÇAMENTO</div><div class="stat-value">${list.filter(d=>d.temOrcamento).length}</div></div>`;
+    <div class="stat-card"><span class="stat-icon">??</span><div class="stat-label">COM ORï¿½AMENTO</div><div class="stat-value">${list.filter(d=>d.temOrcamento).length}</div></div>`;
 
   // Charts
   const byStatus={},byTipo={};
@@ -167,11 +209,11 @@ function renderReport(list){
   // Table
   document.getElementById('rel-count').textContent=list.length+' registro(s)';
   const tbody=document.getElementById('rel-tbody');
-  if(!list.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-3)">Nenhum dado no período</td></tr>';return;}
+  if(!list.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-3)">Nenhum dado no perï¿½odo</td></tr>';return;}
   tbody.innerHTML=list.map(d=>{
     const st=allStatus.find(s=>s.id===d.statusId);
-    return `<tr><td>#${d.numero||'—'}</td><td>${formatDate(d.criadoEm)}</td><td>${d.clienteNome||'—'}</td>
-    <td>${d.tipoServicoNome||'—'}</td><td>${buildStatusBadge(d.statusNome||'—',st?.cor)}</td>
+    return `<tr><td>#${d.numero||'ï¿½'}</td><td>${formatDate(d.criadoEm)}</td><td>${d.clienteNome||'ï¿½'}</td>
+    <td>${d.tipoServicoNome||'ï¿½'}</td><td>${buildStatusBadge(d.statusNome||'ï¿½',st?.cor)}</td>
     <td>${formatDate(d.dataEntrega)}</td></tr>`;
   }).join('');
 }
@@ -194,7 +236,7 @@ function buildChart(canvasId,type,labels,data,btnsId,onTypeChange){
 // Excel
 document.getElementById('btn-excel').addEventListener('click',()=>{
   const list=allDemandas;
-  exportToExcel(list.map(d=>({'Nº':d.numero,'Data':formatDate(d.criadoEm),'Cliente':d.clienteNome||'','Tipo':d.tipoServicoNome||'','Status':d.statusNome||'','Arquivada':d.arquivada?'Sim':'Não','Entrega':formatDate(d.dataEntrega)})),'relatorio-excellentia');
+  exportToExcel(list.map(d=>({'Nï¿½':d.numero,'Data':formatDate(d.criadoEm),'Cliente':d.clienteNome||'','Tipo':d.tipoServicoNome||'','Status':d.statusNome||'','Arquivada':d.arquivada?'Sim':'Nï¿½o','Entrega':formatDate(d.dataEntrega)})),'relatorio-excellentia');
   showToast('Excel exportado!','success');
 });
 

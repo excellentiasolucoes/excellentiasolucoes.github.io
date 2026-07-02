@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+ï»¿ï»¿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Materiais — Excellentia Controll</title>
+  <title>Materiais ï¿½ Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
 </head>
 <body>
@@ -19,7 +19,7 @@
       <div class="card" style="padding:0">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Tipo</th><th>Utilização</th><th>Fornecedor</th><th>Preço</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Tipo</th><th>Utilizaï¿½ï¿½o</th><th>Fornecedor</th><th>Preï¿½o</th><th>Aï¿½ï¿½es</th></tr></thead>
             <tbody id="list-tbody"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
           </table>
         </div>
@@ -35,16 +35,16 @@
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-grid">
         <div class="form-group"><label class="form-label">Tipo de Material</label>
-          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-tipo" placeholder="Ex: Cerâmica, Madeira..."><div class="autocomplete-list" id="tipo-auto"></div></div>
+          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-tipo" placeholder="Ex: Cerï¿½mica, Madeira..."><div class="autocomplete-list" id="tipo-auto"></div></div>
         </div>
-        <div class="form-group"><label class="form-label">Utilização</label>
+        <div class="form-group"><label class="form-label">Utilizaï¿½ï¿½o</label>
           <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-util" placeholder="Ex: Piso, Parede..."><div class="autocomplete-list" id="util-auto"></div></div>
         </div>
         <div class="form-group"><label class="form-label">Fornecedor</label>
           <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-forn-nome" placeholder="Nome do fornecedor"><div class="autocomplete-list" id="forn-auto"></div></div>
           <input type="hidden" id="f-forn-id">
         </div>
-        <div class="form-group"><label class="form-label">Preço (R$)</label>
+        <div class="form-group"><label class="form-label">Preï¿½o (R$)</label>
           <input type="number" class="form-control" id="f-preco" placeholder="0,00" step="0.01" min="0">
         </div>
       </div>
@@ -69,7 +69,7 @@ let allItems=[], fornecedores=[], editId=null;
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href='../login.html'; return; }
   const snap = await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.nome||user.email, u.perfil||'usuario');
+  renderSidebar(u.nome||user.email, u.perfil||'Usu&#225;rio');
   const [mSnap, fSnap] = await Promise.all([getDocs(query(collection(db,'materiais'),orderBy('tipoMaterial'))), getDocs(collection(db,'fornecedores'))]);
   allItems = mSnap.docs.map(d=>({id:d.id,...d.data()}));
   fornecedores = fSnap.docs.map(d=>({id:d.id,...d.data()}));
@@ -84,37 +84,79 @@ onAuthStateChanged(auth, async (user) => {
   setupAutocomplete(document.getElementById('f-util'), document.getElementById('util-auto'), utilSugest,  (i)=>{document.getElementById('f-util').value=i.label;});
 });
 
-function renderSidebar(nome,perfil) {
-  const isAdmin=perfil==='admin'; const ini=nome.charAt(0).toUpperCase();
-  document.getElementById('sidebar-placeholder').innerHTML=`<aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand"><img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
-    <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
-    <nav class="sidebar-nav"><div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a><a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
-      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a><a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
-      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a><a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+function renderSidebar(nome, perfil) {
+  const isAdmin = perfil === 'admin';
+  const ini = nome.charAt(0).toUpperCase();
+
+  // Aplica tema salvo
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light-mode');
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const icon  = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
+    if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
+  };
+
+  const isLight = document.body.classList.contains('light-mode');
+
+  document.getElementById('sidebar-placeholder').innerHTML = `
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+      <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a><a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a><a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin?`<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>`:''}
-      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a><a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
-    <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
-    <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin?'Administrador':'Usuário'}</div></div></div>
-    <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button></div>
-  </aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
-  document.getElementById('btn-logout').addEventListener('click', async()=>{await signOut(auth);window.location.href='../login.html';});
-  setActiveNav(); setupMobileSidebar();
+    <div class="sidebar-footer">
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
+          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+        </button>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">${ini}</div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '../login.html';
+  });
+  setActiveNav();
+  setupMobileSidebar();
 }
 
 function renderTable(list) {
   const tbody=document.getElementById('list-tbody');
   if(!list.length){tbody.innerHTML=`<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhum material</h3></div></td></tr>`;return;}
   tbody.innerHTML=list.map(d=>`<tr>
-    <td>${d.tipoMaterial||'—'}</td><td>${d.utilizacaoMaterial||'—'}</td>
-    <td>${d.fornecedorNome||'—'}</td><td>${formatCurrency(d.preco)}</td>
+    <td>${d.tipoMaterial||'ï¿½'}</td><td>${d.utilizacaoMaterial||'ï¿½'}</td>
+    <td>${d.fornecedorNome||'ï¿½'}</td><td>${formatCurrency(d.preco)}</td>
     <td><div class="td-actions">
       <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">??</button>
       <button class="btn btn-danger btn-icon-sm" onclick="deleteItem('${d.id}')">??</button>
@@ -144,7 +186,7 @@ window.editItem=async(id)=>{
 };
 window.deleteItem=async(id)=>{
   if(!await confirmDialog('Excluir este material?'))return;
-  await deleteDoc(doc(db,'materiais',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Material excluído!','success');
+  await deleteDoc(doc(db,'materiais',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Material excluï¿½do!','success');
 };
 document.getElementById('btn-salvar').addEventListener('click',async()=>{
   const fId=document.getElementById('f-forn-id').value;

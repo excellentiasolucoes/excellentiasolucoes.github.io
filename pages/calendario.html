@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+ï»¿ï»¿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Calendário — Excellentia Controll</title>
+  <title>Calendï¿½rio ï¿½ Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 </head>
@@ -12,8 +12,8 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
-      <div><div class="topbar-title">Calendário</div><div class="topbar-subtitle">Serviços por data</div></div>
-      <div class="topbar-actions"><a href="nova-demanda.html" class="btn btn-primary">+ Nova Demanda</a></div>
+      <div><div class="topbar-title">Calendï¿½rio</div><div class="topbar-subtitle">Serviï¿½os por data</div></div>
+      <div class="topbar-actions"><a href="nova-demanda.html" class="btn btn-primary">+ Novo Projeto</a></div>
     </div>
     <div class="page-content">
       <div class="card">
@@ -45,33 +45,75 @@ const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFi
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.nome||user.email,u.perfil||'usuario');
+  renderSidebar(u.nome||user.email,u.perfil||'Usu&#225;rio');
   await loadCalendar();
 });
 
-function renderSidebar(nome,perfil){
-  const isAdmin=perfil==='admin'; const ini=nome.charAt(0).toUpperCase();
-  document.getElementById('sidebar-placeholder').innerHTML=`<aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand"><img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
-    <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
-    <nav class="sidebar-nav"><div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a><a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
-      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a><a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
-      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a><a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+function renderSidebar(nome, perfil) {
+  const isAdmin = perfil === 'admin';
+  const ini = nome.charAt(0).toUpperCase();
+
+  // Aplica tema salvo
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light-mode');
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const icon  = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
+    if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
+  };
+
+  const isLight = document.body.classList.contains('light-mode');
+
+  document.getElementById('sidebar-placeholder').innerHTML = `
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+      <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a><a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a><a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin?`<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>`:''}
-      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a><a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
-    <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
-    <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin?'Administrador':'Usuário'}</div></div></div>
-    <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button></div>
-  </aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
-  document.getElementById('btn-logout').addEventListener('click',async()=>{await signOut(auth);window.location.href='../login.html';});
-  setActiveNav(); setupMobileSidebar();
+    <div class="sidebar-footer">
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
+          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+        </button>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">${ini}</div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '../login.html';
+  });
+  setActiveNav();
+  setupMobileSidebar();
 }
 
 async function loadCalendar(){
@@ -108,20 +150,20 @@ async function loadCalendar(){
     events, height:'auto',
     eventClick:(info)=>{
       const {demanda,status,isEntrega}=info.event.extendedProps;
-      document.getElementById('ev-title').textContent=(isEntrega?'? Entrega: ':'')+`#${demanda.numero} — ${demanda.clienteNome||'Sem cliente'}`;
+      document.getElementById('ev-title').textContent=(isEntrega?'? Entrega: ':'')+`#${demanda.numero} ï¿½ ${demanda.clienteNome||'Sem cliente'}`;
       document.getElementById('ev-edit').href=`nova-demanda.html?id=${demanda.id}`;
       document.getElementById('ev-body').innerHTML=`
         <div style="display:flex;flex-direction:column;gap:10px">
           <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Status</span><br>
-            ${buildStatusBadge(demanda.statusNome||'—',status?.cor)}</div>
-          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Tipo de Serviço</span><br>
-            <span style="font-size:14px">${demanda.tipoServicoNome||'—'}</span></div>
-          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Data do Serviço</span><br>
+            ${buildStatusBadge(demanda.statusNome||'ï¿½',status?.cor)}</div>
+          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Tipo de Serviï¿½o</span><br>
+            <span style="font-size:14px">${demanda.tipoServicoNome||'ï¿½'}</span></div>
+          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Data do Serviï¿½o</span><br>
             <span style="font-size:14px">${formatDate(demanda.dataServico)}</span></div>
           <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Data de Entrega</span><br>
             <span style="font-size:14px">${formatDate(demanda.dataEntrega)}</span></div>
-          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Descrição</span><br>
-            <span style="font-size:13px;color:var(--text-2)">${demanda.descricao||'—'}</span></div>
+          <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Descriï¿½ï¿½o</span><br>
+            <span style="font-size:13px;color:var(--text-2)">${demanda.descricao||'ï¿½'}</span></div>
         </div>`;
       document.getElementById('modal-detail').classList.add('open'); document.body.style.overflow='hidden';
     }

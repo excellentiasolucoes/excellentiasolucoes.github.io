@@ -53,7 +53,7 @@ export function getSidebarHTML(userNome = '', userPerfil = 'usuario') {
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Principal</div>
       <a href="dashboard.html"><span class="nav-icon">📊</span>Dashboard</a>
-      <a href="demandas.html"><span class="nav-icon">📋</span>Demandas</a>
+      <a href="demandas.html"><span class="nav-icon">📋</span>Projetos</a>
       <a href="kanban.html"><span class="nav-icon">🗂️</span>Kanban</a>
       <a href="calendario.html"><span class="nav-icon">📅</span>Calendário</a>
       <a href="orcamento.html"><span class="nav-icon">💰</span>Orçamentos</a>
@@ -72,6 +72,11 @@ export function getSidebarHTML(userNome = '', userPerfil = 'usuario') {
       <a href="creditos.html"><span class="nav-icon">⭐</span>Créditos</a>
     </nav>
     <div class="sidebar-footer">
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme && window.toggleTheme()">
+          <span id="theme-icon">☀️</span> <span id="theme-label">Modo Claro</span>
+        </button>
+      </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
         <div class="sidebar-user-info">
@@ -85,4 +90,28 @@ export function getSidebarHTML(userNome = '', userPerfil = 'usuario') {
     </div>
   </aside>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+}
+
+// ── THEME TOGGLE ──────────────────────────────────────────────
+export function toggleTheme() {
+  const isLight = document.body.classList.toggle('light-mode');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  _updateThemeBtn(isLight);
+}
+
+export function applyTheme() {
+  const saved = localStorage.getItem('theme');
+  const isLight = saved === 'light';
+  document.body.classList.toggle('light-mode', isLight);
+  // Defer icon update until sidebar is in DOM
+  requestAnimationFrame(() => _updateThemeBtn(isLight));
+  // Expose to window for onclick handlers
+  window.toggleTheme = toggleTheme;
+}
+
+function _updateThemeBtn(isLight) {
+  const icon  = document.getElementById('theme-icon');
+  const label = document.getElementById('theme-label');
+  if (icon)  icon.textContent  = isLight ? '🌙' : '☀️';
+  if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
 }

@@ -181,18 +181,23 @@ document.getElementById('btn-google').addEventListener('click', async () => {
     const cred     = await signInWithPopup(auth, provider);
     const user     = cred.user;
 
-    // Cria doc em /usuarios se nao existir
-    const ref  = doc(db, 'usuarios', user.uid);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) {
-      await setDoc(ref, {
-        nome        : user.displayName || user.email.split('@')[0],
-        email       : user.email,
-        perfil      : 'usuario',
-        ativo       : true,
-        primeiroLogin: false,
-        criadoEm    : serverTimestamp()
-      });
+    // Cria doc em /usuarios se nao existir (nao bloqueia o login se falhar)
+    try {
+      const ref  = doc(db, 'usuarios', user.uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        await setDoc(ref, {
+          nome        : user.displayName || user.email.split('@')[0],
+          email       : user.email,
+          perfil      : 'usuario',
+          ativo       : true,
+          primeiroLogin: false,
+          criadoEm    : serverTimestamp()
+        });
+      }
+    } catch (fsErr) {
+      // Regras do Firestore ainda nao liberadas — redireciona mesmo assim
+      console.warn('Firestore usuarios:', fsErr.message);
     }
     hideLoading();
     window.location.href = 'pages/dashboard.html';
@@ -236,6 +241,29 @@ document.getElementById('btn-save-pwd').addEventListener('click', async () => {
     alertEl.style.display = 'flex';
   }
 });
+</script>
+
+<button class="theme-toggle theme-toggle-login" id="login-theme-toggle" onclick="toggleLoginTheme()">
+  <span id="login-theme-icon">â˜€ï¸</span> <span id="login-theme-label">Modo Claro</span>
+</button>
+
+<script>
+(function() {
+  var saved = localStorage.getItem('theme');
+  var isLight = saved === 'light';
+  if (isLight) document.body.classList.add('light-mode');
+  function update() {
+    var light = document.body.classList.contains('light-mode');
+    document.getElementById('login-theme-icon').textContent  = light ? 'ðŸŒ™' : 'â˜€ï¸';
+    document.getElementById('login-theme-label').textContent = light ? 'Modo Escuro' : 'Modo Claro';
+  }
+  update();
+  window.toggleLoginTheme = function() {
+    var isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    update();
+  };
+})();
 </script>
 </body>
 </html>

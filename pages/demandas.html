@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ï»¿ï»¿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Demandas — Excellentia Controll</title>
+  <title>Demandas ï¿½ Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" href="../assets/logo.png">
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -14,10 +14,10 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">?</button>
-      <div><div class="topbar-title">Demandas</div><div class="topbar-subtitle">Gestão de serviços</div></div>
+      <div><div class="topbar-title">Projetos</div><div class="topbar-subtitle">Gestï¿½o de serviï¿½os</div></div>
       <div class="topbar-actions">
         <button class="btn btn-secondary btn-sm" id="btn-export-excel">?? Excel</button>
-        <a href="nova-demanda.html" class="btn btn-primary">+ Nova Demanda</a>
+        <a href="nova-demanda.html" class="btn btn-primary">+ Novo Projeto</a>
       </div>
     </div>
     <div class="page-content">
@@ -26,7 +26,7 @@
       <div class="search-bar">
         <div class="search-input-wrapper">
           <span class="search-icon">??</span>
-          <input type="text" class="form-control" id="search-input" placeholder="Buscar por cliente, tipo, nº...">
+          <input type="text" class="form-control" id="search-input" placeholder="Buscar por cliente, tipo, nï¿½...">
         </div>
         <select class="form-select" id="filter-status" style="width:180px">
           <option value="">Todos os status</option>
@@ -41,25 +41,25 @@
           <input type="checkbox" id="chk-arquivados"> Mostrar Arquivados
         </label>
         <label class="filter-tag" id="tag-orcamento">
-          <input type="checkbox" id="chk-orcamento"> Com Orçamento
+          <input type="checkbox" id="chk-orcamento"> Com Orï¿½amento
         </label>
         <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
           <select class="form-select" id="sort-by" style="width:160px;font-size:12px">
             <option value="criadoEm-desc">Mais recente</option>
             <option value="criadoEm-asc">Mais antigo</option>
-            <option value="numero-asc">Nº crescente</option>
-            <option value="numero-desc">Nº decrescente</option>
+            <option value="numero-asc">Nï¿½ crescente</option>
+            <option value="numero-desc">Nï¿½ decrescente</option>
           </select>
           <div class="col-visibility-menu">
             <button class="btn btn-secondary btn-sm" id="btn-col-toggle">? Colunas</button>
             <div class="col-visibility-dropdown" id="col-dropdown">
-              <label class="col-visibility-item"><input type="checkbox" data-col="numero" checked> Nº</label>
+              <label class="col-visibility-item"><input type="checkbox" data-col="numero" checked> Nï¿½</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="data" checked> Data</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="status" checked> Status</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="tipo" checked> Tipo</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="cliente" checked> Cliente</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="entrega"> Data Entrega</label>
-              <label class="col-visibility-item"><input type="checkbox" data-col="orcamento"> Orçamento</label>
+              <label class="col-visibility-item"><input type="checkbox" data-col="orcamento"> Orï¿½amento</label>
             </div>
           </div>
         </div>
@@ -71,14 +71,14 @@
           <table class="data-table" id="demandas-table">
             <thead>
               <tr>
-                <th data-col="numero">Nº</th>
+                <th data-col="numero">Nï¿½</th>
                 <th data-col="data">Data</th>
                 <th data-col="status">Status</th>
                 <th data-col="tipo">Tipo</th>
                 <th data-col="cliente">Cliente</th>
                 <th data-col="entrega" style="display:none">Entrega</th>
-                <th data-col="orcamento" style="display:none">Orçamento</th>
-                <th>Ações</th>
+                <th data-col="orcamento" style="display:none">Orï¿½amento</th>
+                <th>Aï¿½ï¿½es</th>
               </tr>
             </thead>
             <tbody id="demandas-tbody">
@@ -103,11 +103,11 @@
 
       <!-- Tabs -->
       <div class="tabs">
-        <button class="tab-btn active" data-tab="acoes">?? Registro de Ações</button>
-        <button class="tab-btn" data-tab="hist">?? Histórico</button>
+        <button class="tab-btn active" data-tab="acoes">?? Registro de Aï¿½ï¿½es</button>
+        <button class="tab-btn" data-tab="hist">?? Histï¿½rico</button>
       </div>
 
-      <!-- Tab: Ações -->
+      <!-- Tab: Aï¿½ï¿½es -->
       <div class="tab-content active" id="tab-acoes">
         <div class="acoes-form">
           <div class="form-grid">
@@ -120,16 +120,16 @@
               <select class="form-select" id="acao-status"><option value="">Selecione o status</option></select>
             </div>
             <div class="form-group col-span-2">
-              <label class="form-label">Descrição da Ação</label>
-              <input type="text" class="form-control" id="acao-desc" placeholder="Descreva a ação realizada">
+              <label class="form-label">Descriï¿½ï¿½o da Aï¿½ï¿½o</label>
+              <input type="text" class="form-control" id="acao-desc" placeholder="Descreva a aï¿½ï¿½o realizada">
             </div>
             <div class="form-group">
-              <label class="form-label">Funcionário Responsável</label>
-              <input type="text" class="form-control" id="acao-func" placeholder="Nome do funcionário">
+              <label class="form-label">Funcionï¿½rio Responsï¿½vel</label>
+              <input type="text" class="form-control" id="acao-func" placeholder="Nome do funcionï¿½rio">
             </div>
             <div class="form-group" style="display:flex;align-items:flex-end">
               <button class="btn btn-primary" id="btn-save-acao" style="width:100%;justify-content:center">
-                + Registrar Ação
+                + Registrar Aï¿½ï¿½o
               </button>
             </div>
           </div>
@@ -137,11 +137,11 @@
         <div id="acoes-list" class="acoes-list"></div>
       </div>
 
-      <!-- Tab: Histórico -->
+      <!-- Tab: Histï¿½rico -->
       <div class="tab-content" id="tab-hist">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Data</th><th>Ação</th><th>Funcionário</th><th>Status</th></tr></thead>
+            <thead><tr><th>Data</th><th>Aï¿½ï¿½o</th><th>Funcionï¿½rio</th><th>Status</th></tr></thead>
             <tbody id="hist-tbody"></tbody>
           </table>
         </div>
@@ -170,7 +170,7 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-let allDemandas = [], allStatus = [], currentDemandaId = null, currentUser = null, userPerfil = 'usuario';
+let allDemandas = [], allStatus = [], currentDemandaId = null, currentUser = null, userPerfil = 'Usu&#225;rio';
 
 // Auth
 onAuthStateChanged(auth, async (user) => {
@@ -178,14 +178,29 @@ onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   const snap = await getDoc(doc(db, 'usuarios', user.uid));
   const u = snap.exists() ? snap.data() : {};
-  userPerfil = u.perfil || 'usuario';
-  renderSidebar(u.nome || user.email, u.perfil || 'usuario');
+  userPerfil = u.perfil || 'Usu&#225;rio';
+  renderSidebar(u.nome || user.email, u.perfil || 'Usu&#225;rio');
   await loadData();
 });
 
 function renderSidebar(nome, perfil) {
   const isAdmin = perfil === 'admin';
   const ini = nome.charAt(0).toUpperCase();
+
+  // Aplica tema salvo
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light-mode');
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const icon  = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
+    if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
+  };
+
+  const isLight = document.body.classList.contains('light-mode');
+
   document.getElementById('sidebar-placeholder').innerHTML = `
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
@@ -194,34 +209,45 @@ function renderSidebar(nome, perfil) {
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a>
-      <a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
-      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a>
-      <a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
-      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a>
-      <a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a>
-      <a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a>
-      <a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>` : ''}
-      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a>
-      <a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
+          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+        </button>
+      </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usuário'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
-      <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
   </aside>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
-  document.getElementById('btn-logout').addEventListener('click', async () => { await signOut(auth); window.location.href = '../login.html'; });
-  setActiveNav(); setupMobileSidebar();
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '../login.html';
+  });
+  setActiveNav();
+  setupMobileSidebar();
 }
 
 async function loadData() {
@@ -303,21 +329,21 @@ function renderTable() {
 
   const tbody = document.getElementById('demandas-tbody');
   if (list.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhuma demanda encontrada</h3><p>Tente ajustar os filtros ou cadastre uma nova demanda.</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">??</div><h3>Nenhuma demanda encontrada</h3><p>Tente ajustar os filtros ou cadastre uma novo projeto.</p></div></td></tr>`;
     return;
   }
 
   tbody.innerHTML = list.map(d => {
     const status = allStatus.find(s => s.id === d.statusId);
-    const badge  = buildStatusBadge(d.statusNome || '—', status?.cor || '#888');
+    const badge  = buildStatusBadge(d.statusNome || 'ï¿½', status?.cor || '#888');
     return `<tr>
-      <td data-col="numero" style="${colConfig.numero === false ? 'display:none' : ''}">#${d.numero || '—'}</td>
+      <td data-col="numero" style="${colConfig.numero === false ? 'display:none' : ''}">#${d.numero || 'ï¿½'}</td>
       <td data-col="data"   style="${colConfig.data   === false ? 'display:none' : ''}">${formatDate(d.dataRegistro || d.criadoEm)}</td>
       <td data-col="status" style="${colConfig.status === false ? 'display:none' : ''}">${badge}${d.arquivada ? ' <span class="badge" style="background:#e74c3c22;color:#e74c3c;border:1px solid #e74c3c44">Arquivada</span>' : ''}</td>
-      <td data-col="tipo"   style="${colConfig.tipo   === false ? 'display:none' : ''}">${d.tipoServicoNome || '—'}</td>
-      <td data-col="cliente" style="${colConfig.cliente === false ? 'display:none' : ''}">${d.clienteNome || '—'}</td>
+      <td data-col="tipo"   style="${colConfig.tipo   === false ? 'display:none' : ''}">${d.tipoServicoNome || 'ï¿½'}</td>
+      <td data-col="cliente" style="${colConfig.cliente === false ? 'display:none' : ''}">${d.clienteNome || 'ï¿½'}</td>
       <td data-col="entrega" style="${colConfig.entrega ? '' : 'display:none'}">${formatDate(d.dataEntrega)}</td>
-      <td data-col="orcamento" style="${colConfig.orcamento ? '' : 'display:none'}">${d.temOrcamento ? '?' : '—'}</td>
+      <td data-col="orcamento" style="${colConfig.orcamento ? '' : 'display:none'}">${d.temOrcamento ? '?' : 'ï¿½'}</td>
       <td>
         <div class="td-actions">
           <button class="btn btn-info btn-icon-sm" title="Ver detalhes" onclick="openDetail('${d.id}')">??</button>
@@ -355,14 +381,14 @@ document.querySelectorAll('#col-dropdown input').forEach(cb => cb.addEventListen
 // Excel export
 document.getElementById('btn-export-excel').addEventListener('click', () => {
   const data = getFiltered().map(d => ({
-    'Nº': d.numero,
+    'Nï¿½': d.numero,
     'Data': formatDate(d.dataRegistro || d.criadoEm),
     'Cliente': d.clienteNome || '',
     'Tipo': d.tipoServicoNome || '',
     'Status': d.statusNome || '',
-    'Arquivada': d.arquivada ? 'Sim' : 'Não',
-    'Com Orçamento': d.temOrcamento ? 'Sim' : 'Não',
-    'Descrição': d.descricao || '',
+    'Arquivada': d.arquivada ? 'Sim' : 'Nï¿½o',
+    'Com Orï¿½amento': d.temOrcamento ? 'Sim' : 'Nï¿½o',
+    'Descriï¿½ï¿½o': d.descricao || '',
     'Data Entrega': formatDate(d.dataEntrega)
   }));
   exportToExcel(data, 'demandas-excellentia');
@@ -393,20 +419,20 @@ window.openDetail = async (id) => {
   const d = allDemandas.find(x => x.id === id);
   if (!d) return;
   const status = allStatus.find(s => s.id === d.statusId);
-  const badge  = buildStatusBadge(d.statusNome || '—', status?.cor || '#888');
+  const badge  = buildStatusBadge(d.statusNome || 'ï¿½', status?.cor || '#888');
 
-  document.getElementById('modal-titulo').textContent = `Demanda #${d.numero || '—'}`;
+  document.getElementById('modal-titulo').textContent = `Projeto #${d.numero || 'ï¿½'}`;
   document.getElementById('btn-edit-demanda').href = `nova-demanda.html?id=${id}`;
   document.getElementById('demanda-info-grid').innerHTML = `
-    <div class="demanda-info-item"><label>Nº</label><span>#${d.numero || '—'}</span></div>
+    <div class="demanda-info-item"><label>Nï¿½</label><span>#${d.numero || 'ï¿½'}</span></div>
     <div class="demanda-info-item"><label>Data</label><span>${formatDate(d.dataRegistro || d.criadoEm)}</span></div>
     <div class="demanda-info-item"><label>Status</label><span>${badge}</span></div>
-    <div class="demanda-info-item"><label>Cliente</label><span>${d.clienteNome || '—'}</span></div>
-    <div class="demanda-info-item"><label>Tipo</label><span>${d.tipoServicoNome || '—'}</span></div>
-    <div class="demanda-info-item"><label>CPF/CNPJ</label><span>${d.cpfCnpj || '—'}</span></div>
+    <div class="demanda-info-item"><label>Cliente</label><span>${d.clienteNome || 'ï¿½'}</span></div>
+    <div class="demanda-info-item"><label>Tipo</label><span>${d.tipoServicoNome || 'ï¿½'}</span></div>
+    <div class="demanda-info-item"><label>CPF/CNPJ</label><span>${d.cpfCnpj || 'ï¿½'}</span></div>
     <div class="demanda-info-item"><label>Entrega</label><span>${formatDate(d.dataEntrega)}</span></div>
-    <div class="demanda-info-item"><label>Orçamento</label><span>${d.temOrcamento ? '? Sim' : '—'}</span></div>
-    <div class="demanda-info-item col-span-2" style="grid-column:span 3"><label>Descrição</label><span>${d.descricao || '—'}</span></div>`;
+    <div class="demanda-info-item"><label>Orï¿½amento</label><span>${d.temOrcamento ? '? Sim' : 'ï¿½'}</span></div>
+    <div class="demanda-info-item col-span-2" style="grid-column:span 3"><label>Descriï¿½ï¿½o</label><span>${d.descricao || 'ï¿½'}</span></div>`;
 
   // Set default datetime for acao
   const now = new Date().toLocaleString('sv-SE', { timeZone: 'America/Manaus' }).replace(' ', 'T').slice(0,16);
@@ -427,15 +453,15 @@ async function loadAcoes(demandaId) {
 function renderAcoes(acoes) {
   const container = document.getElementById('acoes-list');
   if (acoes.length === 0) {
-    container.innerHTML = '<div class="empty-state" style="padding:20px"><div class="empty-icon">??</div><p>Nenhuma ação registrada</p></div>';
+    container.innerHTML = '<div class="empty-state" style="padding:20px"><div class="empty-icon">??</div><p>Nenhuma aï¿½ï¿½o registrada</p></div>';
     return;
   }
   container.innerHTML = acoes.map(a => `
     <div class="acao-item" id="acao-${a.id}">
       <span class="acao-date">${formatDateTime(a.data)}</span>
-      <span class="acao-desc" id="desc-${a.id}">${a.descricao || '—'}</span>
-      <span class="acao-func">${a.funcionario || '—'}</span>
-      <span>${buildStatusBadge(a.statusNome || '—', allStatus.find(s => s.id === a.statusId)?.cor)}</span>
+      <span class="acao-desc" id="desc-${a.id}">${a.descricao || 'ï¿½'}</span>
+      <span class="acao-func">${a.funcionario || 'ï¿½'}</span>
+      <span>${buildStatusBadge(a.statusNome || 'ï¿½', allStatus.find(s => s.id === a.statusId)?.cor)}</span>
       <div style="display:flex;gap:5px">
         <button class="btn btn-secondary btn-icon-sm" onclick="editAcao('${a.id}','${a.descricao?.replace(/'/g,"\\'")}','${a.funcionario?.replace(/'/g,"\\'")}')">??</button>
         <button class="btn btn-danger btn-icon-sm"    onclick="deleteAcao('${a.id}')">??</button>
@@ -447,9 +473,9 @@ function renderHistorico(acoes) {
   document.getElementById('hist-tbody').innerHTML = acoes.map(a => `
     <tr>
       <td>${formatDateTime(a.data)}</td>
-      <td>${a.descricao || '—'}</td>
-      <td>${a.funcionario || '—'}</td>
-      <td>${buildStatusBadge(a.statusNome || '—', allStatus.find(s => s.id === a.statusId)?.cor)}</td>
+      <td>${a.descricao || 'ï¿½'}</td>
+      <td>${a.funcionario || 'ï¿½'}</td>
+      <td>${buildStatusBadge(a.statusNome || 'ï¿½', allStatus.find(s => s.id === a.statusId)?.cor)}</td>
     </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-3)">Nenhum registro</td></tr>';
 }
 
@@ -462,7 +488,7 @@ document.getElementById('btn-save-acao').addEventListener('click', async () => {
   const stId   = stEl.value;
   const stNome = stEl.options[stEl.selectedIndex]?.text || '';
 
-  if (!desc) { showToast('Informe a descrição da ação', 'warning'); return; }
+  if (!desc) { showToast('Informe a descriï¿½ï¿½o da aï¿½ï¿½o', 'warning'); return; }
 
   await addDoc(collection(db, 'demandas', currentDemandaId, 'acoes'), {
     data: data ? Timestamp.fromDate(new Date(data)) : serverTimestamp(),
@@ -475,7 +501,7 @@ document.getElementById('btn-save-acao').addEventListener('click', async () => {
 
   document.getElementById('acao-desc').value = '';
   document.getElementById('acao-func').value = '';
-  showToast('Ação registrada!', 'success');
+  showToast('Aï¿½ï¿½o registrada!', 'success');
   await loadAcoes(currentDemandaId);
   // refresh table
   allDemandas = allDemandas.map(d => d.id === currentDemandaId ? { ...d, statusId: stId, statusNome: stNome } : d);
@@ -483,21 +509,21 @@ document.getElementById('btn-save-acao').addEventListener('click', async () => {
 });
 
 window.editAcao = async (acaoId, desc, func) => {
-  const novaDesc = prompt('Editar descrição:', desc);
+  const novaDesc = prompt('Editar descriï¿½ï¿½o:', desc);
   if (novaDesc === null) return;
-  const novaFunc = prompt('Editar funcionário:', func);
+  const novaFunc = prompt('Editar funcionï¿½rio:', func);
   if (novaFunc === null) return;
   await updateDoc(doc(db, 'demandas', currentDemandaId, 'acoes', acaoId), {
     descricao: novaDesc, funcionario: novaFunc, editadoEm: serverTimestamp()
   });
-  showToast('Ação atualizada!', 'success');
+  showToast('Aï¿½ï¿½o atualizada!', 'success');
   await loadAcoes(currentDemandaId);
 };
 
 window.deleteAcao = async (acaoId) => {
-  if (!await confirmDialog('Deseja excluir este registro de ação?')) return;
+  if (!await confirmDialog('Deseja excluir este registro de aï¿½ï¿½o?')) return;
   await deleteDoc(doc(db, 'demandas', currentDemandaId, 'acoes', acaoId));
-  showToast('Ação excluída!', 'success');
+  showToast('Aï¿½ï¿½o excluï¿½da!', 'success');
   await loadAcoes(currentDemandaId);
 };
 
@@ -511,10 +537,10 @@ window.toggleArquivar = async (id, arquivar) => {
 };
 
 window.excluirDemanda = async (id) => {
-  if (!await confirmDialog('Deseja EXCLUIR permanentemente esta demanda? Esta ação não pode ser desfeita.')) return;
+  if (!await confirmDialog('Deseja EXCLUIR permanentemente esta demanda? Esta aï¿½ï¿½o nï¿½o pode ser desfeita.')) return;
   await deleteDoc(doc(db, 'demandas', id));
   allDemandas = allDemandas.filter(d => d.id !== id);
-  showToast('Demanda excluída!', 'success');
+  showToast('Demanda excluï¿½da!', 'success');
   renderTable();
 };
 </script>

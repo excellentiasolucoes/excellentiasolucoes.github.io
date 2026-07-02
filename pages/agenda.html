@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+ï»¿ï»¿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Agenda de Contatos — Excellentia Controll</title>
+  <title>Agenda de Contatos ï¿½ Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
 </head>
 <body>
@@ -29,7 +29,7 @@
       <div class="form-grid">
         <div class="form-group col-span-2"><label class="form-label">Nome</label><input type="text" class="form-control" id="f-nome" placeholder="Nome completo"></div>
         <div class="form-group"><label class="form-label">Cargo</label><input type="text" class="form-control" id="f-cargo" placeholder="Ex: Diretor"></div>
-        <div class="form-group"><label class="form-label">Função</label><input type="text" class="form-control" id="f-funcao" placeholder="Ex: Aprovação de projetos"></div>
+        <div class="form-group"><label class="form-label">Funï¿½ï¿½o</label><input type="text" class="form-control" id="f-funcao" placeholder="Ex: Aprovaï¿½ï¿½o de projetos"></div>
         <div class="form-group col-span-2"><label class="form-label">Empresa</label><input type="text" class="form-control" id="f-empresa" placeholder="Nome da empresa"></div>
         <div class="form-group"><label class="form-label">Contato 1</label><input type="text" class="form-control" id="f-c1" placeholder="(92) 99999-9999"></div>
         <div class="form-group"><label class="form-label">Contato 2</label><input type="text" class="form-control" id="f-c2" placeholder="(92) 99999-9999"></div>
@@ -55,34 +55,76 @@ let allItems=[], editId=null;
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.nome||user.email,u.perfil||'usuario');
+  renderSidebar(u.nome||user.email,u.perfil||'Usu&#225;rio');
   await loadData();
   applyPhoneMask(document.getElementById('f-c1')); applyPhoneMask(document.getElementById('f-c2'));
 });
 
-function renderSidebar(nome,perfil){
-  const isAdmin=perfil==='admin'; const ini=nome.charAt(0).toUpperCase();
-  document.getElementById('sidebar-placeholder').innerHTML=`<aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand"><img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
-    <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
-    <nav class="sidebar-nav"><div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">??</span>Dashboard</a><a href="demandas.html"><span class="nav-icon">??</span>Demandas</a>
-      <a href="kanban.html"><span class="nav-icon">???</span>Kanban</a><a href="calendario.html"><span class="nav-icon">??</span>Calendário</a>
-      <a href="orcamento.html"><span class="nav-icon">??</span>Orçamentos</a><a href="relatorios.html"><span class="nav-icon">??</span>Relatórios</a>
+function renderSidebar(nome, perfil) {
+  const isAdmin = perfil === 'admin';
+  const ini = nome.charAt(0).toUpperCase();
+
+  // Aplica tema salvo
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light-mode');
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const icon  = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
+    if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
+  };
+
+  const isLight = document.body.classList.contains('light-mode');
+
+  document.getElementById('sidebar-placeholder').innerHTML = `
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+      <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="clientes.html"><span class="nav-icon">??</span>Clientes</a><a href="fornecedores.html"><span class="nav-icon">??</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">??</span>Materiais</a><a href="servicos.html"><span class="nav-icon">??</span>Serviços</a>
+      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin?`<a href="usuarios.html"><span class="nav-icon">??</span>Usuários</a>`:''}
-      <a href="agenda.html"><span class="nav-icon">??</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">??</span>Sugestões</a><a href="creditos.html"><span class="nav-icon">?</span>Créditos</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
-    <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
-    <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin?'Administrador':'Usuário'}</div></div></div>
-    <button class="btn-logout" id="btn-logout"><span>??</span> Sair</button></div>
-  </aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
-  document.getElementById('btn-logout').addEventListener('click',async()=>{await signOut(auth);window.location.href='../login.html';});
-  setActiveNav(); setupMobileSidebar();
+    <div class="sidebar-footer">
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
+          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+        </button>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">${ini}</div>
+        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '../login.html';
+  });
+  setActiveNav();
+  setupMobileSidebar();
 }
 
 async function loadData(){
@@ -101,7 +143,7 @@ function renderGrid(list){
         <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dark),var(--gold));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:var(--navy);flex-shrink:0">${ini}</div>
         <div>
           <div style="font-size:14px;font-weight:700">${d.nome||'Sem nome'}</div>
-          <div style="font-size:12px;color:var(--gold)">${d.cargo||''} ${d.cargo&&d.funcao?'·':''} ${d.funcao||''}</div>
+          <div style="font-size:12px;color:var(--gold)">${d.cargo||''} ${d.cargo&&d.funcao?'ï¿½':''} ${d.funcao||''}</div>
         </div>
       </div>
       ${d.empresa?`<div style="font-size:12px;color:var(--text-3);margin-bottom:8px">?? ${d.empresa}</div>`:''}
@@ -138,7 +180,7 @@ window.editItem=async(id)=>{
 };
 window.deleteItem=async(id)=>{
   if(!await confirmDialog('Excluir este contato?'))return;
-  await deleteDoc(doc(db,'agendaContatos',id)); allItems=allItems.filter(d=>d.id!==id); renderGrid(allItems); showToast('Contato excluído!','success');
+  await deleteDoc(doc(db,'agendaContatos',id)); allItems=allItems.filter(d=>d.id!==id); renderGrid(allItems); showToast('Contato excluï¿½do!','success');
 };
 document.getElementById('btn-salvar').addEventListener('click',async()=>{
   const payload={nome:document.getElementById('f-nome').value.trim(),cargo:document.getElementById('f-cargo').value.trim(),

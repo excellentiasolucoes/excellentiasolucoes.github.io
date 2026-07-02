@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    EXCELLENTIA CONTROLL — Design System
    Paleta: Dourado (#C9A84C) + Azul-noite (#1A1A2E) + Off-white
    Fonte: Inter (Google Fonts)
@@ -34,6 +34,77 @@
   --sidebar-w:   260px;
   --transition:  0.25s cubic-bezier(0.4,0,0.2,1);
 }
+/* ── TEMA CLARO ── */
+body.light-mode {
+  --gold:           #A8882E;
+  --gold-light:     #C9A84C;
+  --gold-dark:      #7A6020;
+  --navy:           #F4F5F7;
+  --navy-mid:       #FFFFFF;
+  --navy-light:     #E8EAF0;
+  --surface:        #FFFFFF;
+  --surface-2:      #F0F2F7;
+  --surface-3:      #E2E6EF;
+  --text-1:         #111827;
+  --text-2:         #374151;
+  --text-3:         #6B7280;
+  --border:         rgba(168,136,46,0.22);
+  --border-subtle:  rgba(0,0,0,0.08);
+  --shadow:         0 4px 24px rgba(0,0,0,0.10);
+  --shadow-gold:    0 0 20px rgba(201,168,76,0.15);
+}
+body.light-mode { background: var(--navy); color: var(--text-1); }
+body.light-mode .sidebar  { background: #FFFFFF; border-right-color: rgba(0,0,0,0.1); }
+body.light-mode .topbar   { background: #FFFFFF; border-bottom: 1px solid rgba(0,0,0,0.08); }
+body.light-mode .card     { background: #FFFFFF; }
+body.light-mode .sidebar-nav a { color: #374151; }
+body.light-mode .sidebar-nav a:hover,
+body.light-mode .sidebar-nav a.active { background: rgba(168,136,46,0.12); color: #111827; }
+body.light-mode .loading-overlay { background: rgba(244,245,247,0.88); }
+body.light-mode .login-brand { background: linear-gradient(145deg, #1A3366, #112244); }
+body.light-mode .form-control { background: #F0F2F7; border-color: rgba(0,0,0,0.12); color: #111827; }
+body.light-mode .form-control:focus { border-color: var(--gold); background: #fff; }
+body.light-mode .table-row:hover { background: #E8EAF0; }
+body.light-mode .modal { background: #FFFFFF; }
+body.light-mode .modal-overlay { background: rgba(0,0,0,0.4); }
+body.light-mode .btn-secondary { background: #E2E6EF; color: #374151; border-color: rgba(0,0,0,0.1); }
+body.light-mode .btn-secondary:hover { background: #D5D9E5; }
+body.light-mode ::-webkit-scrollbar-track { background: #E8EAF0; }
+body.light-mode ::-webkit-scrollbar-thumb { background: #B0B3C8; }
+
+/* ── THEME TOGGLE BUTTON ── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  white-space: nowrap;
+  font-family: inherit;
+}
+.theme-toggle:hover { background: var(--surface-3); color: var(--text-1); border-color: var(--border); }
+.theme-toggle-login {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 9999;
+}
+.sidebar-theme-row {
+  padding: 8px 14px 0;
+}
+.sidebar-theme-row .theme-toggle {
+  width: 100%;
+  justify-content: center;
+  border-radius: 8px;
+}
+
 
 /* ── RESET ──────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
