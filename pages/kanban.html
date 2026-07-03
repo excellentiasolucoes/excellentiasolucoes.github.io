@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -23,7 +23,7 @@
 <div id="toast-container"></div>
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
-import { showToast, formatDate, buildStatusBadge, setActiveNav, setupMobileSidebar } from '../js/utils.js';
+import { showToast, formatDate, buildStatusBadge, setActivenav, setupMobileSidebar } from '../js/utils.js';
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
 const { getFirestore, collection, getDocs, doc, getDoc, updateDoc, query, orderBy, serverTimestamp }
@@ -33,13 +33,13 @@ const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFi
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.nome||user.email,u.perfil||'Usu&#225;rio');
+  renderSidebar(u.Nome||user.email,u.perfil||'Usu&#225;rio');
   await loadKanban();
 });
 
-function renderSidebar(nome, perfil) {
+function renderSidebar(Nome, perfil) {
   const isAdmin = perfil === 'admin';
-  const ini = nome.charAt(0).toUpperCase();
+  const ini = Nome.charAt(0).toUpperCase();
 
   // Aplica tema salvo
   const savedTheme = localStorage.getItem('theme');
@@ -77,7 +77,7 @@ function renderSidebar(nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -89,7 +89,7 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
@@ -100,7 +100,7 @@ function renderSidebar(nome, perfil) {
     await signOut(auth);
     window.location.href = '../login.html';
   });
-  setActiveNav();
+  setActivenav();
   setupMobileSidebar();
 }
 
@@ -116,7 +116,7 @@ async function loadKanban(){
   board.innerHTML='';
 
   // "Sem Status" column
-  const cols=[{id:'__none__',nome:'Sem Status',cor:'#6E7191'},...statusList];
+  const cols=[{id:'__none__',Nome:'Sem Status',cor:'#6E7191'},...statusList];
 
   cols.forEach(status=>{
     const colDemandas=status.id==='__none__'
@@ -126,17 +126,17 @@ async function loadKanban(){
     const col=document.createElement('div');
     col.className='kanban-col';
     col.dataset.statusId=status.id;
-    col.dataset.statusNome=status.nome;
+    col.dataset.statusNome=status.Nome;
     col.dataset.statusCor=status.cor||'#888';
 
     col.innerHTML=`
       <div class="kanban-col-header" style="border-left:4px solid ${status.cor||'#888'}">
-        <span style="color:${status.cor||'#888'}">${status.nome}</span>
+        <span style="color:${status.cor||'#888'}">${status.Nome}</span>
         <span style="background:${status.cor||'#888'}22;color:${status.cor||'#888'};border-radius:99px;padding:2px 8px;font-size:11px">${colDemandas.length}</span>
       </div>
-      <div class="kanban-col-body" data-status-id="${status.id}" data-status-nome="${status.nome}" data-status-cor="${status.cor||'#888'}">
+      <div class="kanban-col-body" data-status-id="${status.id}" data-status-Nome="${status.Nome}" data-status-cor="${status.cor||'#888'}">
         ${colDemandas.map(d=>`
-          <div class="kanban-card" data-id="${d.id}" data-status-id="${d.statusId||''}" data-status-nome="${d.statusNome||''}">
+          <div class="kanban-card" data-id="${d.id}" data-status-id="${d.statusId||''}" data-status-Nome="${d.statusNome||''}">
             <div class="kanban-card-num">#${d.numero||'�'} � ${formatDate(d.dataRegistro||d.criadoEm)}</div>
             <div class="kanban-card-title">${d.clienteNome||'Sem cliente'}</div>
             <div class="kanban-card-meta">${d.tipoServicoNome||'Sem tipo'}</div>

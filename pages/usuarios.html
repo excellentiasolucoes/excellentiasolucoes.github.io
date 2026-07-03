@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -38,7 +38,7 @@
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
       <div><div class="topbar-title">Usu&#225;rios</div><div class="topbar-subtitle">Gest&#227;o de acesso e permiss&#245;es</div></div>
       <div class="topbar-actions">
-        <button class="btn btn-primary" id="btn-novo">&#43; Novo Usu&#225;rio</button>
+        <button class="btn btn-primary" id="btn-novo">&#43; novo Usu&#225;rio</button>
       </div>
     </div>
     <div class="page-content">
@@ -116,13 +116,13 @@
     
         <div class="card" style="margin-top:16px">
           <div style="font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:12px">
-            &#128203; Numera&#231;&#227;o de Projetos
+            &#128203; numera&#231;&#227;o de Projetos
           </div>
           <div style="font-size:13px;color:var(--text-3);line-height:1.8;margin-bottom:16px">
             O pr&#243;ximo projeto ser&#225; numerado como: 
             <strong style="color:var(--gold)" id="next-num-preview">...</strong><br>
-            O formato utilizado &#233; <strong>NNN/ANO</strong> (ex: 001/2026).<br>
-            Reiniciar zera o contador — use com cuidado.
+            O formato utilizado &#233; <strong>nnn/AnO</strong> (ex: 001/2026).<br>
+            Reiniciar zera o contador  use com cuidado.
           </div>
           <div style="display:flex;align-items:center;gap:12px">
             <div>
@@ -132,7 +132,7 @@
             </div>
             <div style="padding-top:22px">
               <button class="btn btn-danger" id="btn-reset-seq">
-                &#128260; Reiniciar Numera&#231;&#227;o
+                &#128260; Reiniciar numera&#231;&#227;o
               </button>
             </div>
           </div>
@@ -154,7 +154,7 @@
       <input type="hidden" id="edit-id">
       <div class="form-group">
         <label class="form-label">Nome completo</label>
-        <input type="text" class="form-control" id="edit-nome" placeholder="Nome do usu&#225;rio">
+        <input type="text" class="form-control" id="edit-Nome" placeholder="Nome do usu&#225;rio">
       </div>
       <div class="form-group">
         <label class="form-label">E-mail</label>
@@ -187,7 +187,7 @@
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
 import { showToast, showLoading, hideLoading, openModal, closeModal, confirmDialog,
-         setupMobileSidebar, setActiveNav } from '../js/utils.js';
+         setupMobileSidebar, setActivenav } from '../js/utils.js';
 
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
@@ -210,16 +210,16 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
   currentUser = user;
-  renderSidebar(uData.nome || user.email, 'admin');
+  renderSidebar(uData.Nome || user.email, 'admin');
   await loadUsuarios();
   await loadEmailsAutorizados();
-  await loadNextNumPreview();
+  await loadnextnumPreview();
 });
 
 // ── Sidebar ───────────────────────────────────────────────────
-function renderSidebar(nome, perfil) {
+function renderSidebar(Nome, perfil) {
   const isAdmin = perfil === 'admin';
-  const ini = nome.charAt(0).toUpperCase();
+  const ini = Nome.charAt(0).toUpperCase();
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'light') document.body.classList.add('light-mode');
   window.toggleTheme = function() {
@@ -253,7 +253,7 @@ function renderSidebar(nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -265,7 +265,7 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">Administrador</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">Administrador</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
@@ -274,7 +274,7 @@ function renderSidebar(nome, perfil) {
   document.getElementById('btn-logout').addEventListener('click', async () => {
     await signOut(auth); window.location.href = '../login.html';
   });
-  setActiveNav(); setupMobileSidebar();
+  setActivenav(); setupMobileSidebar();
 }
 
 // ── Tabs ──────────────────────────────────────────────────────
@@ -299,12 +299,12 @@ async function loadUsuarios() {
 function renderTable() {
   const tbody = document.getElementById('list-tbody');
   if (!allUsers.length) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)">Nenhum usu&#225;rio cadastrado.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)">nenhum usu&#225;rio cadastrado.</td></tr>`;
     return;
   }
   tbody.innerHTML = allUsers.map(u => `
     <tr class="table-row">
-      <td><strong>${u.nome || '&#8212;'}</strong></td>
+      <td><strong>${u.Nome || '&#8212;'}</strong></td>
       <td style="color:var(--text-2)">${u.email || '&#8212;'}</td>
       <td>${u.perfil === 'admin'
         ? '<span class="badge" style="background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3)">Admin</span>'
@@ -328,7 +328,7 @@ window.editUser = function(id) {
   const u = allUsers.find(x => x.id === id);
   if (!u) return;
   document.getElementById('edit-id').value    = id;
-  document.getElementById('edit-nome').value  = u.nome  || '';
+  document.getElementById('edit-Nome').value  = u.Nome  || '';
   document.getElementById('edit-email').value = u.email || '';
   document.getElementById('edit-perfil').value = u.perfil || 'usuario';
   document.getElementById('edit-ativo').value  = String(u.ativo !== false);
@@ -352,35 +352,35 @@ window.deleteUser = async function(id) {
 
 document.getElementById('btn-novo').addEventListener('click', () => {
   document.getElementById('edit-id').value = '';
-  document.getElementById('edit-nome').value = '';
+  document.getElementById('edit-Nome').value = '';
   document.getElementById('edit-email').value = '';
   document.getElementById('edit-perfil').value = 'usuario';
   document.getElementById('edit-ativo').value = 'true';
-  document.getElementById('modal-titulo').textContent = 'Novo Usu&#225;rio';
+  document.getElementById('modal-titulo').textContent = 'novo Usu&#225;rio';
   document.getElementById('modal-alert').style.display = 'none';
   openModal('modal-usuario');
 });
 
 document.getElementById('btn-salvar').addEventListener('click', async () => {
   const id     = document.getElementById('edit-id').value.trim();
-  const nome   = document.getElementById('edit-nome').value.trim();
+  const Nome   = document.getElementById('edit-Nome').value.trim();
   const email  = document.getElementById('edit-email').value.trim();
   const perfil = document.getElementById('edit-perfil').value;
   const ativo  = document.getElementById('edit-ativo').value === 'true';
   const alertEl = document.getElementById('modal-alert');
-  if (!nome || !email) {
-    alertEl.textContent = 'Preencha nome e e-mail.';
+  if (!Nome || !email) {
+    alertEl.textContent = 'Preencha Nome e e-mail.';
     alertEl.style.display = 'flex'; return;
   }
   showLoading('Salvando...');
   try {
     if (id) {
-      await updateDoc(doc(db, 'usuarios', id), { nome, email, perfil, ativo, atualizadoEm: serverTimestamp() });
+      await updateDoc(doc(db, 'usuarios', id), { Nome, email, perfil, ativo, atualizadoEm: serverTimestamp() });
     } else {
-      // Cria doc com ID baseado no email (sem UID real — admin gerenciado)
+      // Cria doc com ID baseado no email (sem UID real  admin gerenciado)
       const newId = email.replace(/[^a-zA-Z0-9]/g, '_') + '_' + Date.now();
       await setDoc(doc(db, 'usuarios', newId), {
-        nome, email, perfil, ativo, primeiroLogin: true,
+        Nome, email, perfil, ativo, primeiroLogin: true,
         provedor: 'email', criadoEm: serverTimestamp()
       });
     }
@@ -407,7 +407,7 @@ async function loadEmailsAutorizados() {
 function renderEmailTags() {
   const wrap = document.getElementById('email-tags');
   if (!emailsAutorizados.length) {
-    wrap.innerHTML = '<span style="color:var(--text-3);font-size:13px;padding:6px">&#128275; Nenhum e-mail na lista — qualquer autenticado pode acessar.</span>';
+    wrap.innerHTML = '<span style="color:var(--text-3);font-size:13px;padding:6px">&#128275; nenhum e-mail na lista  qualquer autenticado pode acessar.</span>';
     return;
   }
   wrap.innerHTML = emailsAutorizados.map(em => `
@@ -462,13 +462,13 @@ document.getElementById('btn-salvar-emails').addEventListener('click', async () 
 window.closeModal = closeModal;
 window.openModal  = openModal;
 
-// ── Numeracao de Projetos ─────────────────────────────────────
-async function loadNextNumPreview() {
+// ── numeracao de Projetos ─────────────────────────────────────
+async function loadnextnumPreview() {
   try {
     const snap = await getDoc(doc(db, 'configuracoes', 'sistema'));
     const year = new Date().getFullYear();
     if (snap.exists()) {
-      const n = snap.data().proximoNumero || 1;
+      const n = snap.data().proximonumero || 1;
       document.getElementById('next-num-preview').textContent =
         String(n).padStart(3,'0') + '/' + year;
     } else {
@@ -488,7 +488,7 @@ document.getElementById('btn-reset-seq').addEventListener('click', async () => {
   showLoading('Reiniciando...');
   try {
     await setDoc(doc(db, 'configuracoes', 'sistema'), {
-      proximoNumero: startFrom,
+      proximonumero: startFrom,
       anoAtual: year,
       fusoHorario: 'America/Manaus',
       resetadoEm: new Date().toISOString(),
@@ -499,8 +499,8 @@ document.getElementById('btn-reset-seq').addEventListener('click', async () => {
     status.style.color = 'var(--success)';
     status.textContent = '&#10003; Reiniciado! O pr&#243;ximo projeto ser&#225; ' + preview;
     status.style.display = 'block';
-    showToast('Numera&#231;&#227;o reiniciada para ' + preview, 'success');
-    await loadNextNumPreview();
+    showToast('numera&#231;&#227;o reiniciada para ' + preview, 'success');
+    await loadnextnumPreview();
     setTimeout(() => { status.style.display = 'none'; }, 4000);
   } catch(e) {
     hideLoading();

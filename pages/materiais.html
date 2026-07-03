@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -30,7 +30,7 @@
 
 <div class="modal-overlay" id="modal-form">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Material</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Material</span></span><button class="modal-close" id="close-modal">✕</button></div>
     <div class="modal-body">
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-grid">
@@ -41,7 +41,7 @@
           <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-util" placeholder="Ex: Piso, Parede..."><div class="autocomplete-list" id="util-auto"></div></div>
         </div>
         <div class="form-group"><label class="form-label">Fornecedor</label>
-          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-forn-nome" placeholder="Nome do fornecedor"><div class="autocomplete-list" id="forn-auto"></div></div>
+          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-forn-Nome" placeholder="Nome do fornecedor"><div class="autocomplete-list" id="forn-auto"></div></div>
           <input type="hidden" id="f-forn-id">
         </div>
         <div class="form-group"><label class="form-label">Pre&#231;o (R$)</label>
@@ -58,7 +58,7 @@
 <div id="toast-container"></div>
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
-import { showToast, formatCurrency, setupAutocomplete, setActiveNav, setupMobileSidebar, confirmDialog } from '../js/utils.js';
+import { showToast, formatCurrency, setupAutocomplete, setActivenav, setupMobileSidebar, confirmDialog } from '../js/utils.js';
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
 const { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy }
@@ -69,12 +69,12 @@ let allItems=[], fornecedores=[], editId=null;
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href='../login.html'; return; }
   const snap = await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.nome||user.email, u.perfil||'Usu&#225;rio');
+  renderSidebar(u.Nome||user.email, u.perfil||'Usu&#225;rio');
   const [mSnap, fSnap] = await Promise.all([getDocs(query(collection(db,'materiais'),orderBy('tipoMaterial'))), getDocs(collection(db,'fornecedores'))]);
   allItems = mSnap.docs.map(d=>({id:d.id,...d.data()}));
   fornecedores = fSnap.docs.map(d=>({id:d.id,...d.data()}));
   renderTable(allItems);
-  setupAutocomplete(document.getElementById('f-forn-nome'), document.getElementById('forn-auto'),
+  setupAutocomplete(document.getElementById('f-forn-Nome'), document.getElementById('forn-auto'),
     fornecedores.map(f=>({id:f.id,label:f.nomeCompleto})),
     (item) => { document.getElementById('f-forn-id').value=item.id; }
   );
@@ -84,9 +84,9 @@ onAuthStateChanged(auth, async (user) => {
   setupAutocomplete(document.getElementById('f-util'), document.getElementById('util-auto'), utilSugest,  (i)=>{document.getElementById('f-util').value=i.label;});
 });
 
-function renderSidebar(nome, perfil) {
+function renderSidebar(Nome, perfil) {
   const isAdmin = perfil === 'admin';
-  const ini = nome.charAt(0).toUpperCase();
+  const ini = Nome.charAt(0).toUpperCase();
 
   // Aplica tema salvo
   const savedTheme = localStorage.getItem('theme');
@@ -124,7 +124,7 @@ function renderSidebar(nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -136,7 +136,7 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
@@ -147,13 +147,13 @@ function renderSidebar(nome, perfil) {
     await signOut(auth);
     window.location.href = '../login.html';
   });
-  setActiveNav();
+  setActivenav();
   setupMobileSidebar();
 }
 
 function renderTable(list) {
   const tbody=document.getElementById('list-tbody');
-  if(!list.length){tbody.innerHTML=`<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhum material</h3></div></td></tr>`;return;}
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>nenhum material</h3></div></td></tr>`;return;}
   tbody.innerHTML=list.map(d=>`<tr>
     <td>${d.tipoMaterial||'�'}</td><td>${d.utilizacaoMaterial||'�'}</td>
     <td>${d.fornecedorNome||'�'}</td><td>${formatCurrency(d.preco)}</td>
@@ -170,8 +170,8 @@ document.getElementById('search-input').addEventListener('input',e=>{
 
 function openModal(id=null){
   editId=id; document.getElementById('form-alert').style.display='none';
-  document.getElementById('modal-titulo').textContent=id?'Editar Material':'Novo Material';
-  if(!id){['f-tipo','f-util','f-forn-nome','f-forn-id'].forEach(i=>document.getElementById(i).value=''); document.getElementById('f-preco').value='';}
+  document.getElementById('modal-titulo').textContent=id?'Editar Material':'novo Material';
+  if(!id){['f-tipo','f-util','f-forn-Nome','f-forn-id'].forEach(i=>document.getElementById(i).value=''); document.getElementById('f-preco').value='';}
   document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
 }
 function closeModalFn(){document.getElementById('modal-form').classList.remove('open');document.body.style.overflow='';editId=null;}
@@ -181,7 +181,7 @@ document.getElementById('btn-novo').addEventListener('click',()=>openModal());
 window.editItem=async(id)=>{
   const d=allItems.find(x=>x.id===id); if(!d)return; openModal(id);
   document.getElementById('f-tipo').value=d.tipoMaterial||''; document.getElementById('f-util').value=d.utilizacaoMaterial||'';
-  document.getElementById('f-forn-nome').value=d.fornecedorNome||''; document.getElementById('f-forn-id').value=d.fornecedorId||'';
+  document.getElementById('f-forn-Nome').value=d.fornecedorNome||''; document.getElementById('f-forn-id').value=d.fornecedorId||'';
   document.getElementById('f-preco').value=d.preco||'';
 };
 window.deleteItem=async(id)=>{
@@ -190,7 +190,7 @@ window.deleteItem=async(id)=>{
 };
 document.getElementById('btn-salvar').addEventListener('click',async()=>{
   const fId=document.getElementById('f-forn-id').value;
-  const fNome=document.getElementById('f-forn-nome').value.trim();
+  const fNome=document.getElementById('f-forn-Nome').value.trim();
   const payload={tipoMaterial:document.getElementById('f-tipo').value.trim(),utilizacaoMaterial:document.getElementById('f-util').value.trim(),
     fornecedorId:fId,fornecedorNome:fNome,preco:parseFloat(document.getElementById('f-preco').value)||0,atualizadoEm:serverTimestamp()};
   try{

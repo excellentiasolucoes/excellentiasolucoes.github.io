@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -24,7 +24,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">Seu Nome (opcional)</label>
-          <input type="text" class="form-control" id="sug-nome" placeholder="Como deseja ser identificado">
+          <input type="text" class="form-control" id="sug-Nome" placeholder="Como deseja ser identificado">
         </div>
         <button class="btn btn-primary" id="btn-enviar" style="width:100%;justify-content:center">?? Enviar Sugest&#227;o</button>
         <div id="sug-success" class="alert alert-success" style="display:none;margin-top:14px">Sugest&#227;o enviada com sucesso! Obrigado ??</div>
@@ -33,7 +33,7 @@
       <!-- List (admin only) -->
       <div id="admin-area" style="display:none">
         <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;color:var(--gold)">?? Sugest&#245;es Recebidas <span id="sug-count" style="font-size:13px;color:var(--text-3)"></span></h3>
-        <div id="sugestoes-list" style="display:flex;flex-direction:column;gap:14px"></div>
+        <div id="suGestãoes-list" style="display:flex;flex-direction:column;gap:14px"></div>
       </div>
     </div>
   </div>
@@ -41,7 +41,7 @@
 <div id="toast-container"></div>
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
-import { showToast, formatDateTime, setActiveNav, setupMobileSidebar, confirmDialog } from '../js/utils.js';
+import { showToast, formatDateTime, setActivenav, setupMobileSidebar, confirmDialog } from '../js/utils.js';
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
 const { getFirestore, collection, getDocs, doc, getDoc, addDoc, deleteDoc, serverTimestamp, query, orderBy }
@@ -53,13 +53,13 @@ onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
   isAdmin=u.perfil==='admin';
-  renderSidebar(u.nome||user.email,u.perfil||'Usu&#225;rio');
-  if(isAdmin){document.getElementById('admin-area').style.display='block';await loadSugestoes();}
+  renderSidebar(u.Nome||user.email,u.perfil||'Usu&#225;rio');
+  if(isAdmin){document.getElementById('admin-area').style.display='block';await loadSuGestãoes();}
 });
 
-function renderSidebar(nome, perfil) {
+function renderSidebar(Nome, perfil) {
   const isAdmin = perfil === 'admin';
-  const ini = nome.charAt(0).toUpperCase();
+  const ini = Nome.charAt(0).toUpperCase();
 
   // Aplica tema salvo
   const savedTheme = localStorage.getItem('theme');
@@ -97,7 +97,7 @@ function renderSidebar(nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -109,7 +109,7 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
@@ -120,16 +120,16 @@ function renderSidebar(nome, perfil) {
     await signOut(auth);
     window.location.href = '../login.html';
   });
-  setActiveNav();
+  setActivenav();
   setupMobileSidebar();
 }
 
-async function loadSugestoes(){
-  const snap=await getDocs(query(collection(db,'sugestoes'),orderBy('criadoEm','desc')));
+async function loadSuGestãoes(){
+  const snap=await getDocs(query(collection(db,'suGestãoes'),orderBy('criadoEm','desc')));
   const list=snap.docs.map(d=>({id:d.id,...d.data()}));
   document.getElementById('sug-count').textContent=`(${list.length})`;
-  const container=document.getElementById('sugestoes-list');
-  if(!list.length){container.innerHTML='<div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhuma sugest&#227;o</h3></div>';return;}
+  const container=document.getElementById('suGestãoes-list');
+  if(!list.length){container.innerHTML='<div class="empty-state"><div class="empty-icon">&#128203;</div><h3>nenhuma sugest&#227;o</h3></div>';return;}
   container.innerHTML=list.map(s=>`
     <div class="card" style="padding:18px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
@@ -137,26 +137,26 @@ async function loadSugestoes(){
           <div style="font-size:13px;color:var(--gold);font-weight:600;margin-bottom:6px">${s.nomeUsuario||'An&#244;nimo'} � ${formatDateTime(s.criadoEm)}</div>
           <p style="font-size:14px;color:var(--text-1);line-height:1.7">${s.texto||'�'}</p>
         </div>
-        <button class="btn btn-danger btn-icon-sm" onclick="deleteSug('${s.id}')" style="margin-left:12px">??</button>
+        <button class="btn btn-danger btn-icon-sm" onclick="deleteSug('${s.id}')" style="margin-left:12px">👁️</button>
       </div>
     </div>`).join('');
 }
 
 window.deleteSug=async(id)=>{
   if(!await confirmDialog('Excluir esta sugest&#227;o?'))return;
-  await deleteDoc(doc(db,'sugestoes',id)); showToast('Sugest&#227;o exclu�da!','success'); await loadSugestoes();
+  await deleteDoc(doc(db,'suGestãoes',id)); showToast('Sugest&#227;o exclu�da!','success'); await loadSuGestãoes();
 };
 
 document.getElementById('btn-enviar').addEventListener('click',async()=>{
   const texto=document.getElementById('sug-texto').value.trim();
-  const nome=document.getElementById('sug-nome').value.trim();
+  const Nome=document.getElementById('sug-Nome').value.trim();
   document.getElementById('sug-alert').style.display='none'; document.getElementById('sug-success').style.display='none';
   if(!texto){document.getElementById('sug-alert').textContent='Escreva sua sugest&#227;o antes de enviar.';document.getElementById('sug-alert').style.display='flex';return;}
   try{
-    await addDoc(collection(db,'sugestoes'),{texto,nomeUsuario:nome,criadoEm:serverTimestamp()});
-    document.getElementById('sug-texto').value=''; document.getElementById('sug-nome').value='';
+    await addDoc(collection(db,'suGestãoes'),{texto,nomeUsuario:Nome,criadoEm:serverTimestamp()});
+    document.getElementById('sug-texto').value=''; document.getElementById('sug-Nome').value='';
     document.getElementById('sug-success').style.display='flex';
-    if(isAdmin) await loadSugestoes();
+    if(isAdmin) await loadSuGestãoes();
   }catch(err){document.getElementById('sug-alert').textContent=err.message;document.getElementById('sug-alert').style.display='flex';}
 });
 </script>

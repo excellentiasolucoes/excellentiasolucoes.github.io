@@ -1,4 +1,4 @@
-﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -35,7 +35,7 @@
 <div id="toast-container"></div>
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
-import { formatDate, formatDateTime, buildStatusBadge, setActiveNav, setupMobileSidebar } from '../js/utils.js';
+import { formatDate, formatDateTime, buildStatusBadge, setActivenav, setupMobileSidebar } from '../js/utils.js';
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
 const { getFirestore, collection, getDocs, doc, getDoc, query, orderBy }
@@ -45,13 +45,13 @@ const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFi
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.nome||user.email,u.perfil||'Usu&#225;rio');
+  renderSidebar(u.Nome||user.email,u.perfil||'Usu&#225;rio');
   await loadCalendar();
 });
 
-function renderSidebar(nome, perfil) {
+function renderSidebar(Nome, perfil) {
   const isAdmin = perfil === 'admin';
-  const ini = nome.charAt(0).toUpperCase();
+  const ini = Nome.charAt(0).toUpperCase();
 
   // Aplica tema salvo
   const savedTheme = localStorage.getItem('theme');
@@ -89,7 +89,7 @@ function renderSidebar(nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -101,7 +101,7 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
@@ -112,7 +112,7 @@ function renderSidebar(nome, perfil) {
     await signOut(auth);
     window.location.href = '../login.html';
   });
-  setActiveNav();
+  setActivenav();
   setupMobileSidebar();
 }
 

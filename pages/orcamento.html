@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -13,7 +13,7 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <div><div class="topbar-title">Or&#231;amentos</div><div class="topbar-subtitle">Gest�o de or&#231;amentos</div></div>
+      <div><div class="topbar-title">Or&#231;amentos</div><div class="topbar-subtitle">Gestão de or&#231;amentos</div></div>
       <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Or&#231;amento</button></div>
     </div>
     <div class="page-content">
@@ -29,10 +29,10 @@
   </div>
 </div>
 
-<!-- Modal: Novo/Editar Or&#231;amento -->
+<!-- Modal: novo/Editar Or&#231;amento -->
 <div class="modal-overlay" id="modal-form">
   <div class="modal modal-lg">
-    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Or&#231;amento</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Or&#231;amento</span></span><button class="modal-close" id="close-modal">✕</button></div>
     <div class="modal-body">
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-grid">
@@ -100,12 +100,12 @@
   <div class="modal modal-lg">
     <div class="modal-header">
       <span class="modal-title">Preview do Or&#231;amento</span>
-      <button class="modal-close" id="close-preview">?</button>
+      <button class="modal-close" id="close-preview">✕</button>
     </div>
     <div class="modal-body">
       <div class="no-print" style="display:flex;gap:10px;margin-bottom:16px">
         <button class="btn btn-secondary" onclick="window.print()">?&#128424; Imprimir</button>
-        <button class="btn btn-danger" id="btn-pdf">?? Baixar PDF</button>
+        <button class="btn btn-danger" id="btn-pdf">📄 Baixar PDF</button>
       </div>
       <div id="orcamento-preview-content" style="background:white;color:#111;padding:40px;border-radius:8px;font-family:'Inter',sans-serif"></div>
     </div>
@@ -115,7 +115,7 @@
 <div id="toast-container"></div>
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
-import { showToast, formatCurrency, formatDate, setupAutocomplete, setActiveNav, setupMobileSidebar, confirmDialog, buildStatusBadge } from '../js/utils.js';
+import { showToast, formatCurrency, formatDate, setupAutocomplete, setActivenav, setupMobileSidebar, confirmDialog, buildStatusBadge } from '../js/utils.js';
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
 const { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, Timestamp, query, orderBy }
@@ -126,7 +126,7 @@ let allItems=[], clientes=[], tiposServico=[], statusList=[], editId=null;
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.nome||user.email,u.perfil||'Usu&#225;rio');
+  renderSidebar(u.Nome||user.email,u.perfil||'Usu&#225;rio');
   const [oSnap,cSnap,tSnap,sSnap]=await Promise.all([
     getDocs(query(collection(db,'orcamentos'),orderBy('criadoEm','desc'))),
     getDocs(collection(db,'clientes')), getDocs(collection(db,'tiposServico')),
@@ -139,17 +139,17 @@ onAuthStateChanged(auth, async(user)=>{
   renderTable(allItems);
 
   const stSel=document.getElementById('f-status');
-  statusList.forEach(s=>stSel.appendChild(new Option(s.nome,s.id)));
+  statusList.forEach(s=>stSel.appendChild(new Option(s.Nome,s.id)));
 
   setupAutocomplete(document.getElementById('f-cliente'),document.getElementById('cli-auto'),
     clientes.map(c=>({id:c.id,label:c.nomeCompleto})), (i)=>document.getElementById('f-cliente-id').value=i.id);
   setupAutocomplete(document.getElementById('f-tipo'),document.getElementById('tipo-auto'),
-    tiposServico.map(t=>({id:t.id,label:t.nome})), (i)=>document.getElementById('f-tipo').value=i.label);
+    tiposServico.map(t=>({id:t.id,label:t.Nome})), (i)=>document.getElementById('f-tipo').value=i.label);
 });
 
-function renderSidebar(nome, perfil) {
+function renderSidebar(Nome, perfil) {
   const isAdmin = perfil === 'admin';
-  const ini = nome.charAt(0).toUpperCase();
+  const ini = Nome.charAt(0).toUpperCase();
 
   // Aplica tema salvo
   const savedTheme = localStorage.getItem('theme');
@@ -187,7 +187,7 @@ function renderSidebar(nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -199,7 +199,7 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
@@ -210,13 +210,13 @@ function renderSidebar(nome, perfil) {
     await signOut(auth);
     window.location.href = '../login.html';
   });
-  setActiveNav();
+  setActivenav();
   setupMobileSidebar();
 }
 
 function renderTable(list){
   const tbody=document.getElementById('list-tbody');
-  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhum or&#231;amento</h3></div></td></tr>`;return;}
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>nenhum or&#231;amento</h3></div></td></tr>`;return;}
   tbody.innerHTML=list.map(d=>{
     const st=statusList.find(s=>s.id===d.statusId);
     return `<tr>
@@ -225,7 +225,7 @@ function renderTable(list){
       <td>${formatDate(d.dataEntrega)}</td>
       <td>${buildStatusBadge(d.statusNome||'�',st?.cor)}</td>
       <td><div class="td-actions">
-        <button class="btn btn-info btn-icon-sm" onclick="previewOrc('${d.id}')">??</button>
+        <button class="btn btn-info btn-icon-sm" onclick="previewOrc('${d.id}')">👁️</button>
         <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
         <button class="btn btn-danger btn-icon-sm" onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
       </div></td></tr>`;
@@ -247,7 +247,7 @@ function calcDesconto(){
 ['f-data','f-prazo'].forEach(id=>document.getElementById(id).addEventListener('input',calcEntrega));
 function calcEntrega(){
   const ds=document.getElementById('f-data').value; const dias=parseInt(document.getElementById('f-prazo').value);
-  if(ds&&!isNaN(dias)){
+  if(ds&&!isnan(dias)){
     const d=new Date(ds+'T12:00:00'); d.setDate(d.getDate()+dias);
     document.getElementById('f-entrega').value=d.toLocaleDateString('pt-BR');
     const now=new Date(); const alertEl=document.getElementById('alerta-prazo');
@@ -257,7 +257,7 @@ function calcEntrega(){
 
 function openModal(id=null){
   editId=id; document.getElementById('form-alert').style.display='none'; document.getElementById('alerta-prazo').style.display='none';
-  document.getElementById('modal-titulo').textContent=id?'Editar Or&#231;amento':'Novo Or&#231;amento';
+  document.getElementById('modal-titulo').textContent=id?'Editar Or&#231;amento':'novo Or&#231;amento';
   if(!id){['f-cliente','f-cliente-id','f-tipo','f-desc','f-entrega'].forEach(i=>document.getElementById(i).value='');
     ['f-data','f-prazo','f-valor','f-desconto'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('f-status').value=''; calcDesconto();}
@@ -296,8 +296,8 @@ function renderPreview(d){
   const st=statusList.find(s=>s.id===d.statusId);
   document.getElementById('orcamento-preview-content').innerHTML=`
     <div style="border-bottom:3px solid #C9A84C;padding-bottom:20px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-start">
-      <div><h1 style="font-size:24px;color:#1A1A2E;margin:0">OR&#199;AMENTO</h1>
-      <p style="color:#666;margin:4px 0">Excellentia Controll &#8212; Sistema de Gest�o</p></div>
+      <div><h1 style="font-size:24px;color:#1A1A2E;margin:0">OR&#199;AMEnTO</h1>
+      <p style="color:#666;margin:4px 0">Excellentia Controll &#8212; Sistema de Gestão</p></div>
       <div style="text-align:right"><div style="font-size:12px;color:#888">Data: ${new Date().toLocaleDateString('pt-BR')}</div></div>
     </div>
     <table style="width:100%;border-collapse:collapse;margin-bottom:24px">
@@ -353,7 +353,7 @@ document.getElementById('btn-pdf').addEventListener('click', async()=>{
   const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const imgData=canvas.toDataURL('image/png');
   const w=pdf.internal.pageSize.getWidth(); const h=(canvas.height/canvas.width)*w;
-  pdf.addImage(imgData,'PNG',0,0,w,h);
+  pdf.addImage(imgData,'PnG',0,0,w,h);
   pdf.save(`orcamento-${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.pdf`);
 });
 

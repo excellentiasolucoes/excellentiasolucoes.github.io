@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -14,7 +14,7 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <div><div class="topbar-title">Projetos</div><div class="topbar-subtitle">Gest�o de servi&#231;os</div></div>
+      <div><div class="topbar-title">Projetos</div><div class="topbar-subtitle">Gestão de servi&#231;os</div></div>
       <div class="topbar-actions">
         <button class="btn btn-secondary btn-sm" id="btn-export-excel">&#128229; Excel</button>
         <a href="nova-demanda.html" class="btn btn-primary">+ Novo Projeto</a>
@@ -26,7 +26,7 @@
       <div class="search-bar">
         <div class="search-input-wrapper">
           <span class="search-icon">&#128269;</span>
-          <input type="text" class="form-control" id="search-input" placeholder="Buscar por cliente, tipo, n�...">
+          <input type="text" class="form-control" id="search-input" placeholder="Buscar por cliente, tipo, nº...">
         </div>
         <select class="form-select" id="filter-status" style="width:180px">
           <option value="">Todos os status</option>
@@ -47,13 +47,13 @@
           <select class="form-select" id="sort-by" style="width:160px;font-size:12px">
             <option value="criadoEm-desc">Mais recente</option>
             <option value="criadoEm-asc">Mais antigo</option>
-            <option value="numero-asc">N&#186; crescente</option>
-            <option value="numero-desc">N&#186; decrescente</option>
+            <option value="numero-asc">n&#186; crescente</option>
+            <option value="numero-desc">n&#186; decrescente</option>
           </select>
           <div class="col-visibility-menu">
             <button class="btn btn-secondary btn-sm" id="btn-col-toggle">&#128209; Colunas</button>
             <div class="col-visibility-dropdown" id="col-dropdown">
-              <label class="col-visibility-item"><input type="checkbox" data-col="numero" checked> N&#186;</label>
+              <label class="col-visibility-item"><input type="checkbox" data-col="numero" checked> n&#186;</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="data" checked> Data</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="status" checked> Status</label>
               <label class="col-visibility-item"><input type="checkbox" data-col="tipo" checked> Tipo</label>
@@ -71,7 +71,7 @@
           <table class="data-table" id="demandas-table">
             <thead>
               <tr>
-                <th data-col="numero">N&#186;</th>
+                <th data-col="numero">n&#186;</th>
                 <th data-col="data">Data</th>
                 <th data-col="status">Status</th>
                 <th data-col="tipo">Tipo</th>
@@ -158,7 +158,7 @@
 
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
-import { showToast, formatDate, formatDateTime, buildStatusBadge, setActiveNav, setupMobileSidebar, confirmDialog, exportToExcel } from '../js/utils.js';
+import { showToast, formatDate, formatDateTime, buildStatusBadge, setActivenav, setupMobileSidebar, confirmDialog, exportToExcel } from '../js/utils.js';
 
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
@@ -179,13 +179,13 @@ onAuthStateChanged(auth, async (user) => {
   const snap = await getDoc(doc(db, 'usuarios', user.uid));
   const u = snap.exists() ? snap.data() : {};
   userPerfil = u.perfil || 'Usu&#225;rio';
-  renderSidebar(u.nome || user.email, u.perfil || 'Usu&#225;rio');
+  renderSidebar(u.Nome || user.email, u.perfil || 'Usu&#225;rio');
   await loadData();
 });
 
-function renderSidebar(nome, perfil) {
+function renderSidebar(Nome, perfil) {
   const isAdmin = perfil === 'admin';
-  const ini = nome.charAt(0).toUpperCase();
+  const ini = Nome.charAt(0).toUpperCase();
 
   // Aplica tema salvo
   const savedTheme = localStorage.getItem('theme');
@@ -223,7 +223,7 @@ function renderSidebar(nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -235,7 +235,7 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
@@ -246,7 +246,7 @@ function renderSidebar(nome, perfil) {
     await signOut(auth);
     window.location.href = '../login.html';
   });
-  setActiveNav();
+  setActivenav();
   setupMobileSidebar();
 }
 
@@ -265,12 +265,12 @@ async function loadData() {
   const fTipo   = document.getElementById('filter-tipo');
   const acaoSt  = document.getElementById('acao-status');
   statusSnap.docs.forEach(d => {
-    const op = new Option(d.data().nome, d.id);
+    const op = new Option(d.data().Nome, d.id);
     fStatus.appendChild(op.cloneNode(true));
     acaoSt.appendChild(op);
   });
   tiposSnap.docs.forEach(d => {
-    fTipo.appendChild(new Option(d.data().nome, d.id));
+    fTipo.appendChild(new Option(d.data().Nome, d.id));
   });
 
   renderTable();
@@ -329,7 +329,7 @@ function renderTable() {
 
   const tbody = document.getElementById('demandas-tbody');
   if (list.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhuma demanda encontrada</h3><p>Tente ajustar os filtros ou cadastre uma novo projeto.</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>nenhuma demanda encontrada</h3><p>Tente ajustar os filtros ou cadastre uma novo projeto.</p></div></td></tr>`;
     return;
   }
 
@@ -381,13 +381,13 @@ document.querySelectorAll('#col-dropdown input').forEach(cb => cb.addEventListen
 // Excel export
 document.getElementById('btn-export-excel').addEventListener('click', () => {
   const data = getFiltered().map(d => ({
-    'N&#186;': d.numero,
+    'n&#186;': d.numero,
     'Data': formatDate(d.dataRegistro || d.criadoEm),
     'Cliente': d.clienteNome || '',
     'Tipo': d.tipoServicoNome || '',
     'Status': d.statusNome || '',
-    'Arquivada': d.arquivada ? 'Sim' : 'N&#227;o',
-    'Com Or&#231;amento': d.temOrcamento ? 'Sim' : 'N&#227;o',
+    'Arquivada': d.arquivada ? 'Sim' : 'n&#227;o',
+    'Com Or&#231;amento': d.temOrcamento ? 'Sim' : 'n&#227;o',
     'Descri&#231;&#227;o': d.descricao || '',
     'Data Entrega': formatDate(d.dataEntrega)
   }));
@@ -424,12 +424,12 @@ window.openDetail = async (id) => {
   document.getElementById('modal-titulo').textContent = `Projeto #${d.numero || '�'}`;
   document.getElementById('btn-edit-demanda').href = `nova-demanda.html?id=${id}`;
   document.getElementById('demanda-info-grid').innerHTML = `
-    <div class="demanda-info-item"><label>N&#186;</label><span>#${d.numero || '�'}</span></div>
+    <div class="demanda-info-item"><label>n&#186;</label><span>#${d.numero || '�'}</span></div>
     <div class="demanda-info-item"><label>Data</label><span>${formatDate(d.dataRegistro || d.criadoEm)}</span></div>
     <div class="demanda-info-item"><label>Status</label><span>${badge}</span></div>
     <div class="demanda-info-item"><label>Cliente</label><span>${d.clienteNome || '�'}</span></div>
     <div class="demanda-info-item"><label>Tipo</label><span>${d.tipoServicoNome || '�'}</span></div>
-    <div class="demanda-info-item"><label>CPF/CNPJ</label><span>${d.cpfCnpj || '�'}</span></div>
+    <div class="demanda-info-item"><label>CPF/CnPJ</label><span>${d.cpfCnpj || '�'}</span></div>
     <div class="demanda-info-item"><label>Entrega</label><span>${formatDate(d.dataEntrega)}</span></div>
     <div class="demanda-info-item"><label>Or&#231;amento</label><span>${d.temOrcamento ? '? Sim' : '�'}</span></div>
     <div class="demanda-info-item col-span-2" style="grid-column:span 3"><label>Descri&#231;&#227;o</label><span>${d.descricao || '�'}</span></div>`;
@@ -453,7 +453,7 @@ async function loadAcoes(demandaId) {
 function renderAcoes(acoes) {
   const container = document.getElementById('acoes-list');
   if (acoes.length === 0) {
-    container.innerHTML = '<div class="empty-state" style="padding:20px"><div class="empty-icon">&#128203;</div><p>Nenhuma a&#231;&#227;o registrada</p></div>';
+    container.innerHTML = '<div class="empty-state" style="padding:20px"><div class="empty-icon">&#128203;</div><p>nenhuma a&#231;&#227;o registrada</p></div>';
     return;
   }
   container.innerHTML = acoes.map(a => `
@@ -476,7 +476,7 @@ function renderHistorico(acoes) {
       <td>${a.descricao || '�'}</td>
       <td>${a.funcionario || '�'}</td>
       <td>${buildStatusBadge(a.statusNome || '�', allStatus.find(s => s.id === a.statusId)?.cor)}</td>
-    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-3)">Nenhum registro</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-3)">nenhum registro</td></tr>';
 }
 
 document.getElementById('btn-save-acao').addEventListener('click', async () => {

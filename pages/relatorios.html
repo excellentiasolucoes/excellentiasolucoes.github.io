@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -75,7 +75,7 @@
         </div>
         <div class="table-wrapper">
           <table class="data-table" id="rel-table">
-            <thead><tr><th>N&#186;</th><th>Data</th><th>Cliente</th><th>Tipo</th><th>Status</th><th>Entrega</th></tr></thead>
+            <thead><tr><th>n&#186;</th><th>Data</th><th>Cliente</th><th>Tipo</th><th>Status</th><th>Entrega</th></tr></thead>
             <tbody id="rel-tbody"></tbody>
           </table>
         </div>
@@ -86,7 +86,7 @@
 <div id="toast-container"></div>
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
-import { showToast, formatDate, buildStatusBadge, exportToExcel, setActiveNav, setupMobileSidebar } from '../js/utils.js';
+import { showToast, formatDate, buildStatusBadge, exportToExcel, setActivenav, setupMobileSidebar } from '../js/utils.js';
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
 const { getFirestore, collection, getDocs, doc, getDoc, query, orderBy }
@@ -98,18 +98,18 @@ const COLORS=['#C9A84C','#3498DB','#2ECC71','#E74C3C','#9B59B6','#F39C12','#1ABC
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.nome||user.email,u.perfil||'Usu&#225;rio');
+  renderSidebar(u.Nome||user.email,u.perfil||'Usu&#225;rio');
   const [dSnap,sSnap,tSnap]=await Promise.all([getDocs(query(collection(db,'demandas'),orderBy('criadoEm','desc'))),getDocs(collection(db,'statusServico')),getDocs(collection(db,'tiposServico'))]);
   allDemandas=dSnap.docs.map(d=>({id:d.id,...d.data()}));
   allStatus=sSnap.docs.map(d=>({id:d.id,...d.data()}));
-  const fSt=document.getElementById('f-status'); sSnap.docs.forEach(d=>fSt.appendChild(new Option(d.data().nome,d.id)));
-  const fTp=document.getElementById('f-tipo');   tSnap.docs.forEach(d=>fTp.appendChild(new Option(d.data().nome,d.id)));
+  const fSt=document.getElementById('f-status'); sSnap.docs.forEach(d=>fSt.appendChild(new Option(d.data().Nome,d.id)));
+  const fTp=document.getElementById('f-tipo');   tSnap.docs.forEach(d=>fTp.appendChild(new Option(d.data().Nome,d.id)));
   renderReport(allDemandas);
 });
 
-function renderSidebar(nome, perfil) {
+function renderSidebar(Nome, perfil) {
   const isAdmin = perfil === 'admin';
-  const ini = nome.charAt(0).toUpperCase();
+  const ini = Nome.charAt(0).toUpperCase();
 
   // Aplica tema salvo
   const savedTheme = localStorage.getItem('theme');
@@ -147,7 +147,7 @@ function renderSidebar(nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -159,7 +159,7 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
@@ -170,7 +170,7 @@ function renderSidebar(nome, perfil) {
     await signOut(auth);
     window.location.href = '../login.html';
   });
-  setActiveNav();
+  setActivenav();
   setupMobileSidebar();
 }
 
@@ -195,7 +195,7 @@ function renderReport(list){
     <div class="stat-card"><span class="stat-icon">&#128202;</span><div class="stat-label">TOTAL</div><div class="stat-value">${list.length}</div></div>
     <div class="stat-card"><span class="stat-icon">&#128229;</span><div class="stat-label">ATIVOS</div><div class="stat-value">${list.filter(d=>!d.arquivada).length}</div></div>
     <div class="stat-card"><span class="stat-icon">&#128229;</span><div class="stat-label">ARQUIVADOS</div><div class="stat-value">${list.filter(d=>d.arquivada).length}</div></div>
-    <div class="stat-card"><span class="stat-icon">&#128176;</span><div class="stat-label">COM OR&#199;AMENTO</div><div class="stat-value">${list.filter(d=>d.temOrcamento).length}</div></div>`;
+    <div class="stat-card"><span class="stat-icon">&#128176;</span><div class="stat-label">COM OR&#199;AMEnTO</div><div class="stat-value">${list.filter(d=>d.temOrcamento).length}</div></div>`;
 
   // Charts
   const byStatus={},byTipo={};
@@ -209,7 +209,7 @@ function renderReport(list){
   // Table
   document.getElementById('rel-count').textContent=list.length+' registro(s)';
   const tbody=document.getElementById('rel-tbody');
-  if(!list.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-3)">Nenhum dado no per&#237;odo</td></tr>';return;}
+  if(!list.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-3)">nenhum dado no per&#237;odo</td></tr>';return;}
   tbody.innerHTML=list.map(d=>{
     const st=allStatus.find(s=>s.id===d.statusId);
     return `<tr><td>#${d.numero||'�'}</td><td>${formatDate(d.criadoEm)}</td><td>${d.clienteNome||'�'}</td>
@@ -236,7 +236,7 @@ function buildChart(canvasId,type,labels,data,btnsId,onTypeChange){
 // Excel
 document.getElementById('btn-excel').addEventListener('click',()=>{
   const list=allDemandas;
-  exportToExcel(list.map(d=>({'N&#186;':d.numero,'Data':formatDate(d.criadoEm),'Cliente':d.clienteNome||'','Tipo':d.tipoServicoNome||'','Status':d.statusNome||'','Arquivada':d.arquivada?'Sim':'N&#227;o','Entrega':formatDate(d.dataEntrega)})),'relatorio-excellentia');
+  exportToExcel(list.map(d=>({'n&#186;':d.numero,'Data':formatDate(d.criadoEm),'Cliente':d.clienteNome||'','Tipo':d.tipoServicoNome||'','Status':d.statusNome||'','Arquivada':d.arquivada?'Sim':'n&#227;o','Entrega':formatDate(d.dataEntrega)})),'relatorio-excellentia');
   showToast('Excel exportado!','success');
 });
 
@@ -247,7 +247,7 @@ document.getElementById('btn-pdf').addEventListener('click',async()=>{
   const {jsPDF}=window.jspdf;
   const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const w=pdf.internal.pageSize.getWidth(); const h=(canvas.height/canvas.width)*w;
-  pdf.addImage(canvas.toDataURL('image/png'),'PNG',0,0,w,Math.min(h,297));
+  pdf.addImage(canvas.toDataURL('image/png'),'PnG',0,0,w,Math.min(h,297));
   pdf.save(`relatorio-${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.pdf`);
   showToast('PDF gerado!','success');
 });

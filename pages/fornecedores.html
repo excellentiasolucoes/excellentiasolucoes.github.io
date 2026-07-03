@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -17,11 +17,11 @@
       <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Fornecedor</button></div>
     </div>
     <div class="page-content">
-      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">&#128269;</span><input type="text" class="form-control" id="search-input" placeholder="Buscar por nome, CPF/CNPJ..."></div></div>
+      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">&#128269;</span><input type="text" class="form-control" id="search-input" placeholder="Buscar por Nome, CPF/CnPJ..."></div></div>
       <div class="card" style="padding:0">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Nome</th><th>Tipo</th><th>CPF/CNPJ</th><th>E-mail</th><th>Contato</th><th>A&#231;&#245;es</th></tr></thead>
+            <thead><tr><th>Nome</th><th>Tipo</th><th>CPF/CnPJ</th><th>E-mail</th><th>Contato</th><th>A&#231;&#245;es</th></tr></thead>
             <tbody id="list-tbody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
           </table>
         </div>
@@ -32,13 +32,13 @@
 
 <div class="modal-overlay" id="modal-form">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Fornecedor</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Fornecedor</span></span><button class="modal-close" id="close-modal">✕</button></div>
     <div class="modal-body">
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-grid">
-        <div class="form-group col-span-2"><label class="form-label">Nome Completo</label><input type="text" class="form-control" id="f-nome" placeholder="Nome completo"></div>
+        <div class="form-group col-span-2"><label class="form-label">Nome Completo</label><input type="text" class="form-control" id="f-Nome" placeholder="Nome completo"></div>
         <div class="form-group"><label class="form-label">Tipo</label><select class="form-select" id="f-tipo"><option value="">Selecionar</option><option value="PF">Pessoa F�sica</option><option value="PJ">Pessoa Jur�dica</option></select></div>
-        <div class="form-group"><label class="form-label">CPF / CNPJ</label><input type="text" class="form-control" id="f-cpf" placeholder="000.000.000-00"></div>
+        <div class="form-group"><label class="form-label">CPF / CnPJ</label><input type="text" class="form-control" id="f-cpf" placeholder="000.000.000-00"></div>
         <div class="form-group col-span-2"><label class="form-label">Endere&#231;o Completo</label><input type="text" class="form-control" id="f-endereco"></div>
         <div class="form-group col-span-2"><label class="form-label">E-mail</label><input type="email" class="form-control" id="f-email"></div>
         <div class="form-group"><label class="form-label">Contato 1</label><input type="text" class="form-control" id="f-contato1"></div>
@@ -54,7 +54,7 @@
 <div id="toast-container"></div>
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
-import { showToast, applyCpfCnpjMask, applyPhoneMask, setActiveNav, setupMobileSidebar, confirmDialog } from '../js/utils.js';
+import { showToast, applyCpfCnpjMask, applyPhoneMask, setActivenav, setupMobileSidebar, confirmDialog } from '../js/utils.js';
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
 const { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy }
@@ -66,16 +66,16 @@ onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = '../login.html'; return; }
   const snap = await getDoc(doc(db, 'usuarios', user.uid));
   const u = snap.exists() ? snap.data() : {};
-  renderSidebar(u.nome || user.email, u.perfil || 'Usu&#225;rio');
+  renderSidebar(u.Nome || user.email, u.perfil || 'Usu&#225;rio');
   await loadData();
   applyCpfCnpjMask(document.getElementById('f-cpf'));
   applyPhoneMask(document.getElementById('f-contato1'));
   applyPhoneMask(document.getElementById('f-contato2'));
 });
 
-function renderSidebar(nome, perfil) {
+function renderSidebar(Nome, perfil) {
   const isAdmin = perfil === 'admin';
-  const ini = nome.charAt(0).toUpperCase();
+  const ini = Nome.charAt(0).toUpperCase();
 
   // Aplica tema salvo
   const savedTheme = localStorage.getItem('theme');
@@ -113,7 +113,7 @@ function renderSidebar(nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -125,7 +125,7 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
@@ -136,7 +136,7 @@ function renderSidebar(nome, perfil) {
     await signOut(auth);
     window.location.href = '../login.html';
   });
-  setActiveNav();
+  setActivenav();
   setupMobileSidebar();
 }
 
@@ -148,7 +148,7 @@ async function loadData() {
 
 function renderTable(list) {
   const tbody = document.getElementById('list-tbody');
-  if (!list.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhum fornecedor</h3><p>Clique em "+ Novo Fornecedor".</p></div></td></tr>`; return; }
+  if (!list.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>nenhum fornecedor</h3><p>Clique em "+ Novo Fornecedor".</p></div></td></tr>`; return; }
   tbody.innerHTML = list.map(d => `<tr>
     <td>${d.nomeCompleto||'�'}</td><td>${d.tipo==='PF'?'Pessoa F�sica':d.tipo==='PJ'?'Pessoa Jur�dica':'�'}</td>
     <td>${d.cpfCnpj||'�'}</td><td>${d.email||'�'}</td><td>${d.contato1||'�'}</td>
@@ -165,8 +165,8 @@ document.getElementById('search-input').addEventListener('input', (e) => {
 
 function openModal(id=null) {
   editId = id; document.getElementById('form-alert').style.display='none';
-  document.getElementById('modal-titulo').textContent = id ? 'Editar Fornecedor' : 'Novo Fornecedor';
-  if (!id) { ['f-nome','f-cpf','f-endereco','f-email','f-contato1','f-contato2'].forEach(i => document.getElementById(i).value=''); document.getElementById('f-tipo').value=''; }
+  document.getElementById('modal-titulo').textContent = id ? 'Editar Fornecedor' : 'novo Fornecedor';
+  if (!id) { ['f-Nome','f-cpf','f-endereco','f-email','f-contato1','f-contato2'].forEach(i => document.getElementById(i).value=''); document.getElementById('f-tipo').value=''; }
   document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
 }
 function closeModalFn() { document.getElementById('modal-form').classList.remove('open'); document.body.style.overflow=''; editId=null; }
@@ -176,7 +176,7 @@ document.getElementById('btn-novo').addEventListener('click', () => openModal())
 
 window.editItem = async (id) => {
   const d = allItems.find(x => x.id===id); if (!d) return; openModal(id);
-  document.getElementById('f-nome').value=d.nomeCompleto||''; document.getElementById('f-tipo').value=d.tipo||'';
+  document.getElementById('f-Nome').value=d.nomeCompleto||''; document.getElementById('f-tipo').value=d.tipo||'';
   document.getElementById('f-cpf').value=d.cpfCnpj||''; document.getElementById('f-endereco').value=d.endereco||'';
   document.getElementById('f-email').value=d.email||''; document.getElementById('f-contato1').value=d.contato1||'';
   document.getElementById('f-contato2').value=d.contato2||'';
@@ -188,7 +188,7 @@ window.deleteItem = async (id) => {
 
 document.getElementById('btn-salvar').addEventListener('click', async () => {
   const payload = {
-    nomeCompleto: document.getElementById('f-nome').value.trim(), tipo: document.getElementById('f-tipo').value,
+    nomeCompleto: document.getElementById('f-Nome').value.trim(), tipo: document.getElementById('f-tipo').value,
     cpfCnpj: document.getElementById('f-cpf').value.trim(), endereco: document.getElementById('f-endereco').value.trim(),
     email: document.getElementById('f-email').value.trim(), contato1: document.getElementById('f-contato1').value.trim(),
     contato2: document.getElementById('f-contato2').value.trim(), atualizadoEm: serverTimestamp()

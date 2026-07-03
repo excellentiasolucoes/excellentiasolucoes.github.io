@@ -1,6 +1,6 @@
-// ============================================================
-//  EXCELLENTIA CONTROLL — Configuração do Firebase
-//  NÃO commite este arquivo com chaves reais no GitHub!
+﻿// ============================================================
+//  EXCELLEnTIA COnTROLL  Configuração do Firebase
+//  nÃO commite este arquivo com chaves reais no GitHub!
 // ============================================================
 
 export const firebaseConfig = {

@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -29,9 +29,9 @@
       <!-- STAT CARDS -->
       <div class="stat-grid" id="stat-grid">
         <div class="stat-card"><span class="stat-icon">&#128202;</span><div class="stat-label">PROJETOS</div><div class="stat-value" id="s-total">-</div><div class="stat-sub">Total registrado</div></div>
-        <div class="stat-card"><span class="stat-icon">&#9201;</span><div class="stat-label">EM ANDAMENTO</div><div class="stat-value" id="s-andamento">-</div><div class="stat-sub">Ativos</div></div>
+        <div class="stat-card"><span class="stat-icon">&#9201;</span><div class="stat-label">EM AnDAMEnTO</div><div class="stat-value" id="s-andamento">-</div><div class="stat-sub">Ativos</div></div>
         <div class="stat-card"><span class="stat-icon">&#128229;</span><div class="stat-label">ARQUIVADOS</div><div class="stat-value" id="s-arquivados">-</div><div class="stat-sub">Encerrados</div></div>
-        <div class="stat-card"><span class="stat-icon">&#128176;</span><div class="stat-label">COM OR&#199;AMENTO</div><div class="stat-value" id="s-orcamento">-</div><div class="stat-sub">Or&#231;amentados</div></div>
+        <div class="stat-card"><span class="stat-icon">&#128176;</span><div class="stat-label">COM OR&#199;AMEnTO</div><div class="stat-value" id="s-orcamento">-</div><div class="stat-sub">Or&#231;amentados</div></div>
       </div>
 
       <!-- CHARTS -->
@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <!-- CALENDAR + PRAZO -->
+      <!-- CALEnDAR + PRAZO -->
       <div style="display:grid;grid-template-columns:1fr 380px;gap:20px">
         <div class="card">
           <div class="card-header">
@@ -82,7 +82,7 @@
 
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
-import { showToast, formatDate, formatDateTime, nowManaus, buildStatusBadge, buildPrazoBar, setupMobileSidebar, setActiveNav } from '../js/utils.js';
+import { showToast, formatDate, formatDateTime, nowManaus, buildStatusBadge, buildPrazoBar, setupMobileSidebar, setActivenav } from '../js/utils.js';
 
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
@@ -101,14 +101,14 @@ onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   const snap = await getDoc(doc(db, 'usuarios', user.uid));
   const uData = snap.exists() ? snap.data() : {};
-  renderSidebar(uData.nome || user.email, uData.perfil || 'Usu&#225;rio');
+  renderSidebar(uData.Nome || user.email, uData.perfil || 'Usu&#225;rio');
   await loadDashboard();
   startClock();
 });
 
-function renderSidebar(nome, perfil) {
+function renderSidebar(Nome, perfil) {
   const isAdmin = perfil === 'admin';
-  const ini = nome.charAt(0).toUpperCase();
+  const ini = Nome.charAt(0).toUpperCase();
 
   // Aplica tema salvo
   const savedTheme = localStorage.getItem('theme');
@@ -146,7 +146,7 @@ function renderSidebar(nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -158,7 +158,7 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
@@ -169,7 +169,7 @@ function renderSidebar(nome, perfil) {
     await signOut(auth);
     window.location.href = '../login.html';
   });
-  setActiveNav();
+  setActivenav();
   setupMobileSidebar();
 }
 
@@ -259,7 +259,7 @@ async function loadDashboard() {
 
   const prazosEl = document.getElementById('prazos-list');
   if (soon.length === 0) {
-    prazosEl.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhum prazo pr&#243;ximo</h3></div>';
+    prazosEl.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128203;</div><h3>nenhum prazo pr&#243;ximo</h3></div>';
   } else {
     prazosEl.innerHTML = soon.map(d => {
       const daysLeft = Math.ceil((d.entregaDate - now) / (1000*60*60*24));

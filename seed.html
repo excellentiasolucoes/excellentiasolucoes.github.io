@@ -1,9 +1,9 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Excellentia Controll — Inicializar Banco de Dados</title>
+  <title>Excellentia Controll  Inicializar Banco de Dados</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -164,7 +164,7 @@
     <div class="col-item" id="ci-demandas"><span class="icon">&#128200;</span><span class="name">demandas</span><span class="count">1 doc demo</span></div>
     <div class="col-item" id="ci-orcamentos"><span class="icon">&#128200;</span><span class="name">orcamentos</span><span class="count">1 doc demo</span></div>
     <div class="col-item" id="ci-agendaContatos"><span class="icon">&#128200;</span><span class="name">agendaContatos</span><span class="count">1 doc demo</span></div>
-    <div class="col-item" id="ci-sugestoes"><span class="icon">&#128200;</span><span class="name">sugestoes</span><span class="count">vazio</span></div>
+    <div class="col-item" id="ci-suGestãoes"><span class="icon">&#128200;</span><span class="name">suGestãoes</span><span class="count">vazio</span></div>
   </div>
 
   <div id="google-login-area" style="display:none;margin-bottom:16px">
@@ -228,15 +228,15 @@
     return true;
   }
 
-  async function seedAddDoc(colName, data, label) {
+  async function seedAddDoc(colname, data, label) {
     try {
-      const ref = await addDoc(collection(db, colName), {
+      const ref = await addDoc(collection(db, colname), {
         ...data, _seed: true, criadoEm: serverTimestamp()
       });
-      log('Criado: ' + colName + '/' + ref.id + ' — ' + label, 'ok');
+      log('Criado: ' + colname + '/' + ref.id + '  ' + label, 'ok');
       return ref.id;
     } catch (e) {
-      log('Erro em ' + colName + ': ' + e.message, 'err');
+      log('Erro em ' + colname + ': ' + e.message, 'err');
       return null;
     }
   }
@@ -261,7 +261,7 @@
       log('--- configuracoes ---', 'info');
       try {
         const ok = await seedDoc('configuracoes', 'sistema', {
-          proximoNumero   : 1,
+          proximonumero   : 1,
           numeracaoInicial: 1,
           fusoHorario     : 'America/Manaus',
           nomeEmpresa     : 'Excellentia Controll',
@@ -274,15 +274,15 @@
       log('--- statusServico ---', 'info');
       try {
         const statuses = [
-          { nome: 'Novo',         cor: '#6366f1', ordem: 1, ativo: true },
-          { nome: 'Em Andamento', cor: '#f59e0b', ordem: 2, ativo: true },
-          { nome: 'Aguardando',   cor: '#3b82f6', ordem: 3, ativo: true },
-          { nome: 'Revisao',      cor: '#8b5cf6', ordem: 4, ativo: true },
-          { nome: 'Concluido',    cor: '#10b981', ordem: 5, ativo: true },
+          { Nome: 'novo',         cor: '#6366f1', ordem: 1, ativo: true },
+          { Nome: 'Em Andamento', cor: '#f59e0b', ordem: 2, ativo: true },
+          { Nome: 'Aguardando',   cor: '#3b82f6', ordem: 3, ativo: true },
+          { Nome: 'Revisao',      cor: '#8b5cf6', ordem: 4, ativo: true },
+          { Nome: 'Concluido',    cor: '#10b981', ordem: 5, ativo: true },
         ];
         for (const s of statuses) {
           const ref = await addDoc(collection(db, 'statusServico'), { ...s, _seed: true, criadoEm: serverTimestamp() });
-          log('Criado statusServico: ' + s.nome + ' (' + ref.id + ')', 'ok');
+          log('Criado statusServico: ' + s.Nome + ' (' + ref.id + ')', 'ok');
         }
         markCol('statusServico', 'done');
       } catch(e) { log('Erro statusServico: ' + e.message, 'err'); markCol('statusServico','error'); }
@@ -298,9 +298,9 @@
           'Reforma',
           'Regularizacao de Imovel',
         ];
-        for (const nome of tipos) {
-          const ref = await addDoc(collection(db, 'tiposServico'), { nome, ativo: true, _seed: true, criadoEm: serverTimestamp() });
-          log('Criado tiposServico: ' + nome + ' (' + ref.id + ')', 'ok');
+        for (const Nome of tipos) {
+          const ref = await addDoc(collection(db, 'tiposServico'), { Nome, ativo: true, _seed: true, criadoEm: serverTimestamp() });
+          log('Criado tiposServico: ' + Nome + ' (' + ref.id + ')', 'ok');
         }
         markCol('tiposServico', 'done');
       } catch(e) { log('Erro tiposServico: ' + e.message, 'err'); markCol('tiposServico','error'); }
@@ -311,14 +311,14 @@
         const user = auth.currentUser;
         if (user) {
           const ok = await seedDoc('usuarios', user.uid, {
-            nome  : user.displayName || user.email.split('@')[0] || 'Administrador',
+            Nome  : user.displayname || user.email.split('@')[0] || 'Administrador',
             email : user.email || '',
             perfil: 'admin',
             ativo : true,
           });
           markCol('usuarios', ok ? 'done' : 'skip');
         } else {
-          log('Nenhum usuario logado — usuarios nao criado.', 'skip');
+          log('nenhum usuario logado  usuarios nao criado.', 'skip');
           markCol('usuarios', 'skip');
         }
       } catch(e) { log('Erro usuarios: ' + e.message, 'err'); markCol('usuarios','error'); }
@@ -331,7 +331,7 @@
           cpfCnpj     : '000.000.000-00',
           email       : 'demo@exemplo.com',
           telefone    : '(92) 99999-0000',
-          endereco    : 'Rua Exemplo, 100 — Manaus/AM',
+          endereco    : 'Rua Exemplo, 100  Manaus/AM',
           obs         : 'Registro de demonstracao. Pode ser excluido.',
           ativo       : true,
         }, 'Cliente Demo');
@@ -346,7 +346,7 @@
           cpfCnpj     : '00.000.000/0000-00',
           email       : 'fornecedor@exemplo.com',
           telefone    : '(92) 98888-0000',
-          endereco    : 'Av. Exemplo, 200 — Manaus/AM',
+          endereco    : 'Av. Exemplo, 200  Manaus/AM',
           categoria   : 'Material de Construcao',
           obs         : 'Registro de demonstracao. Pode ser excluido.',
           ativo       : true,
@@ -392,7 +392,7 @@
           clienteId  : '',
           clienteNome: 'Cliente Demo',
           tipoServico: 'Consultoria',
-          statusNome : 'Novo',
+          statusNome : 'novo',
           statusCor  : '#6366f1',
           prioridade : 'media',
           dataInicio : Timestamp.now(),
@@ -427,7 +427,7 @@
       log('--- agendaContatos ---', 'info');
       try {
         const id = await seedAddDoc('agendaContatos', {
-          nome     : 'Contato de Demonstracao',
+          Nome     : 'Contato de Demonstracao',
           telefone : '(92) 97777-0000',
           email    : 'contato@exemplo.com',
           empresa  : 'Empresa Demo',
@@ -437,19 +437,19 @@
         markCol('agendaContatos', id ? 'done' : 'error');
       } catch(e) { log('Erro agendaContatos: ' + e.message, 'err'); markCol('agendaContatos','error'); }
 
-      // 12. sugestoes — criada dinamicamente pelo usuario
-      markCol('sugestoes', 'skip');
-      log('sugestoes — ignorada (criada pelos usuarios).', 'skip');
+      // 12. suGestãoes  criada dinamicamente pelo usuario
+      markCol('suGestãoes', 'skip');
+      log('suGestãoes  ignorada (criada pelos usuarios).', 'skip');
 
       log('', 'info');
-      log('SEED CONCLUIDO! Verifique o Firestore Console.', 'ok');
+      log('SEED COnCLUIDO! Verifique o Firestore Console.', 'ok');
       btn.textContent = 'Concluido!';
       btn.style.background = 'linear-gradient(135deg,#238636,#2ea043)';
 
     } catch (fatalErr) {
       log('Erro fatal: ' + fatalErr.message, 'err');
       btn.disabled = false;
-      btn.textContent = 'Tentar Novamente';
+      btn.textContent = 'Tentar novamente';
     }
   };
 

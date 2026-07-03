@@ -1,8 +1,8 @@
-// ============================================================
-//  EXCELLENTIA CONTROLL — Utilitários Globais
+﻿// ============================================================
+//  EXCELLEnTIA COnTROLL  Utilitários Globais
 // ============================================================
 
-// ── TOAST NOTIFICATIONS ──────────────────────────────────────
+// ── TOAST nOTIFICATIOnS ──────────────────────────────────────
 export function showToast(message, type = 'success', duration = 4000) {
   let container = document.getElementById('toast-container');
   if (!container) {
@@ -21,7 +21,7 @@ export function showToast(message, type = 'success', duration = 4000) {
   }, duration);
 }
 
-// ── LOADING ───────────────────────────────────────────────────
+// ── LOADInG ───────────────────────────────────────────────────
 export function showLoading(msg = 'Carregando...') {
   let el = document.getElementById('global-loading');
   if (!el) {
@@ -45,12 +45,12 @@ export function nowManaus() {
   return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Manaus' }));
 }
 export function formatDate(date) {
-  if (!date) return '—';
+  if (!date) return '';
   const d = date?.toDate ? date.toDate() : new Date(date);
   return d.toLocaleDateString('pt-BR', { timeZone: 'America/Manaus' });
 }
 export function formatDateTime(date) {
-  if (!date) return '—';
+  if (!date) return '';
   const d = date?.toDate ? date.toDate() : new Date(date);
   return d.toLocaleString('pt-BR', { timeZone: 'America/Manaus', hour12: false });
 }
@@ -71,13 +71,13 @@ export function daysDiff(date1, date2) {
   return Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
 }
 
-// ── CURRENCY ──────────────────────────────────────────────────
+// ── CURREnCY ──────────────────────────────────────────────────
 export function formatCurrency(value) {
-  if (value === null || value === undefined || value === '') return '—';
+  if (value === null || value === undefined || value === '') return '';
   return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-// ── CPF / CNPJ MASK ───────────────────────────────────────────
+// ── CPF / CnPJ MASK ───────────────────────────────────────────
 export function applyCpfCnpjMask(input) {
   input.addEventListener('input', () => {
     let v = input.value.replace(/\D/g, '');
@@ -95,7 +95,7 @@ export function applyCpfCnpjMask(input) {
   });
 }
 
-// ── PHONE MASK ────────────────────────────────────────────────
+// ── PHOnE MASK ────────────────────────────────────────────────
 export function applyPhoneMask(input) {
   input.addEventListener('input', () => {
     let v = input.value.replace(/\D/g, '').slice(0, 11);
@@ -169,34 +169,34 @@ export function confirmDialog(message) {
   });
 }
 
-// ── NEXT SEQUENCE NUMBER ──────────────────────────────────────
-export async function getNextDemandaNum(db) {
+// ── nEXT SEQUEnCE nUMBER ──────────────────────────────────────
+export async function getnextDemandanum(db) {
   const { doc, getDoc, updateDoc, increment } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
   const ref = doc(db, 'configuracoes', 'sistema');
   const snap = await getDoc(ref);
   const year = new Date().getFullYear();
   let num = 1;
   if (snap.exists()) {
-    num = (snap.data().proximoNumero || 1);
-    await updateDoc(ref, { proximoNumero: increment(1) });
+    num = (snap.data().proximonumero || 1);
+    await updateDoc(ref, { proximonumero: increment(1) });
   } else {
     const { setDoc } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
-    await setDoc(ref, { proximoNumero: 2, numeracaoInicial: 1, fusoHorario: 'America/Manaus' });
+    await setDoc(ref, { proximonumero: 2, numeracAçãoInicial: 1, fusoHorario: 'America/Manaus' });
   }
   return `${String(num).padStart(3, '0')}/${year}`;
 }
 
-export async function resetDemandaNum(db) {
+export async function resetDemandanum(db) {
   const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
   const ref = doc(db, 'configuracoes', 'sistema');
-  await updateDoc(ref, { proximoNumero: 1 });
+  await updateDoc(ref, { proximonumero: 1 });
 }
 
 // ── STATUS BADGE ──────────────────────────────────────────────
-export function buildStatusBadge(nome, cor) {
+export function buildStatusBadge(Nome, cor) {
   const c = cor || '#888';
   return `<span class="badge" style="background:${c}22;color:${c};border:1px solid ${c}44">
-    <span class="badge-dot" style="background:${c}"></span>${nome}
+    <span class="badge-dot" style="background:${c}"></span>${Nome}
   </span>`;
 }
 
@@ -213,8 +213,8 @@ export function buildPrazoBar(dataInicio, dataEntrega) {
   return `<div class="prazo-bar"><div class="prazo-fill" style="width:${pct}%;background:${color}"></div></div>`;
 }
 
-// ── SIDEBAR ACTIVE LINK ───────────────────────────────────────
-export function setActiveNav() {
+// ── SIDEBAR ACTIVE LInK ───────────────────────────────────────
+export function setActivenav() {
   const page = window.location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.sidebar-nav a').forEach(a => {
     const href = a.getAttribute('href') || '';
@@ -277,7 +277,7 @@ export function exportToExcel(data, filename) {
   XLSX.writeFile(wb, filename + '.xlsx');
 }
 
-// ── PDF PRINT ─────────────────────────────────────────────────
+// ── PDF PRInT ─────────────────────────────────────────────────
 export function printArea(elementId) {
   const el = document.getElementById(elementId);
   if (!el) return;

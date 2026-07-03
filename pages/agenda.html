@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -15,7 +15,7 @@
       <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Contato</button></div>
     </div>
     <div class="page-content">
-      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">&#128269;</span><input type="text" class="form-control" id="search-input" placeholder="Buscar por nome, empresa..."></div></div>
+      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">&#128269;</span><input type="text" class="form-control" id="search-input" placeholder="Buscar por Nome, empresa..."></div></div>
       <div id="contatos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px"></div>
     </div>
   </div>
@@ -23,11 +23,11 @@
 
 <div class="modal-overlay" id="modal-form">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Contato</span></span><button class="modal-close" id="close-modal">?</button></div>
+    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Contato</span></span><button class="modal-close" id="close-modal">✕</button></div>
     <div class="modal-body">
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-grid">
-        <div class="form-group col-span-2"><label class="form-label">Nome</label><input type="text" class="form-control" id="f-nome" placeholder="Nome completo"></div>
+        <div class="form-group col-span-2"><label class="form-label">Nome</label><input type="text" class="form-control" id="f-Nome" placeholder="Nome completo"></div>
         <div class="form-group"><label class="form-label">Cargo</label><input type="text" class="form-control" id="f-cargo" placeholder="Ex: Diretor"></div>
         <div class="form-group"><label class="form-label">Fun&#231;&#227;o</label><input type="text" class="form-control" id="f-funcao" placeholder="Ex: Aprova&#231;&#227;o de projetos"></div>
         <div class="form-group col-span-2"><label class="form-label">Empresa</label><input type="text" class="form-control" id="f-empresa" placeholder="Nome da empresa"></div>
@@ -44,7 +44,7 @@
 <div id="toast-container"></div>
 <script type="module">
 import { firebaseConfig } from '../js/firebase/config.js';
-import { showToast, applyPhoneMask, setActiveNav, setupMobileSidebar, confirmDialog } from '../js/utils.js';
+import { showToast, applyPhoneMask, setActivenav, setupMobileSidebar, confirmDialog } from '../js/utils.js';
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
 const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
 const { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy }
@@ -55,14 +55,14 @@ let allItems=[], editId=null;
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.nome||user.email,u.perfil||'Usu&#225;rio');
+  renderSidebar(u.Nome||user.email,u.perfil||'Usu&#225;rio');
   await loadData();
   applyPhoneMask(document.getElementById('f-c1')); applyPhoneMask(document.getElementById('f-c2'));
 });
 
-function renderSidebar(nome, perfil) {
+function renderSidebar(Nome, perfil) {
   const isAdmin = perfil === 'admin';
-  const ini = nome.charAt(0).toUpperCase();
+  const ini = Nome.charAt(0).toUpperCase();
 
   // Aplica tema salvo
   const savedTheme = localStorage.getItem('theme');
@@ -100,7 +100,7 @@ function renderSidebar(nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -112,7 +112,7 @@ function renderSidebar(nome, perfil) {
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
       </div>
       <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
     </div>
@@ -123,26 +123,26 @@ function renderSidebar(nome, perfil) {
     await signOut(auth);
     window.location.href = '../login.html';
   });
-  setActiveNav();
+  setActivenav();
   setupMobileSidebar();
 }
 
 async function loadData(){
-  const snap=await getDocs(query(collection(db,'agendaContatos'),orderBy('nome')));
+  const snap=await getDocs(query(collection(db,'agendaContatos'),orderBy('Nome')));
   allItems=snap.docs.map(d=>({id:d.id,...d.data()}));
   renderGrid(allItems);
 }
 
 function renderGrid(list){
   const grid=document.getElementById('contatos-grid');
-  if(!list.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">&#128203;</div><h3>Nenhum contato</h3><p>Clique em "+ Novo Contato".</p></div>`;return;}
+  if(!list.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">&#128203;</div><h3>nenhum contato</h3><p>Clique em "+ Novo Contato".</p></div>`;return;}
   grid.innerHTML=list.map(d=>{
-    const ini=(d.nome||'?').charAt(0).toUpperCase();
+    const ini=(d.Nome||'?').charAt(0).toUpperCase();
     return `<div class="card" style="padding:18px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
         <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dark),var(--gold));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:var(--navy);flex-shrink:0">${ini}</div>
         <div>
-          <div style="font-size:14px;font-weight:700">${d.nome||'Sem nome'}</div>
+          <div style="font-size:14px;font-weight:700">${d.Nome||'Sem Nome'}</div>
           <div style="font-size:12px;color:var(--gold)">${d.cargo||''} ${d.cargo&&d.funcao?'�':''} ${d.funcao||''}</div>
         </div>
       </div>
@@ -159,13 +159,13 @@ function renderGrid(list){
 
 document.getElementById('search-input').addEventListener('input',e=>{
   const q=e.target.value.toLowerCase();
-  renderGrid(q?allItems.filter(d=>(d.nome||'').toLowerCase().includes(q)||(d.empresa||'').toLowerCase().includes(q)):allItems);
+  renderGrid(q?allItems.filter(d=>(d.Nome||'').toLowerCase().includes(q)||(d.empresa||'').toLowerCase().includes(q)):allItems);
 });
 
 function openModal(id=null){
   editId=id; document.getElementById('form-alert').style.display='none';
-  document.getElementById('modal-titulo').textContent=id?'Editar Contato':'Novo Contato';
-  if(!id){['f-nome','f-cargo','f-funcao','f-empresa','f-c1','f-c2'].forEach(i=>document.getElementById(i).value='');}
+  document.getElementById('modal-titulo').textContent=id?'Editar Contato':'novo Contato';
+  if(!id){['f-Nome','f-cargo','f-funcao','f-empresa','f-c1','f-c2'].forEach(i=>document.getElementById(i).value='');}
   document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
 }
 function closeModalFn(){document.getElementById('modal-form').classList.remove('open');document.body.style.overflow='';editId=null;}
@@ -174,7 +174,7 @@ document.getElementById('btn-novo').addEventListener('click',()=>openModal());
 
 window.editItem=async(id)=>{
   const d=allItems.find(x=>x.id===id); if(!d)return; openModal(id);
-  document.getElementById('f-nome').value=d.nome||''; document.getElementById('f-cargo').value=d.cargo||'';
+  document.getElementById('f-Nome').value=d.Nome||''; document.getElementById('f-cargo').value=d.cargo||'';
   document.getElementById('f-funcao').value=d.funcao||''; document.getElementById('f-empresa').value=d.empresa||'';
   document.getElementById('f-c1').value=d.contato1||''; document.getElementById('f-c2').value=d.contato2||'';
 };
@@ -183,13 +183,13 @@ window.deleteItem=async(id)=>{
   await deleteDoc(doc(db,'agendaContatos',id)); allItems=allItems.filter(d=>d.id!==id); renderGrid(allItems); showToast('Contato exclu�do!','success');
 };
 document.getElementById('btn-salvar').addEventListener('click',async()=>{
-  const payload={nome:document.getElementById('f-nome').value.trim(),cargo:document.getElementById('f-cargo').value.trim(),
+  const payload={Nome:document.getElementById('f-Nome').value.trim(),cargo:document.getElementById('f-cargo').value.trim(),
     funcao:document.getElementById('f-funcao').value.trim(),empresa:document.getElementById('f-empresa').value.trim(),
     contato1:document.getElementById('f-c1').value.trim(),contato2:document.getElementById('f-c2').value.trim(),atualizadoEm:serverTimestamp()};
   try{
     if(editId){await updateDoc(doc(db,'agendaContatos',editId),payload);allItems=allItems.map(d=>d.id===editId?{...d,...payload}:d);}
     else{const ref=await addDoc(collection(db,'agendaContatos'),{...payload,criadoEm:serverTimestamp()});allItems.push({id:ref.id,...payload});}
-    allItems.sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+    allItems.sort((a,b)=>(a.Nome||'').localeCompare(b.Nome||''));
     renderGrid(allItems); closeModalFn(); showToast(editId?'Contato atualizado!':'Contato salvo!','success');
   }catch(err){document.getElementById('form-alert').textContent=err.message;document.getElementById('form-alert').style.display='flex';}
 });
