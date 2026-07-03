@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -46,7 +46,7 @@
       <div class="form-group">
         <label class="form-label">Senha</label>
         <div class="password-wrapper">
-          <input type="password" class="form-control" id="login-password" placeholder="��������" required>
+          <input type="password" class="form-control" id="login-password" placeholder="--------" required>
           <button type="button" class="password-toggle" id="toggle-password">&#128065;</button>
         </div>
       </div>
@@ -68,7 +68,7 @@
 
     <div class="login-legal">
       Este sistema foi desenvolvido para organizar e otimizar seus atendimentos.<br>
-      n&#227;o � permitida a utiliza&#231;&#227;o por pessoas n&#227;o autorizadas.<br>
+      n&#227;o - permitida a utiliza&#231;&#227;o por pessoas n&#227;o autorizadas.<br>
       <strong style="color:var(--gold)">Excellentia Controll &#8212; 2026</strong>
     </div>
   </div>
@@ -298,7 +298,7 @@ document.getElementById('btn-save-pwd').addEventListener('click', async () => {
   if (isLight) document.body.classList.add('light-mode');
   function update() {
     var light = document.body.classList.contains('light-mode');
-    document.getElementById('login-theme-icon').textContent  = light ? '��' : 'â˜€ï¸';
+    document.getElementById('login-theme-icon').textContent  = light ? '--' : 'â˜€ï¸';
     document.getElementById('login-theme-label').textContent = light ? 'Modo Escuro' : 'Modo Claro';
   }
   update();

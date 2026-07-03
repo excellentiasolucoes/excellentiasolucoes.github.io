@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -89,18 +89,18 @@
 
       <!-- Alerta de prazo -->
       <div id="alerta-prazo" style="display:none" class="alert alert-warning">
-        ? Aten&#231;&#227;o: o prazo de entrega est� pr&#243;ximo ou vencido!
+        ? Aten&#231;&#227;o: o prazo de entrega est- pr&#243;ximo ou vencido!
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
-      <button class="btn btn-info" id="btn-preview">?? Preview</button>
+      <button class="btn btn-info" id="btn-preview">Preview</button>
       <button class="btn btn-primary" id="btn-salvar">&#128190; Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- Modal Preview/Impress�o -->
+<!-- Modal Preview/Impress-o -->
 <div class="modal-overlay" id="modal-preview">
   <div class="modal modal-lg">
     <div class="modal-header">
@@ -192,7 +192,7 @@ function renderSidebar(Nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -225,10 +225,10 @@ function renderTable(list){
   tbody.innerHTML=list.map(d=>{
     const st=statusList.find(s=>s.id===d.statusId);
     return `<tr>
-      <td>${d.clienteNome||'�'}</td><td>${d.tipoServico||'�'}</td>
+      <td>${d.clienteNome||'-'}</td><td>${d.tipoServico||'-'}</td>
       <td>${formatCurrency(d.valorServico)}</td><td><strong style="color:var(--gold)">${formatCurrency(d.valorComDesconto)}</strong></td>
       <td>${formatDate(d.dataEntrega)}</td>
-      <td>${buildStatusBadge(d.statusNome||'�',st?.cor)}</td>
+      <td>${buildStatusBadge(d.statusNome||'-',st?.cor)}</td>
       <td><div class="td-actions">
         <button class="btn btn-info btn-icon-sm" onclick="previewOrc('${d.id}')">👁️</button>
         <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
@@ -315,7 +315,7 @@ document.getElementById('f-imagem').addEventListener('change', function(e) {
 
 window.deleteItem=async(id)=>{
   if(!await confirmDialog('Excluir este or&#231;amento?'))return;
-  await deleteDoc(doc(db,'orcamentos',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Or&#231;amento exclu�do!','success');
+  await deleteDoc(doc(db,'orcamentos',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Or&#231;amento exclu-do!','success');
 };
 
 window.previewOrc=async(id)=>{
@@ -382,7 +382,7 @@ function renderPreview(d){
         <div style="display:flex;justify-content:space-between;margin-top:auto;font-size:12px;color:#333;margin-bottom:60px">
           <div style="width:50%">
             <p style="margin:0 0 8px 0;font-size:10px">Documentos inclusos ao fechamento do projeto: DOC c/ Imagens finais e DOC c/ Medidas Brutas e sugestivas</p>
-            <p style="margin:0;line-height:1.4">Modelagem realizada levando em consideração sugestões do próprio cliente, visando agregar valores práticos e estéticos aos elementos solicitados<br>Projeto contará com a modelagem do ambiente com sugestão de decoração viável ao ambiente.</p>
+            <p style="margin:0;line-height:1.4">Modelagem realizada levando em consideração sugestoes do próprio cliente, visando agregar valores práticos e estéticos aos elementos solicitados<br>Projeto contará com a modelagem do ambiente com sugestão de decoração viável ao ambiente.</p>
           </div>
           <div style="width:40%">
             <p style="margin:0;line-height:1.4">Estamos à disposição para esclarecer quaisquer dúvidas ou fornecer informações adicionais</p>

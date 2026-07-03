@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -89,7 +89,7 @@ function renderSidebar(Nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -150,20 +150,20 @@ async function loadCalendar(){
     events, height:'auto',
     eventClick:(info)=>{
       const {demanda,status,isEntrega}=info.event.extendedProps;
-      document.getElementById('ev-title').textContent=(isEntrega?'? Entrega: ':'')+`#${demanda.numero} � ${demanda.clienteNome||'Sem cliente'}`;
+      document.getElementById('ev-title').textContent=(isEntrega?'? Entrega: ':'')+`#${demanda.numero} - ${demanda.clienteNome||'Sem cliente'}`;
       document.getElementById('ev-edit').href=`nova-demanda.html?id=${demanda.id}`;
       document.getElementById('ev-body').innerHTML=`
         <div style="display:flex;flex-direction:column;gap:10px">
           <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Status</span><br>
-            ${buildStatusBadge(demanda.statusNome||'�',status?.cor)}</div>
+            ${buildStatusBadge(demanda.statusNome||'-',status?.cor)}</div>
           <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Tipo de Servi&#231;o</span><br>
-            <span style="font-size:14px">${demanda.tipoServicoNome||'�'}</span></div>
+            <span style="font-size:14px">${demanda.tipoServicoNome||'-'}</span></div>
           <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Data do Servi&#231;o</span><br>
             <span style="font-size:14px">${formatDate(demanda.dataServico)}</span></div>
           <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Data de Entrega</span><br>
             <span style="font-size:14px">${formatDate(demanda.dataEntrega)}</span></div>
           <div><span style="font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase">Descri&#231;&#227;o</span><br>
-            <span style="font-size:13px;color:var(--text-2)">${demanda.descricao||'�'}</span></div>
+            <span style="font-size:13px;color:var(--text-2)">${demanda.descricao||'-'}</span></div>
         </div>`;
       document.getElementById('modal-detail').classList.add('open'); document.body.style.overflow='hidden';
     }

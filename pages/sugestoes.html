@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -33,7 +33,7 @@
       <!-- List (admin only) -->
       <div id="admin-area" style="display:none">
         <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;color:var(--gold)">?? Sugest&#245;es Recebidas <span id="sug-count" style="font-size:13px;color:var(--text-3)"></span></h3>
-        <div id="suGestãoes-list" style="display:flex;flex-direction:column;gap:14px"></div>
+        <div id="sugestoes-list" style="display:flex;flex-direction:column;gap:14px"></div>
       </div>
     </div>
   </div>
@@ -97,7 +97,7 @@ function renderSidebar(Nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -125,17 +125,17 @@ function renderSidebar(Nome, perfil) {
 }
 
 async function loadSuGestãoes(){
-  const snap=await getDocs(query(collection(db,'suGestãoes'),orderBy('criadoEm','desc')));
+  const snap=await getDocs(query(collection(db,'sugestoes'),orderBy('criadoEm','desc')));
   const list=snap.docs.map(d=>({id:d.id,...d.data()}));
   document.getElementById('sug-count').textContent=`(${list.length})`;
-  const container=document.getElementById('suGestãoes-list');
+  const container=document.getElementById('sugestoes-list');
   if(!list.length){container.innerHTML='<div class="empty-state"><div class="empty-icon">&#128203;</div><h3>nenhuma sugest&#227;o</h3></div>';return;}
   container.innerHTML=list.map(s=>`
     <div class="card" style="padding:18px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div style="flex:1">
-          <div style="font-size:13px;color:var(--gold);font-weight:600;margin-bottom:6px">${s.nomeUsuario||'An&#244;nimo'} � ${formatDateTime(s.criadoEm)}</div>
-          <p style="font-size:14px;color:var(--text-1);line-height:1.7">${s.texto||'�'}</p>
+          <div style="font-size:13px;color:var(--gold);font-weight:600;margin-bottom:6px">${s.nomeUsuario||'An&#244;nimo'} - ${formatDateTime(s.criadoEm)}</div>
+          <p style="font-size:14px;color:var(--text-1);line-height:1.7">${s.texto||'-'}</p>
         </div>
         <button class="btn btn-danger btn-icon-sm" onclick="deleteSug('${s.id}')" style="margin-left:12px">👁️</button>
       </div>
@@ -144,7 +144,7 @@ async function loadSuGestãoes(){
 
 window.deleteSug=async(id)=>{
   if(!await confirmDialog('Excluir esta sugest&#227;o?'))return;
-  await deleteDoc(doc(db,'suGestãoes',id)); showToast('Sugest&#227;o exclu�da!','success'); await loadSuGestãoes();
+  await deleteDoc(doc(db,'sugestoes',id)); showToast('Sugest&#227;o exclu-da!','success'); await loadSuGestãoes();
 };
 
 document.getElementById('btn-enviar').addEventListener('click',async()=>{
@@ -153,7 +153,7 @@ document.getElementById('btn-enviar').addEventListener('click',async()=>{
   document.getElementById('sug-alert').style.display='none'; document.getElementById('sug-success').style.display='none';
   if(!texto){document.getElementById('sug-alert').textContent='Escreva sua sugest&#227;o antes de enviar.';document.getElementById('sug-alert').style.display='flex';return;}
   try{
-    await addDoc(collection(db,'suGestãoes'),{texto,nomeUsuario:Nome,criadoEm:serverTimestamp()});
+    await addDoc(collection(db,'sugestoes'),{texto,nomeUsuario:Nome,criadoEm:serverTimestamp()});
     document.getElementById('sug-texto').value=''; document.getElementById('sug-Nome').value='';
     document.getElementById('sug-success').style.display='flex';
     if(isAdmin) await loadSuGestãoes();

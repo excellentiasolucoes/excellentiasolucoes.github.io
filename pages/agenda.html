@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -100,7 +100,7 @@ function renderSidebar(Nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -143,7 +143,7 @@ function renderGrid(list){
         <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dark),var(--gold));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:var(--navy);flex-shrink:0">${ini}</div>
         <div>
           <div style="font-size:14px;font-weight:700">${d.Nome||'Sem Nome'}</div>
-          <div style="font-size:12px;color:var(--gold)">${d.cargo||''} ${d.cargo&&d.funcao?'�':''} ${d.funcao||''}</div>
+          <div style="font-size:12px;color:var(--gold)">${d.cargo||''} ${d.cargo&&d.funcao?'-':''} ${d.funcao||''}</div>
         </div>
       </div>
       ${d.empresa?`<div style="font-size:12px;color:var(--text-3);margin-bottom:8px">?? ${d.empresa}</div>`:''}
@@ -180,7 +180,7 @@ window.editItem=async(id)=>{
 };
 window.deleteItem=async(id)=>{
   if(!await confirmDialog('Excluir este contato?'))return;
-  await deleteDoc(doc(db,'agendaContatos',id)); allItems=allItems.filter(d=>d.id!==id); renderGrid(allItems); showToast('Contato exclu�do!','success');
+  await deleteDoc(doc(db,'agendaContatos',id)); allItems=allItems.filter(d=>d.id!==id); renderGrid(allItems); showToast('Contato exclu-do!','success');
 };
 document.getElementById('btn-salvar').addEventListener('click',async()=>{
   const payload={Nome:document.getElementById('f-Nome').value.trim(),cargo:document.getElementById('f-cargo').value.trim(),

@@ -1,9 +1,9 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Projetos ?� Excellentia Controll</title>
+  <title>Projetos ?- Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" href="../assets/logo.png">
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -124,8 +124,8 @@
               <input type="text" class="form-control" id="acao-desc" placeholder="Descreva a a&#231;&#227;o realizada">
             </div>
             <div class="form-group">
-              <label class="form-label">Funcion�rio Respons�vel</label>
-              <input type="text" class="form-control" id="acao-func" placeholder="Nome do funcion�rio">
+              <label class="form-label">Funcion-rio Respons-vel</label>
+              <input type="text" class="form-control" id="acao-func" placeholder="Nome do funcion-rio">
             </div>
             <div class="form-group" style="display:flex;align-items:flex-end">
               <button class="btn btn-primary" id="btn-save-acao" style="width:100%;justify-content:center">
@@ -141,7 +141,7 @@
       <div class="tab-content" id="tab-hist">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Data</th><th>A&#231;&#227;o</th><th>Funcion�rio</th><th>Status</th></tr></thead>
+            <thead><tr><th>Data</th><th>A&#231;&#227;o</th><th>Funcion-rio</th><th>Status</th></tr></thead>
             <tbody id="hist-tbody"></tbody>
           </table>
         </div>
@@ -223,7 +223,7 @@ function renderSidebar(Nome, perfil) {
       <div class="sidebar-section-label">Outros</div>
       ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="suGestãoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -335,15 +335,15 @@ function renderTable() {
 
   tbody.innerHTML = list.map(d => {
     const status = allStatus.find(s => s.id === d.statusId);
-    const badge  = buildStatusBadge(d.statusNome || '�', status?.cor || '#888');
+    const badge  = buildStatusBadge(d.statusNome || '-', status?.cor || '#888');
     return `<tr>
-      <td data-col="numero" style="${colConfig.numero === false ? 'display:none' : ''}">#${d.numero || '�'}</td>
+      <td data-col="numero" style="${colConfig.numero === false ? 'display:none' : ''}">#${d.numero || '-'}</td>
       <td data-col="data"   style="${colConfig.data   === false ? 'display:none' : ''}">${formatDate(d.dataRegistro || d.criadoEm)}</td>
       <td data-col="status" style="${colConfig.status === false ? 'display:none' : ''}">${badge}${d.arquivada ? ' <span class="badge" style="background:#e74c3c22;color:#e74c3c;border:1px solid #e74c3c44">Arquivada</span>' : ''}</td>
-      <td data-col="tipo"   style="${colConfig.tipo   === false ? 'display:none' : ''}">${d.tipoServicoNome || '�'}</td>
-      <td data-col="cliente" style="${colConfig.cliente === false ? 'display:none' : ''}">${d.clienteNome || '�'}</td>
+      <td data-col="tipo"   style="${colConfig.tipo   === false ? 'display:none' : ''}">${d.tipoServicoNome || '-'}</td>
+      <td data-col="cliente" style="${colConfig.cliente === false ? 'display:none' : ''}">${d.clienteNome || '-'}</td>
       <td data-col="entrega" style="${colConfig.entrega ? '' : 'display:none'}">${formatDate(d.dataEntrega)}</td>
-      <td data-col="orcamento" style="${colConfig.orcamento ? '' : 'display:none'}">${d.temOrcamento ? '?' : '�'}</td>
+      <td data-col="orcamento" style="${colConfig.orcamento ? '' : 'display:none'}">${d.temOrcamento ? '?' : '-'}</td>
       <td>
         <div class="td-actions">
           <button class="btn btn-info btn-icon-sm" title="Ver detalhes" onclick="openDetail('${d.id}')">&#8227;</button>
@@ -419,20 +419,20 @@ window.openDetail = async (id) => {
   const d = allDemandas.find(x => x.id === id);
   if (!d) return;
   const status = allStatus.find(s => s.id === d.statusId);
-  const badge  = buildStatusBadge(d.statusNome || '�', status?.cor || '#888');
+  const badge  = buildStatusBadge(d.statusNome || '-', status?.cor || '#888');
 
-  document.getElementById('modal-titulo').textContent = `Projeto #${d.numero || '�'}`;
+  document.getElementById('modal-titulo').textContent = `Projeto #${d.numero || '-'}`;
   document.getElementById('btn-edit-demanda').href = `nova-demanda.html?id=${id}`;
   document.getElementById('demanda-info-grid').innerHTML = `
-    <div class="demanda-info-item"><label>n&#186;</label><span>#${d.numero || '�'}</span></div>
+    <div class="demanda-info-item"><label>n&#186;</label><span>#${d.numero || '-'}</span></div>
     <div class="demanda-info-item"><label>Data</label><span>${formatDate(d.dataRegistro || d.criadoEm)}</span></div>
     <div class="demanda-info-item"><label>Status</label><span>${badge}</span></div>
-    <div class="demanda-info-item"><label>Cliente</label><span>${d.clienteNome || '�'}</span></div>
-    <div class="demanda-info-item"><label>Tipo</label><span>${d.tipoServicoNome || '�'}</span></div>
-    <div class="demanda-info-item"><label>CPF/CnPJ</label><span>${d.cpfCnpj || '�'}</span></div>
+    <div class="demanda-info-item"><label>Cliente</label><span>${d.clienteNome || '-'}</span></div>
+    <div class="demanda-info-item"><label>Tipo</label><span>${d.tipoServicoNome || '-'}</span></div>
+    <div class="demanda-info-item"><label>CPF/CnPJ</label><span>${d.cpfCnpj || '-'}</span></div>
     <div class="demanda-info-item"><label>Entrega</label><span>${formatDate(d.dataEntrega)}</span></div>
-    <div class="demanda-info-item"><label>Or&#231;amento</label><span>${d.temOrcamento ? '? Sim' : '�'}</span></div>
-    <div class="demanda-info-item col-span-2" style="grid-column:span 3"><label>Descri&#231;&#227;o</label><span>${d.descricao || '�'}</span></div>`;
+    <div class="demanda-info-item"><label>Or&#231;amento</label><span>${d.temOrcamento ? '? Sim' : '-'}</span></div>
+    <div class="demanda-info-item col-span-2" style="grid-column:span 3"><label>Descri&#231;&#227;o</label><span>${d.descricao || '-'}</span></div>`;
 
   // Set default datetime for acao
   const now = new Date().toLocaleString('sv-SE', { timeZone: 'America/Manaus' }).replace(' ', 'T').slice(0,16);
@@ -459,9 +459,9 @@ function renderAcoes(acoes) {
   container.innerHTML = acoes.map(a => `
     <div class="acao-item" id="acao-${a.id}">
       <span class="acao-date">${formatDateTime(a.data)}</span>
-      <span class="acao-desc" id="desc-${a.id}">${a.descricao || '�'}</span>
-      <span class="acao-func">${a.funcionario || '�'}</span>
-      <span>${buildStatusBadge(a.statusNome || '�', allStatus.find(s => s.id === a.statusId)?.cor)}</span>
+      <span class="acao-desc" id="desc-${a.id}">${a.descricao || '-'}</span>
+      <span class="acao-func">${a.funcionario || '-'}</span>
+      <span>${buildStatusBadge(a.statusNome || '-', allStatus.find(s => s.id === a.statusId)?.cor)}</span>
       <div style="display:flex;gap:5px">
         <button class="btn btn-secondary btn-icon-sm" onclick="editAcao('${a.id}','${a.descricao?.replace(/'/g,"\\'")}','${a.funcionario?.replace(/'/g,"\\'")}')">&#9999;&#65039;</button>
         <button class="btn btn-danger btn-icon-sm"    onclick="deleteAcao('${a.id}')">&#128465;&#65039;</button>
@@ -473,9 +473,9 @@ function renderHistorico(acoes) {
   document.getElementById('hist-tbody').innerHTML = acoes.map(a => `
     <tr>
       <td>${formatDateTime(a.data)}</td>
-      <td>${a.descricao || '�'}</td>
-      <td>${a.funcionario || '�'}</td>
-      <td>${buildStatusBadge(a.statusNome || '�', allStatus.find(s => s.id === a.statusId)?.cor)}</td>
+      <td>${a.descricao || '-'}</td>
+      <td>${a.funcionario || '-'}</td>
+      <td>${buildStatusBadge(a.statusNome || '-', allStatus.find(s => s.id === a.statusId)?.cor)}</td>
     </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-3)">nenhum registro</td></tr>';
 }
 
@@ -511,7 +511,7 @@ document.getElementById('btn-save-acao').addEventListener('click', async () => {
 window.editAcao = async (acaoId, desc, func) => {
   const novaDesc = prompt('Editar descri&#231;&#227;o:', desc);
   if (novaDesc === null) return;
-  const novaFunc = prompt('Editar funcion�rio:', func);
+  const novaFunc = prompt('Editar funcion-rio:', func);
   if (novaFunc === null) return;
   await updateDoc(doc(db, 'demandas', currentDemandaId, 'acoes', acaoId), {
     descricao: novaDesc, funcionario: novaFunc, editadoEm: serverTimestamp()
@@ -523,7 +523,7 @@ window.editAcao = async (acaoId, desc, func) => {
 window.deleteAcao = async (acaoId) => {
   if (!await confirmDialog('Deseja excluir este registro de a&#231;&#227;o?')) return;
   await deleteDoc(doc(db, 'demandas', currentDemandaId, 'acoes', acaoId));
-  showToast('A&#231;&#227;o exclu�da!', 'success');
+  showToast('A&#231;&#227;o exclu-da!', 'success');
   await loadAcoes(currentDemandaId);
 };
 
