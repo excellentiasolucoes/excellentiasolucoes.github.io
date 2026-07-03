@@ -242,6 +242,31 @@ export function setupMobileSidebar() {
   });
 }
 
+// ── RIPPLE EFFECT ─────────────────────────────────────────────
+export function setupRippleEffect() {
+  document.addEventListener('click', function (e) {
+    const target = e.target.closest('.btn');
+    if (!target) return;
+    
+    const circle = document.createElement('span');
+    const diameter = Math.max(target.clientWidth, target.clientHeight);
+    const radius = diameter / 2;
+    const rect = target.getBoundingClientRect();
+    
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${e.clientX - rect.left - radius}px`;
+    circle.style.top = `${e.clientY - rect.top - radius}px`;
+    circle.classList.add('ripple');
+    
+    const ripple = target.querySelector('.ripple');
+    if (ripple) {
+      ripple.remove();
+    }
+    
+    target.appendChild(circle);
+  });
+}
+
 // ── EXCEL EXPORT ──────────────────────────────────────────────
 export function exportToExcel(data, filename) {
   const XLSX = window.XLSX;
@@ -265,3 +290,6 @@ export function printArea(elementId) {
   w.focus();
   setTimeout(() => { w.print(); w.close(); }, 500);
 }
+
+// Initialize global effects
+setupRippleEffect();
