@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -62,6 +62,11 @@
         <div class="form-group"><label class="form-label">Valor do Servi&#231;o (R$)</label>
           <input type="number" class="form-control" id="f-valor" placeholder="0,00" step="0.01" min="0">
         </div>
+        <div class="form-group col-span-2">
+          <label class="form-label">Planta / Imagem do Projeto (Opcional)</label>
+          <input type="file" class="form-control" id="f-imagem" accept="image/*" style="padding: 6px;">
+          <img id="img-preview" src="" style="display:none; max-height:200px; margin-top:10px; border-radius:8px; object-fit:contain; width:100%; border:1px solid var(--border)">
+        </div>
 
         <!-- Calculadora de desconto -->
         <div class="form-group col-span-2">
@@ -121,7 +126,7 @@ const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstat
 const { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, Timestamp, query, orderBy }
   = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
 const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
-let allItems=[], clientes=[], tiposServico=[], statusList=[], editId=null;
+let allItems=[], clientes=[], tiposServico=[], statusList=[], editId=null, imagemProjetoBase64=null;
 
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
@@ -257,10 +262,12 @@ function calcEntrega(){
 
 function openModal(id=null){
   editId=id; document.getElementById('form-alert').style.display='none'; document.getElementById('alerta-prazo').style.display='none';
-  document.getElementById('modal-titulo').textContent=id?'Editar Or&#231;amento':'novo Or&#231;amento';
-  if(!id){['f-cliente','f-cliente-id','f-tipo','f-desc','f-entrega'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('modal-titulo').textContent=id?'Editar Or&#231;amento':'Novo Or&#231;amento';
+  if(!id){['f-cliente','f-cliente-id','f-tipo','f-desc','f-entrega','f-imagem'].forEach(i=>document.getElementById(i).value='');
     ['f-data','f-prazo','f-valor','f-desconto'].forEach(i=>document.getElementById(i).value='');
-    document.getElementById('f-status').value=''; calcDesconto();}
+    document.getElementById('f-status').value=''; calcDesconto();
+    imagemProjetoBase64=null; document.getElementById('img-preview').style.display='none'; document.getElementById('img-preview').src='';
+  }
   document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
 }
 function closeModalFn(){document.getElementById('modal-form').classList.remove('open');document.body.style.overflow='';editId=null;}
@@ -274,8 +281,37 @@ window.editItem=async(id)=>{
   document.getElementById('f-desc').value=d.descricao||''; document.getElementById('f-valor').value=d.valorServico||'';
   document.getElementById('f-desconto').value=d.percentualDesconto||''; document.getElementById('f-prazo').value=d.prazo||'';
   if(d.dataServico){const dt=d.dataServico.toDate?d.dataServico.toDate():new Date(d.dataServico);document.getElementById('f-data').value=dt.toISOString().split('T')[0];}
+  imagemProjetoBase64 = d.imagemProjeto || null;
+  const imgEl = document.getElementById('img-preview');
+  if(imagemProjetoBase64) { imgEl.src = imagemProjetoBase64; imgEl.style.display = 'block'; }
+  else { imgEl.src = ''; imgEl.style.display = 'none'; }
+  document.getElementById('f-imagem').value='';
   calcDesconto(); calcEntrega();
 };
+
+document.getElementById('f-imagem').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX_WIDTH = 1200;
+      let width = img.width, height = img.height;
+      if (width > MAX_WIDTH) { height = Math.round(height * MAX_WIDTH / width); width = MAX_WIDTH; }
+      canvas.width = width; canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      imagemProjetoBase64 = canvas.toDataURL('image/jpeg', 0.8);
+      const imgEl = document.getElementById('img-preview');
+      imgEl.src = imagemProjetoBase64;
+      imgEl.style.display = 'block';
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
 
 window.deleteItem=async(id)=>{
   if(!await confirmDialog('Excluir este or&#231;amento?'))return;
@@ -293,37 +329,107 @@ document.getElementById('close-preview').addEventListener('click',()=>{
 });
 
 function renderPreview(d){
-  const st=statusList.find(s=>s.id===d.statusId);
+  const logoUrl = '../assets/logo.png';
   document.getElementById('orcamento-preview-content').innerHTML=`
-    <div style="border-bottom:3px solid #C9A84C;padding-bottom:20px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-start">
-      <div><h1 style="font-size:24px;color:#1A1A2E;margin:0">OR&#199;AMEnTO</h1>
-      <p style="color:#666;margin:4px 0">Excellentia Controll &#8212; Sistema de Gestão</p></div>
-      <div style="text-align:right"><div style="font-size:12px;color:#888">Data: ${new Date().toLocaleDateString('pt-BR')}</div></div>
-    </div>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:24px">
-      <tr><td style="padding:8px 0;font-weight:600;width:150px;color:#444">Cliente:</td><td>${d.clienteNome||'�'}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;color:#444">Tipo de Servi&#231;o:</td><td>${d.tipoServico||'�'}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;color:#444">Status:</td><td>${d.statusNome||'�'}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;color:#444">Data do Servi&#231;o:</td><td>${formatDate(d.dataServico)}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;color:#444">Data de Entrega:</td><td>${formatDate(d.dataEntrega)}</td></tr>
-    </table>
-    <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin-bottom:24px">
-      <div style="font-weight:600;color:#444;margin-bottom:8px">Descri&#231;&#227;o do Servi&#231;o:</div>
-      <p style="color:#333;line-height:1.6">${d.descricao||'�'}</p>
-    </div>
-    <div style="background:#1A1A2E;color:white;border-radius:8px;padding:20px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-        <span>Valor do Servi&#231;o:</span><span>${formatCurrency(d.valorServico)}</span>
+    <div style="background:white;color:#111;width:100%;max-width:800px;margin:0 auto;box-sizing:border-box;">
+      <!-- Página 1 -->
+      <div style="padding:40px; min-height:1050px; position:relative; box-sizing:border-box; background:white;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px;">
+          <div style="flex:1">
+            <h1 style="font-family:'Georgia',serif;font-size:36px;font-weight:normal;color:#111;margin:0 0 16px 0;line-height:1.2">Proposta de projeto de<br>interiores</h1>
+            <p style="font-size:14px;color:#333;margin:0 0 16px 0;max-width:320px;line-height:1.4">Agradecemos pela oportunidade de apresentar nossa proposta de or&#231;amento para atender &#224;s suas necessidades.</p>
+            <div style="font-size:18px;font-weight:bold;color:#111">${new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'})}</div>
+          </div>
+          <div style="width:200px;text-align:right">
+            <img src="${logoUrl}" style="width:100px;margin-bottom:8px;object-fit:contain" onerror="this.style.display='none'">
+            <div style="color:#0A58CA;font-weight:bold;font-size:18px;letter-spacing:1px">EXCELLENTIA</div>
+            <div style="color:#F58220;font-size:11px;letter-spacing:2px">SOLUÇÕES</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:24px">
+          <div style="font-size:18px;font-weight:bold;color:#111">Cliente: ${d.clienteNome||'—'}</div>
+          <div style="font-size:18px;font-weight:bold;color:#111">END: —</div>
+        </div>
+
+        <table style="width:100%;border-collapse:collapse;margin-bottom:24px;border:1px solid #111">
+          <thead>
+            <tr style="background:#111;color:white">
+              <th style="padding:12px;text-align:center;width:60px">Nº</th>
+              <th style="padding:12px;text-align:left">Descrição</th>
+              <th style="padding:12px;text-align:center;width:120px">Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:16px;text-align:center;border-right:1px solid #111;border-bottom:1px solid #111">1</td>
+              <td style="padding:16px;border-right:1px solid #111;border-bottom:1px solid #111;white-space:pre-wrap;">${d.descricao||'—'}</td>
+              <td style="padding:16px;text-align:center;border-bottom:1px solid #111">${formatCurrency(d.valorServico)}</td>
+            </tr>
+            ${d.percentualDesconto ? `
+            <tr>
+              <td colspan="2" style="padding:16px;text-align:right;border-right:1px solid #111;font-weight:bold;font-size:16px">
+                Valor Promocional: <span style="color:#00B050">${formatCurrency(d.valorComDesconto)}</span>
+              </td>
+              <td style="padding:16px;text-align:center;color:#FF0000;font-weight:bold;font-size:16px">
+                <del>${formatCurrency(d.valorServico)}</del>
+              </td>
+            </tr>
+            ` : ''}
+          </tbody>
+        </table>
+
+        <div style="display:flex;justify-content:space-between;margin-top:auto;font-size:12px;color:#333;margin-bottom:60px">
+          <div style="width:50%">
+            <p style="margin:0 0 8px 0;font-size:10px">Documentos inclusos ao fechamento do projeto: DOC c/ Imagens finais e DOC c/ Medidas Brutas e sugestivas</p>
+            <p style="margin:0;line-height:1.4">Modelagem realizada levando em consideração sugestões do próprio cliente, visando agregar valores práticos e estéticos aos elementos solicitados<br>Projeto contará com a modelagem do ambiente com sugestão de decoração viável ao ambiente.</p>
+          </div>
+          <div style="width:40%">
+            <p style="margin:0;line-height:1.4">Estamos à disposição para esclarecer quaisquer dúvidas ou fornecer informações adicionais</p>
+          </div>
+        </div>
+
+        <div style="position:absolute;bottom:40px;left:40px;right:40px;border-top:2px solid #111;padding-top:16px;display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#111">
+          <div style="font-weight:bold;line-height:1.2">EXCELLENTIA<br>SOLUÇÕES</div>
+          <div style="font-weight:bold;line-height:1.2;text-align:center">excellentiasolucoes@gmail.com<br>@renderg.io</div>
+          <div style="line-height:1.2;text-align:right">Rua Etelvina Gadelha, 1042<br>União - Manacapuru</div>
+        </div>
+        <div style="position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:12px;color:#111">PAULO SÉRGIO MORAES DE ARAÚJO</div>
       </div>
-      ${d.percentualDesconto?`<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:#C9A84C">
-        <span>Desconto (${d.percentualDesconto}%):</span><span>- ${formatCurrency(d.valorServico*(d.percentualDesconto/100))}</span>
-      </div>`:''}
-      <div style="display:flex;justify-content:space-between;font-size:22px;font-weight:800;border-top:1px solid rgba(255,255,255,0.2);padding-top:12px;margin-top:8px">
-        <span>TOTAL:</span><span style="color:#C9A84C">${formatCurrency(d.valorComDesconto||d.valorServico)}</span>
+
+      <!-- Página 2 (Opcional - Imagem do Projeto) -->
+      ${d.imagemProjeto ? `
+      <div style="page-break-before:always; padding:40px; min-height:1050px; position:relative; box-sizing:border-box; background:white;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px;">
+          <div style="flex:1">
+            <h1 style="font-family:'Georgia',serif;font-size:36px;font-weight:normal;color:#111;margin:0 0 16px 0;line-height:1.2">Proposta de projeto de<br>interiores</h1>
+            <p style="font-size:14px;color:#333;margin:0 0 16px 0;max-width:320px;line-height:1.4">Agradecemos pela oportunidade de apresentar nossa proposta de or&#231;amento para atender &#224;s suas necessidades.</p>
+            <div style="font-size:18px;font-weight:bold;color:#111">${new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'})}</div>
+          </div>
+          <div style="width:200px;text-align:right">
+            <img src="${logoUrl}" style="width:100px;margin-bottom:8px;object-fit:contain" onerror="this.style.display='none'">
+            <div style="color:#0A58CA;font-weight:bold;font-size:18px;letter-spacing:1px">EXCELLENTIA</div>
+            <div style="color:#F58220;font-size:11px;letter-spacing:2px">SOLUÇÕES</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:24px">
+          <div style="font-size:18px;font-weight:bold;color:#111">Cliente: ${d.clienteNome||'—'}</div>
+          <div style="font-size:18px;font-weight:bold;color:#111">END: —</div>
+        </div>
+
+        <div style="text-align:center; margin-top:40px; margin-bottom:40px;">
+          <img src="${d.imagemProjeto}" style="max-width:100%; max-height:500px; object-fit:contain; border:1px solid #ddd; padding:10px;">
+        </div>
+
+        <div style="position:absolute;bottom:40px;left:40px;right:40px;border-top:2px solid #111;padding-top:16px;display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#111">
+          <div style="font-weight:bold;line-height:1.2">EXCELLENTIA<br>SOLUÇÕES</div>
+          <div style="font-weight:bold;line-height:1.2;text-align:center">excellentiasolucoes@gmail.com<br>@renderg.io</div>
+          <div style="line-height:1.2;text-align:right">Rua Etelvina Gadelha, 1042<br>União - Manacapuru</div>
+        </div>
+        <div style="position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:12px;color:#111">PAULO SÉRGIO MORAES DE ARAÚJO</div>
       </div>
-    </div>
-    <div style="margin-top:40px;text-align:center;font-size:11px;color:#888;border-top:1px solid #ddd;padding-top:16px">
-      Excellentia Controll &#8212; 2026 &#8212; Este documento foi gerado eletronicamente e � v&#225;lido sem assinatura.
+      ` : ''}
     </div>`;
 }
 
@@ -339,7 +445,8 @@ document.getElementById('btn-preview').addEventListener('click',()=>{
     percentualDesconto:parseFloat(document.getElementById('f-desconto').value)||0,
     valorComDesconto:parseFloat(document.getElementById('f-valor').value||0)*(1-(parseFloat(document.getElementById('f-desconto').value||0)/100)),
     dataServico:{toDate:()=>document.getElementById('f-data').value?new Date(document.getElementById('f-data').value+'T12:00:00'):null},
-    dataEntrega:null
+    dataEntrega:null,
+    imagemProjeto: imagemProjetoBase64
   };
   renderPreview(fakeData);
   document.getElementById('modal-preview').classList.add('open'); document.body.style.overflow='hidden';
@@ -347,14 +454,35 @@ document.getElementById('btn-preview').addEventListener('click',()=>{
 
 // PDF
 document.getElementById('btn-pdf').addEventListener('click', async()=>{
+  const btn = document.getElementById('btn-pdf');
+  const oldText = btn.innerHTML;
+  btn.innerHTML = 'Gerando...'; btn.disabled = true;
+  
   const el=document.getElementById('orcamento-preview-content');
-  const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff'});
+  const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true});
   const {jsPDF}=window.jspdf;
   const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const imgData=canvas.toDataURL('image/png');
-  const w=pdf.internal.pageSize.getWidth(); const h=(canvas.height/canvas.width)*w;
-  pdf.addImage(imgData,'PnG',0,0,w,h);
+  
+  const imgData=canvas.toDataURL('image/jpeg',0.95);
+  const w=pdf.internal.pageSize.getWidth(); 
+  const h=(canvas.height/canvas.width)*w;
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  
+  let heightLeft = h;
+  let position = 0;
+  
+  pdf.addImage(imgData,'JPEG',0,position,w,h);
+  heightLeft -= pageHeight;
+  
+  while(heightLeft > 5) { // 5px tolerance
+    position -= pageHeight;
+    pdf.addPage();
+    pdf.addImage(imgData,'JPEG',0,position,w,h);
+    heightLeft -= pageHeight;
+  }
+  
   pdf.save(`orcamento-${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.pdf`);
+  btn.innerHTML = oldText; btn.disabled = false;
 });
 
 document.getElementById('btn-salvar').addEventListener('click',async()=>{
@@ -370,7 +498,8 @@ document.getElementById('btn-salvar').addEventListener('click',async()=>{
     clienteNome:document.getElementById('f-cliente').value.trim(),clienteId:document.getElementById('f-cliente-id').value,
     tipoServico:document.getElementById('f-tipo').value.trim(),statusId:stSel.value,
     statusNome:stSel.options[stSel.selectedIndex]?.text||'',descricao:document.getElementById('f-desc').value.trim(),
-    dataServico,prazo,dataEntrega,valorServico:valor,percentualDesconto:pctDesc,valorComDesconto:valorDesc,atualizadoEm:serverTimestamp()
+    dataServico,prazo,dataEntrega,valorServico:valor,percentualDesconto:pctDesc,valorComDesconto:valorDesc,
+    imagemProjeto: imagemProjetoBase64, atualizadoEm:serverTimestamp()
   };
   try{
     if(editId){await updateDoc(doc(db,'orcamentos',editId),payload);allItems=allItems.map(d=>d.id===editId?{...d,...payload}:d);}
