@@ -1,469 +1,80 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Excellentia Controll  Inicializar Banco de Dados</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: #0d1117;
-      color: #e6edf3;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .card {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 16px;
-      padding: 40px;
-      width: 100%;
-      max-width: 680px;
-      box-shadow: 0 16px 48px rgba(0,0,0,.5);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-    .logo-icon {
-      width: 44px; height: 44px;
-      background: linear-gradient(135deg, #7c3aed, #4f46e5);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-    }
-    .logo-text h1 { font-size: 18px; font-weight: 700; color: #f0f6fc; }
-    .logo-text p  { font-size: 12px; color: #8b949e; margin-top: 2px; }
-
-    h2 {
-      font-size: 22px;
-      font-weight: 700;
-      color: #f0f6fc;
-      margin-bottom: 8px;
-    }
-    .subtitle {
-      font-size: 13px;
-      color: #8b949e;
-      margin-bottom: 28px;
-      line-height: 1.6;
-    }
-
-    .collections-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 28px;
-    }
-    .col-item {
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      transition: border-color .3s, background .3s;
-    }
-    .col-item .icon { font-size: 16px; }
-    .col-item .name { font-weight: 600; color: #e6edf3; }
-    .col-item .count { font-size: 11px; color: #8b949e; margin-left: auto; }
-    .col-item.done  { border-color: #238636; background: #0f2419; }
-    .col-item.error { border-color: #da3633; background: #2a0e0e; }
-    .col-item.skip  { border-color: #9e6a03; background: #2a1d00; }
-
-    .btn-seed {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #7c3aed, #4f46e5);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: opacity .2s, transform .15s;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .btn-seed:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
-    .btn-seed:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-
-    #log {
-      margin-top: 22px;
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 14px;
-      font-size: 12px;
-      font-family: 'Consolas', monospace;
-      max-height: 220px;
-      overflow-y: auto;
-      display: none;
-    }
-    #log .line { padding: 2px 0; }
-    #log .ok   { color: #3fb950; }
-    #log .err  { color: #f85149; }
-    #log .skip { color: #d29922; }
-    #log .info { color: #58a6ff; }
-
-    .warning-box {
-      background: #2a1d00;
-      border: 1px solid #9e6a03;
-      border-radius: 8px;
-      padding: 12px 16px;
-      font-size: 12.5px;
-      color: #d29922;
-      margin-bottom: 22px;
-      line-height: 1.6;
-    }
-    .warning-box strong { color: #f0c244; }
-  </style>
-</head>
-<body>
-<div class="card">
-
-  <div class="logo">
-    <div class="logo-icon">&#127963;</div>
-    <div class="logo-text">
-      <h1>Excellentia Controll</h1>
-      <p>Empresa de Arquitetura</p>
-    </div>
-  </div>
-
-  <h2>&#128450; Inicializar Banco de Dados</h2>
-  <p class="subtitle">
-    Esta p&aacute;gina cria todas as cole&ccedil;&otilde;es e documentos padr&atilde;o no Firestore.<br>
-    Execute <strong>apenas uma vez</strong> ao configurar o projeto pela primeira vez.<br>
-    Documentos j&aacute; existentes ser&atilde;o preservados (n&atilde;o sobrescritos).
-  </p>
-
-  <div class="warning-box">
-    &#9888; <strong>Aten&ccedil;&atilde;o:</strong> Voc&ecirc; precisa estar <strong>autenticado no Firebase</strong> (ou ter as
-    regras do Firestore abertas) para que o seed funcione. Certifique-se de ter feito login
-    antes de executar.
-  </div>
-
-  <div class="collections-grid" id="collections-grid">
-    <div class="col-item" id="ci-configuracoes"><span class="icon">&#128202;</span><span class="name">configuracoes</span><span class="count">1 doc</span></div>
-    <div class="col-item" id="ci-statusServico"><span class="icon">&#128202;</span><span class="name">statusServico</span><span class="count">5 docs</span></div>
-    <div class="col-item" id="ci-tiposServico"><span class="icon">&#128203;</span><span class="name">tiposServico</span><span class="count">6 docs</span></div>
-    <div class="col-item" id="ci-usuarios"><span class="icon">&#128200;</span><span class="name">usuarios</span><span class="count">1 doc</span></div>
-    <div class="col-item" id="ci-clientes"><span class="icon">&#128200;</span><span class="name">clientes</span><span class="count">1 doc demo</span></div>
-    <div class="col-item" id="ci-fornecedores"><span class="icon">&#128200;</span><span class="name">fornecedores</span><span class="count">1 doc demo</span></div>
-    <div class="col-item" id="ci-servicos"><span class="icon">&#128200;</span><span class="name">servicos</span><span class="count">1 doc demo</span></div>
-    <div class="col-item" id="ci-materiais"><span class="icon">&#128200;</span><span class="name">materiais</span><span class="count">1 doc demo</span></div>
-    <div class="col-item" id="ci-demandas"><span class="icon">&#128200;</span><span class="name">demandas</span><span class="count">1 doc demo</span></div>
-    <div class="col-item" id="ci-orcamentos"><span class="icon">&#128200;</span><span class="name">orcamentos</span><span class="count">1 doc demo</span></div>
-    <div class="col-item" id="ci-agendaContatos"><span class="icon">&#128200;</span><span class="name">agendaContatos</span><span class="count">1 doc demo</span></div>
-    <div class="col-item" id="ci-sugestoes"><span class="icon">&#128200;</span><span class="name">sugestoes</span><span class="count">vazio</span></div>
-  </div>
-
-  <div id="google-login-area" style="display:none;margin-bottom:16px">
-    <button id="btn-google-login" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1.5px solid #30363d;background:#0d1117;color:#e6edf3;font-size:14px;font-weight:600;border-radius:10px;cursor:pointer;transition:background .2s,border-color .2s" onclick="loginGoogle()">
-      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-      Fazer login com Google para continuar
-    </button>
-  </div>
-
-  <button class="btn-seed" id="btn-seed" onclick="runSeed()">
-    &#128640; Inicializar Cole&ccedil;&otilde;es
-  </button>
-
-  <div id="log"></div>
-</div>
-
+<html><body>
+<h2>Limpando e populando banco de dados... Aguarde!</h2>
+<div id="log" style="font-family: monospace; background: #eee; padding: 10px;"></div>
 <script type="module">
-  import { initializeApp }   from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js';
-  import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js';
-  import {
-    getFirestore, doc, collection,
-    getDoc, setDoc, addDoc,
-    serverTimestamp, Timestamp
-  } from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js';
+import { firebaseConfig } from './js/firebase/config.js';
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, collection, getDocs, doc, setDoc, addDoc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
 
-  import { firebaseConfig } from './js/firebase/config.js';
+const app=initializeApp(firebaseConfig); 
+const auth=getAuth(app); 
+const db=getFirestore(app);
 
-  const app  = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
+const logEl = document.getElementById('log');
+function log(msg) {
+  logEl.innerHTML += msg + "<br>";
+}
 
-  const logEl = document.getElementById('log');
-
-  function log(msg, cls = 'info') {
-    logEl.style.display = 'block';
-    const line = document.createElement('div');
-    line.className = 'line ' + cls;
-    line.textContent = '[' + new Date().toLocaleTimeString('pt-BR') + '] ' + msg;
-    logEl.appendChild(line);
-    logEl.scrollTop = logEl.scrollHeight;
+onAuthStateChanged(auth, async(user)=>{
+  if(!user){
+    log("<b>Erro:</b> Você precisa estar logado no sistema para fazer isso. Abra o painel em outra aba e recarregue esta página.");
+    return;
   }
-
-  function markCol(id, state) {
-    const el = document.getElementById('ci-' + id);
-    if (el) {
-      el.classList.remove('done', 'error', 'skip');
-      el.classList.add(state);
+  log("Usuário autenticado. Iniciando limpeza...");
+  
+  try {
+    // Tipos de servico
+    const tSnap = await getDocs(collection(db, 'tiposServico'));
+    const existingTipos = [];
+    for(const d of tSnap.docs) {
+      const nome = d.data().Nome || '';
+      if(!nome.trim() || nome.startsWith('') || nome.startsWith('?') || nome === '') {
+        await deleteDoc(d.ref);
+        log('Apagado tipo inválido/vazio: ' + d.id);
+      } else {
+        existingTipos.push(nome.trim());
+      }
     }
+    const requiredTipos = ["Consultoria", "Acompanhamento", "Revisão", "Projeto Completo", "Projeto e Execução da Obra"];
+    for(const t of requiredTipos) {
+      if(!existingTipos.includes(t)) {
+        await addDoc(collection(db, 'tiposServico'), {Nome: t});
+        log('Adicionado tipo: ' + t);
+      }
+    }
+
+    // Status de servico
+    const sSnap = await getDocs(collection(db, 'statusServico'));
+    const existingStatus = [];
+    for(const d of sSnap.docs) {
+      const nome = d.data().Nome || '';
+      if(!nome.trim() || nome.startsWith('') || nome.startsWith('?') || nome === '') {
+        await deleteDoc(d.ref);
+        log('Apagado status inválido/vazio: ' + d.id);
+      } else {
+        existingStatus.push(nome.trim());
+      }
+    }
+    const requiredStatus = [
+      {Nome: "Entrevista", ordem: 1, cor: "#0A58CA"},
+      {Nome: "Visita Técnica", ordem: 2, cor: "#F58220"},
+      {Nome: "Desenho", ordem: 3, cor: "#6F42C1"},
+      {Nome: "Orçamento", ordem: 4, cor: "#20C997"},
+      {Nome: "Pagamento", ordem: 5, cor: "#198754"}
+    ];
+    for(const s of requiredStatus) {
+      if(!existingStatus.includes(s.Nome)) {
+        await addDoc(collection(db, 'statusServico'), s);
+        log('Adicionado status: ' + s.Nome);
+      }
+    }
+
+    log("<b>SUCESSO! O banco de dados foi limpo e os itens corretos recriados. Pode fechar esta página.</b>");
+  } catch(e) {
+    log("Erro: " + e.message);
   }
-
-  async function seedDoc(colPath, docId, data) {
-    const parts = colPath.split('/');
-    const ref  = doc(db, ...parts, docId);
-    const snap = await getDoc(ref);
-    if (snap.exists()) {
-      log('Ignorado (ja existe): ' + colPath + '/' + docId, 'skip');
-      return false;
-    }
-    await setDoc(ref, { ...data, _seed: true, criadoEm: serverTimestamp() });
-    log('Criado: ' + colPath + '/' + docId, 'ok');
-    return true;
-  }
-
-  async function seedAddDoc(colname, data, label) {
-    try {
-      const ref = await addDoc(collection(db, colname), {
-        ...data, _seed: true, criadoEm: serverTimestamp()
-      });
-      log('Criado: ' + colname + '/' + ref.id + '  ' + label, 'ok');
-      return ref.id;
-    } catch (e) {
-      log('Erro em ' + colname + ': ' + e.message, 'err');
-      return null;
-    }
-  }
-
-  window.loginGoogle = async function () {
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-    } catch(e) {
-      log('Erro no login Google: ' + e.message, 'err');
-    }
-  };
-
-  window.runSeed = async function () {
-    const btn = document.getElementById('btn-seed');
-    btn.disabled = true;
-    btn.textContent = 'Inicializando...';
-    log('Iniciando seed do Firestore...', 'info');
-
-    try {
-      // 1. configuracoes/sistema
-      log('--- configuracoes ---', 'info');
-      try {
-        const ok = await seedDoc('configuracoes', 'sistema', {
-          proximonumero   : 1,
-          numeracaoInicial: 1,
-          fusoHorario     : 'America/Manaus',
-          nomeEmpresa     : 'Excellentia Controll',
-          versao          : '1.0.0'
-        });
-        markCol('configuracoes', ok ? 'done' : 'skip');
-      } catch(e) { log('Erro configuracoes: ' + e.message, 'err'); markCol('configuracoes','error'); }
-
-      // 2. statusServico
-      log('--- statusServico ---', 'info');
-      try {
-        const statuses = [
-          { Nome: 'novo',         cor: '#6366f1', ordem: 1, ativo: true },
-          { Nome: 'Em Andamento', cor: '#f59e0b', ordem: 2, ativo: true },
-          { Nome: 'Aguardando',   cor: '#3b82f6', ordem: 3, ativo: true },
-          { Nome: 'Revisao',      cor: '#8b5cf6', ordem: 4, ativo: true },
-          { Nome: 'Concluido',    cor: '#10b981', ordem: 5, ativo: true },
-        ];
-        for (const s of statuses) {
-          const ref = await addDoc(collection(db, 'statusServico'), { ...s, _seed: true, criadoEm: serverTimestamp() });
-          log('Criado statusServico: ' + s.Nome + ' (' + ref.id + ')', 'ok');
-        }
-        markCol('statusServico', 'done');
-      } catch(e) { log('Erro statusServico: ' + e.message, 'err'); markCol('statusServico','error'); }
-
-      // 3. tiposServico
-      log('--- tiposServico ---', 'info');
-      try {
-        const tipos = [
-          'Projeto Arquitetonico',
-          'Projeto de Interiores',
-          'Consultoria',
-          'Laudo Tecnico',
-          'Reforma',
-          'Regularizacao de Imovel',
-        ];
-        for (const Nome of tipos) {
-          const ref = await addDoc(collection(db, 'tiposServico'), { Nome, ativo: true, _seed: true, criadoEm: serverTimestamp() });
-          log('Criado tiposServico: ' + Nome + ' (' + ref.id + ')', 'ok');
-        }
-        markCol('tiposServico', 'done');
-      } catch(e) { log('Erro tiposServico: ' + e.message, 'err'); markCol('tiposServico','error'); }
-
-      // 4. usuarios
-      log('--- usuarios ---', 'info');
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          const ok = await seedDoc('usuarios', user.uid, {
-            Nome  : user.displayname || user.email.split('@')[0] || 'Administrador',
-            email : user.email || '',
-            perfil: 'admin',
-            ativo : true,
-          });
-          markCol('usuarios', ok ? 'done' : 'skip');
-        } else {
-          log('nenhum usuario logado  usuarios nao criado.', 'skip');
-          markCol('usuarios', 'skip');
-        }
-      } catch(e) { log('Erro usuarios: ' + e.message, 'err'); markCol('usuarios','error'); }
-
-      // 5. clientes
-      log('--- clientes ---', 'info');
-      try {
-        const id = await seedAddDoc('clientes', {
-          nomeCompleto: 'Cliente Demonstracao',
-          cpfCnpj     : '000.000.000-00',
-          email       : 'demo@exemplo.com',
-          telefone    : '(92) 99999-0000',
-          endereco    : 'Rua Exemplo, 100  Manaus/AM',
-          obs         : 'Registro de demonstracao. Pode ser excluido.',
-          ativo       : true,
-        }, 'Cliente Demo');
-        markCol('clientes', id ? 'done' : 'error');
-      } catch(e) { log('Erro clientes: ' + e.message, 'err'); markCol('clientes','error'); }
-
-      // 6. fornecedores
-      log('--- fornecedores ---', 'info');
-      try {
-        const id = await seedAddDoc('fornecedores', {
-          nomeCompleto: 'Fornecedor Demonstracao',
-          cpfCnpj     : '00.000.000/0000-00',
-          email       : 'fornecedor@exemplo.com',
-          telefone    : '(92) 98888-0000',
-          endereco    : 'Av. Exemplo, 200  Manaus/AM',
-          categoria   : 'Material de Construcao',
-          obs         : 'Registro de demonstracao. Pode ser excluido.',
-          ativo       : true,
-        }, 'Fornecedor Demo');
-        markCol('fornecedores', id ? 'done' : 'error');
-      } catch(e) { log('Erro fornecedores: ' + e.message, 'err'); markCol('fornecedores','error'); }
-
-      // 7. servicos
-      log('--- servicos ---', 'info');
-      try {
-        const id = await seedAddDoc('servicos', {
-          nomeServico : 'Servico de Demonstracao',
-          tipoServico : 'Consultoria',
-          descricao   : 'Registro de demonstracao. Pode ser excluido.',
-          valorPadrao : 0,
-          ativo       : true,
-        }, 'Servico Demo');
-        markCol('servicos', id ? 'done' : 'error');
-      } catch(e) { log('Erro servicos: ' + e.message, 'err'); markCol('servicos','error'); }
-
-      // 8. materiais
-      log('--- materiais ---', 'info');
-      try {
-        const id = await seedAddDoc('materiais', {
-          nomeMaterial : 'Material de Demonstracao',
-          tipoMaterial : 'Geral',
-          unidade      : 'un',
-          precoUnitario: 0,
-          fornecedorId : '',
-          obs          : 'Registro de demonstracao. Pode ser excluido.',
-          ativo        : true,
-        }, 'Material Demo');
-        markCol('materiais', id ? 'done' : 'error');
-      } catch(e) { log('Erro materiais: ' + e.message, 'err'); markCol('materiais','error'); }
-
-      // 9. demandas
-      log('--- demandas ---', 'info');
-      try {
-        const id = await seedAddDoc('demandas', {
-          numero     : 1,
-          titulo     : 'Demanda de Demonstracao',
-          descricao  : 'Registro de demonstracao. Pode ser excluido.',
-          clienteId  : '',
-          clienteNome: 'Cliente Demo',
-          tipoServico: 'Consultoria',
-          statusNome : 'novo',
-          statusCor  : '#6366f1',
-          prioridade : 'media',
-          dataInicio : Timestamp.now(),
-          dataEntrega: null,
-          responsavel: '',
-          valorTotal : 0,
-          ativo      : true,
-        }, 'Demanda Demo');
-        markCol('demandas', id ? 'done' : 'error');
-      } catch(e) { log('Erro demandas: ' + e.message, 'err'); markCol('demandas','error'); }
-
-      // 10. orcamentos
-      log('--- orcamentos ---', 'info');
-      try {
-        const id = await seedAddDoc('orcamentos', {
-          numero     : 1,
-          titulo     : 'Orcamento de Demonstracao',
-          clienteId  : '',
-          clienteNome: 'Cliente Demo',
-          tipoServico: 'Consultoria',
-          statusNome : 'Rascunho',
-          statusCor  : '#6366f1',
-          itens      : [],
-          totalGeral : 0,
-          validade   : null,
-          obs        : 'Registro de demonstracao. Pode ser excluido.',
-        }, 'Orcamento Demo');
-        markCol('orcamentos', id ? 'done' : 'error');
-      } catch(e) { log('Erro orcamentos: ' + e.message, 'err'); markCol('orcamentos','error'); }
-
-      // 11. agendaContatos
-      log('--- agendaContatos ---', 'info');
-      try {
-        const id = await seedAddDoc('agendaContatos', {
-          Nome     : 'Contato de Demonstracao',
-          telefone : '(92) 97777-0000',
-          email    : 'contato@exemplo.com',
-          empresa  : 'Empresa Demo',
-          categoria: 'Geral',
-          obs      : 'Registro de demonstracao. Pode ser excluido.',
-        }, 'Contato Demo');
-        markCol('agendaContatos', id ? 'done' : 'error');
-      } catch(e) { log('Erro agendaContatos: ' + e.message, 'err'); markCol('agendaContatos','error'); }
-
-      // 12. sugestoes  criada dinamicamente pelo usuario
-      markCol('sugestoes', 'skip');
-      log('sugestoes  ignorada (criada pelos usuarios).', 'skip');
-
-      log('', 'info');
-      log('SEED COnCLUIDO! Verifique o Firestore Console.', 'ok');
-      btn.textContent = 'Concluido!';
-      btn.style.background = 'linear-gradient(135deg,#238636,#2ea043)';
-
-    } catch (fatalErr) {
-      log('Erro fatal: ' + fatalErr.message, 'err');
-      btn.disabled = false;
-      btn.textContent = 'Tentar novamente';
-    }
-  };
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      log('Logado como: ' + (user.email || user.uid), 'info');
-      document.getElementById('log').style.display = 'block';
-      document.getElementById('google-login-area').style.display = 'none';
-      document.getElementById('btn-seed').style.display = 'flex';
-    } else {
-      document.getElementById('google-login-area').style.display = 'block';
-      document.getElementById('btn-seed').style.display = 'none';
-    }
-  });
+});
 </script>
-</body>
-</html>
+</body></html>

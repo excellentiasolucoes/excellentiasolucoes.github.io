@@ -252,7 +252,7 @@ function calcDesconto(){
 ['f-data','f-prazo'].forEach(id=>document.getElementById(id).addEventListener('input',calcEntrega));
 function calcEntrega(){
   const ds=document.getElementById('f-data').value; const dias=parseInt(document.getElementById('f-prazo').value);
-  if(ds&&!isnan(dias)){
+  if(ds&&!isNaN(dias)){
     const d=new Date(ds+'T12:00:00'); d.setDate(d.getDate()+dias);
     document.getElementById('f-entrega').value=d.toLocaleDateString('pt-BR');
     const now=new Date(); const alertEl=document.getElementById('alerta-prazo');

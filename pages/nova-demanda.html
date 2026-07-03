@@ -298,7 +298,7 @@ async function loadDemanda(id) {
 function updateEntrega() {
   const ds   = document.getElementById('data-servico').value;
   const dias = parseInt(document.getElementById('prazo').value);
-  if (ds && !isnan(dias)) {
+  if (ds && !isNaN(dias)) {
     const d = new Date(ds + 'T12:00:00');
     d.setDate(d.getDate() + dias);
     document.getElementById('data-entrega-calc').value = d.toLocaleDateString('pt-BR');
