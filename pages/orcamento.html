@@ -29,7 +29,7 @@
   </div>
 </div>
 
-<!-- Modal: novo/Editar Or&#231;amento -->
+<!-- Modal: novo/Editar Orçamento -->
 <div class="modal-overlay" id="modal-form">
   <div class="modal modal-lg">
     <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Or&#231;amento</span></span><button class="modal-close" id="close-modal">✕</button></div>
@@ -185,6 +185,7 @@ function renderSidebar(Nome, perfil) {
       <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
       <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
+      <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
       <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
       <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
       <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
@@ -262,7 +263,7 @@ function calcEntrega(){
 
 function openModal(id=null){
   editId=id; document.getElementById('form-alert').style.display='none'; document.getElementById('alerta-prazo').style.display='none';
-  document.getElementById('modal-titulo').textContent=id?'Editar Or&#231;amento':'Novo Or&#231;amento';
+  document.getElementById('modal-titulo').textContent=id?'Editar Orçamento':'Novo Or&#231;amento';
   if(!id){['f-cliente','f-cliente-id','f-tipo','f-desc','f-entrega','f-imagem'].forEach(i=>document.getElementById(i).value='');
     ['f-data','f-prazo','f-valor','f-desconto'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('f-status').value=''; calcDesconto();

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clientes  Excellentia Controll</title>
+  <title>Colaboradores  Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" href="../assets/logo.png">
 </head>
@@ -13,9 +13,9 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <div><div class="topbar-title">Clientes</div><div class="topbar-subtitle">Cadastro de clientes</div></div>
+      <div><div class="topbar-title">Colaboradores</div><div class="topbar-subtitle">Cadastro de colaboradors</div></div>
       <div class="topbar-actions">
-        <button class="btn btn-primary" id="btn-novo">+ Novo Cliente</button>
+        <button class="btn btn-primary" id="btn-novo">+ Novo Colaborador</button>
       </div>
     </div>
     <div class="page-content">
@@ -45,7 +45,7 @@
 <div class="modal-overlay" id="modal-form">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title"><span id="modal-titulo">Novo Cliente</span></span>
+      <span class="modal-title"><span id="modal-titulo">Novo Colaborador</span></span>
       <button class="modal-close" id="close-modal">✕</button>
     </div>
     <div class="modal-body">
@@ -152,8 +152,7 @@ function renderSidebar(Nome, perfil) {
       <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
       <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
-      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="colaboradors.html"><span class="nav-icon">&#128101;</span>Colaboradores</a>
       <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
       <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
       <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
@@ -201,8 +200,7 @@ function getSidebar(Nome, perfil) {
       <a href="orcamento.html"><span class="nav-icon">&#9642;</span>Or&#231;amentos</a>
       <a href="relatorios.html"><span class="nav-icon">&#9642;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
-      <a href="clientes.html"><span class="nav-icon">&#9642;</span>Clientes</a>
+      <a href="colaboradors.html"><span class="nav-icon">&#9642;</span>Colaboradores</a>
       <a href="fornecedores.html"><span class="nav-icon">&#9642;</span>Fornecedores</a>
       <a href="materiais.html"><span class="nav-icon">&#9642;</span>Materiais</a>
       <a href="servicos.html"><span class="nav-icon">&#9642;</span>Servi&#231;os</a>
@@ -221,7 +219,7 @@ function getSidebar(Nome, perfil) {
 }
 
 async function loadData() {
-  const snap = await getDocs(query(collection(db, 'clientes'), orderBy('nomeCompleto')));
+  const snap = await getDocs(query(collection(db, 'colaboradors'), orderBy('nomeCompleto')));
   allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   renderTable(allItems);
 }
@@ -229,7 +227,7 @@ async function loadData() {
 function renderTable(list) {
   const tbody = document.getElementById('list-tbody');
   if (list.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>nenhum cliente</h3><p>Clique em "+ Novo Cliente" para comear.</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>nenhum colaborador</h3><p>Clique em "+ Novo Colaborador" para comear.</p></div></td></tr>`;
     return;
   }
   tbody.innerHTML = list.map(d => `<tr>
@@ -256,7 +254,7 @@ document.getElementById('search-input').addEventListener('input', (e) => {
 function openModal(id = null) {
   editId = id;
   document.getElementById('form-alert').style.display = 'none';
-  document.getElementById('modal-titulo').textContent = id ? 'Editar Cliente' : 'novo Cliente';
+  document.getElementById('modal-titulo').textContent = id ? 'Editar Colaborador' : 'novo Colaborador';
   if (!id) { ['f-Nome','f-cpf','f-endereco','f-email','f-contato1','f-contato2'].forEach(i => document.getElementById(i).value = ''); document.getElementById('f-tipo').value = ''; }
   document.getElementById('modal-form').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -280,11 +278,11 @@ window.editItem = async (id) => {
 };
 
 window.deleteItem = async (id) => {
-  if (!await confirmDialog('Deseja excluir este cliente?')) return;
-  await deleteDoc(doc(db, 'clientes', id));
+  if (!await confirmDialog('Deseja excluir este colaborador?')) return;
+  await deleteDoc(doc(db, 'colaboradors', id));
   allItems = allItems.filter(d => d.id !== id);
   renderTable(allItems);
-  showToast('Cliente excludo!', 'success');
+  showToast('Colaborador excludo!', 'success');
 };
 
 document.getElementById('btn-salvar').addEventListener('click', async () => {
@@ -300,15 +298,15 @@ document.getElementById('btn-salvar').addEventListener('click', async () => {
   };
   try {
     if (editId) {
-      await updateDoc(doc(db, 'clientes', editId), payload);
+      await updateDoc(doc(db, 'colaboradors', editId), payload);
       allItems = allItems.map(d => d.id === editId ? { ...d, ...payload } : d);
     } else {
-      const ref = await addDoc(collection(db, 'clientes'), { ...payload, criadoEm: serverTimestamp() });
+      const ref = await addDoc(collection(db, 'colaboradors'), { ...payload, criadoEm: serverTimestamp() });
       allItems.push({ id: ref.id, ...payload });
     }
     renderTable(allItems);
     closeModalFn();
-    showToast(editId ? 'Cliente atualizado!' : 'Cliente cadastrado!', 'success');
+    showToast(editId ? 'Colaborador atualizado!' : 'Colaborador cadastrado!', 'success');
   } catch (err) {
     document.getElementById('form-alert').textContent = err.message;
     document.getElementById('form-alert').style.display = 'flex';

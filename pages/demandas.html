@@ -71,7 +71,7 @@
           <table class="data-table" id="demandas-table">
             <thead>
               <tr>
-                <th data-col="numero">n&#186;</th>
+                <th data-col="numero">Nº</th>
                 <th data-col="data">Data</th>
                 <th data-col="status">Status</th>
                 <th data-col="tipo">Tipo</th>
@@ -124,8 +124,8 @@
               <input type="text" class="form-control" id="acao-desc" placeholder="Descreva a a&#231;&#227;o realizada">
             </div>
             <div class="form-group">
-              <label class="form-label">Funcion-rio Respons-vel</label>
-              <input type="text" class="form-control" id="acao-func" placeholder="Nome do funcion-rio">
+              <label class="form-label">Colaborador Responsável</label>
+              <input type="text" class="form-control" id="acao-func" placeholder="Nome do colaborador">
             </div>
             <div class="form-group" style="display:flex;align-items:flex-end">
               <button class="btn btn-primary" id="btn-save-acao" style="width:100%;justify-content:center">
@@ -216,6 +216,7 @@ function renderSidebar(Nome, perfil) {
       <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
       <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
+      <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
       <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
       <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
       <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
@@ -424,7 +425,7 @@ window.openDetail = async (id) => {
   document.getElementById('modal-titulo').textContent = `Projeto #${d.numero || '-'}`;
   document.getElementById('btn-edit-demanda').href = `nova-demanda.html?id=${id}`;
   document.getElementById('demanda-info-grid').innerHTML = `
-    <div class="demanda-info-item"><label>n&#186;</label><span>#${d.numero || '-'}</span></div>
+    <div class="demanda-info-item"><label>Nº</label><span>#${d.numero || '-'}</span></div>
     <div class="demanda-info-item"><label>Data</label><span>${formatDate(d.dataRegistro || d.criadoEm)}</span></div>
     <div class="demanda-info-item"><label>Status</label><span>${badge}</span></div>
     <div class="demanda-info-item"><label>Cliente</label><span>${d.clienteNome || '-'}</span></div>
