@@ -52,23 +52,23 @@ export function getSidebarHTML(userNome = '', userPerfil = 'usuario') {
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">--</span>Dashboard</a>
-      <a href="demandas.html"><span class="nav-icon">--</span>Projetos</a>
-      <a href="kanban.html"><span class="nav-icon">--️</span>Kanban</a>
-      <a href="calendario.html"><span class="nav-icon">--</span>Calendário</a>
-      <a href="orcamento.html"><span class="nav-icon">--</span>Orçamentos</a>
-      <a href="relatorios.html"><span class="nav-icon">--</span>Relatórios</a>
+      <a href="dashboard.html"><span class="nav-icon">📊</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">📋</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">📁️</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">📅</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">💰</span>Orçamentos</a>
+      <a href="relatorios.html"><span class="nav-icon">📈</span>Relatórios</a>
 
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="clientes.html"><span class="nav-icon">--</span>Clientes</a>
-      <a href="fornecedores.html"><span class="nav-icon">--</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">--</span>Materiais</a>
-      <a href="servicos.html"><span class="nav-icon">--</span>Serviços</a>
+      <a href="clientes.html"><span class="nav-icon">👥</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">🏭</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">🛠️</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">🔨</span>Serviços</a>
 
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">--</span>Usuários</a>` : ''}
-      <a href="agenda.html"><span class="nav-icon">--</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">--</span>Sugestões</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">👤</span>Usuários</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">📚</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">💡</span>Sugestões</a>
       <a href="creditos.html"><span class="nav-icon">⭐</span>Créditos</a>
     </nav>
     <div class="sidebar-footer">
@@ -85,7 +85,7 @@ export function getSidebarHTML(userNome = '', userPerfil = 'usuario') {
         </div>
       </div>
       <button class="btn-logout" id="btn-logout">
-        <span>--</span> Sair
+        <span>🚪</span> Sair
       </button>
     </div>
   </aside>
@@ -112,6 +112,6 @@ export function applyTheme() {
 function _updateThemeBtn(isLight) {
   const icon  = document.getElementById('theme-icon');
   const label = document.getElementById('theme-label');
-  if (icon)  icon.textContent  = isLight ? '--' : '☀️';
+  if (icon)  icon.textContent  = isLight ? '🌙' : '☀️';
   if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
 }

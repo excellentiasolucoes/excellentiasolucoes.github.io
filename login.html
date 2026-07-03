@@ -17,12 +17,12 @@
     <p>Sistema de Gestao de Projetos para Empresas de Arquitetura</p>
     <div style="margin-top:40px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">
       <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
-        <span style="font-size:22px">??</span>
-        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Gestao de Projetos</div><div style="font-size:11px;color:var(--text-3)">Controle total dos seus atendimentos</div></div>
+        <span style="font-size:22px">&#128203;</span>
+        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Gestão de Projetos</div><div style="font-size:11px;color:var(--text-3)">Controle total dos seus atendimentos</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
-        <span style="font-size:22px">??</span>
-        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Relat&#243;rios & Gr&#225;ficos</div><div style="font-size:11px;color:var(--text-3)">Dados em tempo real do seu neg&#243;cio</div></div>
+        <span style="font-size:22px">&#128200;</span>
+        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Relatórios & Gráficos</div><div style="font-size:11px;color:var(--text-3)">Dados em tempo real do seu neg&#243;cio</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
         <span style="font-size:22px">&#8226;&#8226;&#8226;</span>
@@ -68,7 +68,7 @@
 
     <div class="login-legal">
       Este sistema foi desenvolvido para organizar e otimizar seus atendimentos.<br>
-      n&#227;o - permitida a utiliza&#231;&#227;o por pessoas n&#227;o autorizadas.<br>
+      Não é permitida a utilização por pessoas não autorizadas.<br>
       <strong style="color:var(--gold)">Excellentia Controll &#8212; 2026</strong>
     </div>
   </div>
@@ -298,7 +298,7 @@ document.getElementById('btn-save-pwd').addEventListener('click', async () => {
   if (isLight) document.body.classList.add('light-mode');
   function update() {
     var light = document.body.classList.contains('light-mode');
-    document.getElementById('login-theme-icon').textContent  = light ? '--' : 'â˜€ï¸';
+    document.getElementById('login-theme-icon').textContent  = light ? '🌙' : '☀️';
     document.getElementById('login-theme-label').textContent = light ? 'Modo Escuro' : 'Modo Claro';
   }
   update();

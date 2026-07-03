@@ -26,7 +26,7 @@
 <!-- Detail Modal -->
 <div class="modal-overlay" id="modal-detail">
   <div class="modal modal-sm">
-    <div class="modal-header"><span class="modal-title"><span id="ev-title">Detalhes</span></span><button class="modal-close" id="close-detail">?</button></div>
+    <div class="modal-header"><span class="modal-title"><span id="ev-title">Detalhes</span></span><button class="modal-close" id="close-detail">&times;</button></div>
     <div class="modal-body" id="ev-body"></div>
     <div class="modal-footer"><a id="ev-edit" href="#" class="btn btn-secondary">&#9999;&#65039; Editar</a><button class="modal-close btn btn-primary" id="close-detail-2">Fechar</button></div>
   </div>
@@ -136,7 +136,7 @@ async function loadCalendar(){
     if(d.dataEntrega){
       const de=d.dataEntrega.toDate?d.dataEntrega.toDate():new Date(d.dataEntrega);
       events.push({
-        id:d.id+'_e', title:`? Entrega: #${d.numero} ${d.clienteNome||''}`,
+        id:d.id+'_e', title: `🚚 Entrega: #${d.numero} ${d.clienteNome||''}`,
         start:de.toISOString().split('T')[0],
         color:'#E74C3C', textColor:'#fff',
         extendedProps:{demanda:d,status:statusMap[d.statusId],isEntrega:true}
@@ -150,7 +150,7 @@ async function loadCalendar(){
     events, height:'auto',
     eventClick:(info)=>{
       const {demanda,status,isEntrega}=info.event.extendedProps;
-      document.getElementById('ev-title').textContent=(isEntrega?'? Entrega: ':'')+`#${demanda.numero} - ${demanda.clienteNome||'Sem cliente'}`;
+      document.getElementById('ev-title').textContent=(isEntrega?'🚚 Entrega: ':'')+`#${demanda.numero} - ${demanda.clienteNome||'Sem cliente'}`;
       document.getElementById('ev-edit').href=`nova-demanda.html?id=${demanda.id}`;
       document.getElementById('ev-body').innerHTML=`
         <div style="display:flex;flex-direction:column;gap:10px">

@@ -431,7 +431,7 @@ window.openDetail = async (id) => {
     <div class="demanda-info-item"><label>Tipo</label><span>${d.tipoServicoNome || '-'}</span></div>
     <div class="demanda-info-item"><label>CPF/CnPJ</label><span>${d.cpfCnpj || '-'}</span></div>
     <div class="demanda-info-item"><label>Entrega</label><span>${formatDate(d.dataEntrega)}</span></div>
-    <div class="demanda-info-item"><label>Or&#231;amento</label><span>${d.temOrcamento ? '? Sim' : '-'}</span></div>
+    <div class="demanda-info-item"><label>Orçamento</label><span>${d.temOrcamento ? '✅ Sim' : '-'}</span></div>
     <div class="demanda-info-item col-span-2" style="grid-column:span 3"><label>Descri&#231;&#227;o</label><span>${d.descricao || '-'}</span></div>`;
 
   // Set default datetime for acao
