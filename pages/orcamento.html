@@ -561,10 +561,33 @@ document.getElementById('close-preview').addEventListener('click',()=>{
 
 function renderPreview(d){
   const logoUrl = '../assets/logo.png';
+  
+  let servicosHTML = '';
+  if (d.servicos && d.servicos.length > 0) {
+    d.servicos.forEach((s, idx) => {
+      const sStatus = s.aprovado ? 'Aprovado' : 'Pendente/Recusado';
+      servicosHTML += `
+        <tr>
+          <td style="padding:16px;text-align:center;border-right:1px solid #111;border-bottom:1px solid #111">${idx + 1}</td>
+          <td style="padding:16px;border-right:1px solid #111;border-bottom:1px solid #111;white-space:pre-wrap;">${s.descricao} - <strong>${sStatus}</strong></td>
+          <td style="padding:16px;text-align:center;border-bottom:1px solid #111">${formatCurrency(s.valor)}</td>
+        </tr>
+      `;
+    });
+  } else {
+    servicosHTML = `
+      <tr>
+        <td style="padding:16px;text-align:center;border-right:1px solid #111;border-bottom:1px solid #111">1</td>
+        <td style="padding:16px;border-right:1px solid #111;border-bottom:1px solid #111;white-space:pre-wrap;">${d.descricao||'—'}</td>
+        <td style="padding:16px;text-align:center;border-bottom:1px solid #111">${formatCurrency(d.valorServico)}</td>
+      </tr>
+    `;
+  }
+
   document.getElementById('orcamento-preview-content').innerHTML=`
-    <div style="background:white;color:#111;width:100%;max-width:800px;margin:0 auto;box-sizing:border-box;">
+    <div id="preview-wrapper" style="background:#e9ecef; width:100%; padding:20px 0; display:flex; flex-direction:column; align-items:center; gap:20px;">
       <!-- Página 1 -->
-      <div style="padding:40px; min-height:1050px; position:relative; box-sizing:border-box; background:white;">
+      <div class="print-page" style="width:800px; min-height:1131px; max-width:100%; position:relative; box-sizing:border-box; background:white; padding:40px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px;">
           <div style="flex:1">
             <h1 style="font-family:'Georgia',serif;font-size:36px;font-weight:normal;color:#111;margin:0 0 16px 0;line-height:1.2">Proposta de projeto de<br>interiores</h1>
@@ -592,10 +615,15 @@ function renderPreview(d){
             </tr>
           </thead>
           <tbody>
+            ${servicosHTML}
+            <!-- Linha do Total Aprovado -->
             <tr>
-              <td style="padding:16px;text-align:center;border-right:1px solid #111;border-bottom:1px solid #111">1</td>
-              <td style="padding:16px;border-right:1px solid #111;border-bottom:1px solid #111;white-space:pre-wrap;">${d.descricao||'—'}</td>
-              <td style="padding:16px;text-align:center;border-bottom:1px solid #111">${formatCurrency(d.valorServico)}</td>
+              <td colspan="2" style="padding:16px;text-align:right;border-right:1px solid #111;font-weight:bold;font-size:16px">
+                Valor Total (Soma dos Aprovados):
+              </td>
+              <td style="padding:16px;text-align:center;font-weight:bold;font-size:16px">
+                ${formatCurrency(d.valorServico)}
+              </td>
             </tr>
             ${d.percentualDesconto ? `
             <tr>
@@ -630,7 +658,7 @@ function renderPreview(d){
 
       <!-- Página 2 (Opcional - Imagem do Projeto) -->
       ${d.imagemProjeto ? `
-      <div style="page-break-before:always; padding:40px; min-height:1050px; position:relative; box-sizing:border-box; background:white;">
+      <div class="print-page" style="width:800px; min-height:1131px; max-width:100%; position:relative; box-sizing:border-box; background:white; padding:40px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px;">
           <div style="flex:1">
             <h1 style="font-family:'Georgia',serif;font-size:36px;font-weight:normal;color:#111;margin:0 0 16px 0;line-height:1.2">Proposta de projeto de<br>interiores</h1>
@@ -667,11 +695,21 @@ function renderPreview(d){
 // Preview do form atual
 document.getElementById('btn-preview').addEventListener('click',()=>{
   const stSel=document.getElementById('f-status');
+  
+  const servicosArray = [];
+  document.querySelectorAll('.servico-item').forEach(el => {
+    servicosArray.push({
+      descricao: el.querySelector('.s-desc').value.trim(),
+      valor: parseFloat(el.querySelector('.s-valor').value) || 0,
+      aprovado: el.querySelector('.s-aprovado').checked
+    });
+  });
+
   const fakeData={
     clienteNome:document.getElementById('f-cliente').value,
     tipoServico:document.getElementById('f-tipo').value,
     statusNome:stSel.options[stSel.selectedIndex]?.text||'',
-    descricao:document.getElementById('f-desc').value,
+    servicos: servicosArray,
     valorServico:parseFloat(document.getElementById('f-valor').value)||0,
     formaPagamento:document.getElementById('f-forma-pagamento').value,
     opcaoPagamento:document.getElementById('f-opcao-pagamento').value,
@@ -691,8 +729,26 @@ document.getElementById('btn-pdf').addEventListener('click', async()=>{
   const oldText = btn.innerHTML;
   btn.innerHTML = 'Gerando...'; btn.disabled = true;
   
+  // Remover os efeitos de separação de página para o html2canvas ler como um único elemento contínuo
+  const wrapper = document.getElementById('preview-wrapper');
+  if(wrapper) {
+    wrapper.style.background = 'white';
+    wrapper.style.padding = '0';
+    wrapper.style.gap = '0';
+    document.querySelectorAll('.print-page').forEach(p => p.style.boxShadow = 'none');
+  }
+
   const el=document.getElementById('orcamento-preview-content');
   const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true});
+  
+  // Restaurar visualização paginada após capturar
+  if(wrapper) {
+    wrapper.style.background = '#e9ecef';
+    wrapper.style.padding = '20px 0';
+    wrapper.style.gap = '20px';
+    document.querySelectorAll('.print-page').forEach(p => p.style.boxShadow = '0 4px 15px rgba(0,0,0,0.15)');
+  }
+  
   const {jsPDF}=window.jspdf;
   const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   
