@@ -62,6 +62,23 @@
         <div class="form-group"><label class="form-label">Valor do Servi&#231;o (R$)</label>
           <input type="number" class="form-control" id="f-valor" placeholder="0,00" step="0.01" min="0">
         </div>
+        <div class="form-group"><label class="form-label">Forma de Pagamento</label>
+          <select class="form-select" id="f-forma-pagamento">
+            <option value="">N&#227;o informada</option>
+            <option value="Cart&#227;o">Cart&#227;o</option>
+            <option value="Pix">Pix</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Boleto">Boleto</option>
+            <option value="Outros">Outros</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Op&#231;&#227;o de Pagamento</label>
+          <select class="form-select" id="f-opcao-pagamento">
+            <option value="">N&#227;o informada</option>
+            <option value="&#192; vista">&#192; vista</option>
+            <option value="Parcelado">Parcelado</option>
+          </select>
+        </div>
         <div class="form-group col-span-2">
           <label class="form-label">Planta / Imagem do Projeto (Opcional)</label>
           <input type="file" class="form-control" id="f-imagem" accept="image/*" style="padding: 6px;">
@@ -183,6 +200,7 @@ function renderSidebar(Nome, perfil) {
       <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
       <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
       <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="financeiro.html"><span class="nav-icon">&#128176;</span>Financeiro</a>
       <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
       <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
@@ -190,8 +208,10 @@ function renderSidebar(Nome, perfil) {
       <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
       <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
       <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
+      <a href="tipos-despesas.html"><span class="nav-icon">&#128203;</span>Tipos de Despesas</a>
+      <a href="tipos-receitas.html"><span class="nav-icon">&#128203;</span>Tipos de Receitas</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
+      ${isAdmin ? \`<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>\` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
       <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
@@ -231,9 +251,12 @@ function renderTable(list){
       <td>${formatDate(d.dataEntrega)}</td>
       <td>${buildStatusBadge(d.statusNome||'-',st?.cor)}</td>
       <td><div class="td-actions">
-        <button class="btn btn-info btn-icon-sm" onclick="previewOrc('${d.id}')">👁️</button>
-        <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
-        <button class="btn btn-danger btn-icon-sm" onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
+        <button class="btn btn-info btn-icon-sm" title="Visualizar" onclick="previewOrc('${d.id}')">👁️</button>
+        <button class="btn btn-secondary btn-icon-sm" title="Editar" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
+        ${d.arquivada
+          ? `<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar('${d.id}', false)">&#128229;</button>`
+          : `<button class="btn btn-warning btn-icon-sm" title="Arquivar"    onclick="toggleArquivar('${d.id}', true)">&#128451;</button>`}
+        <button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
       </div></td></tr>`;
   }).join('');
 }
@@ -266,7 +289,9 @@ function openModal(id=null){
   document.getElementById('modal-titulo').textContent=id?'Editar Orçamento':'Novo Or&#231;amento';
   if(!id){['f-cliente','f-cliente-id','f-tipo','f-desc','f-entrega','f-imagem'].forEach(i=>document.getElementById(i).value='');
     ['f-data','f-prazo','f-valor','f-desconto'].forEach(i=>document.getElementById(i).value='');
-    document.getElementById('f-status').value=''; calcDesconto();
+    document.getElementById('f-status').value=''; 
+    document.getElementById('f-forma-pagamento').value=''; document.getElementById('f-opcao-pagamento').value=''; 
+    calcDesconto();
     imagemProjetoBase64=null; document.getElementById('img-preview').style.display='none'; document.getElementById('img-preview').src='';
   }
   document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
@@ -281,6 +306,7 @@ window.editItem=async(id)=>{
   document.getElementById('f-tipo').value=d.tipoServico||''; document.getElementById('f-status').value=d.statusId||'';
   document.getElementById('f-desc').value=d.descricao||''; document.getElementById('f-valor').value=d.valorServico||'';
   document.getElementById('f-desconto').value=d.percentualDesconto||''; document.getElementById('f-prazo').value=d.prazo||'';
+  document.getElementById('f-forma-pagamento').value=d.formaPagamento||''; document.getElementById('f-opcao-pagamento').value=d.opcaoPagamento||'';
   if(d.dataServico){const dt=d.dataServico.toDate?d.dataServico.toDate():new Date(d.dataServico);document.getElementById('f-data').value=dt.toISOString().split('T')[0];}
   imagemProjetoBase64 = d.imagemProjeto || null;
   const imgEl = document.getElementById('img-preview');
@@ -317,6 +343,15 @@ document.getElementById('f-imagem').addEventListener('change', function(e) {
 window.deleteItem=async(id)=>{
   if(!await confirmDialog('Excluir este or&#231;amento?'))return;
   await deleteDoc(doc(db,'orcamentos',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Or&#231;amento exclu-do!','success');
+};
+
+window.toggleArquivar = async (id, arquivar) => {
+  const msg = arquivar ? 'Deseja arquivar este or&#231;amento?' : 'Deseja desarquivar este or&#231;amento?';
+  if (!await confirmDialog(msg)) return;
+  await updateDoc(doc(db, 'orcamentos', id), { arquivada: arquivar, atualizadoEm: serverTimestamp() });
+  allItems = allItems.map(d => d.id === id ? { ...d, arquivada: arquivar } : d);
+  renderTable(allItems);
+  showToast(arquivar ? 'Or&#231;amento arquivado!' : 'Or&#231;amento desarquivado!', 'success');
 };
 
 window.previewOrc=async(id)=>{
@@ -443,6 +478,8 @@ document.getElementById('btn-preview').addEventListener('click',()=>{
     statusNome:stSel.options[stSel.selectedIndex]?.text||'',
     descricao:document.getElementById('f-desc').value,
     valorServico:parseFloat(document.getElementById('f-valor').value)||0,
+    formaPagamento:document.getElementById('f-forma-pagamento').value,
+    opcaoPagamento:document.getElementById('f-opcao-pagamento').value,
     percentualDesconto:parseFloat(document.getElementById('f-desconto').value)||0,
     valorComDesconto:parseFloat(document.getElementById('f-valor').value||0)*(1-(parseFloat(document.getElementById('f-desconto').value||0)/100)),
     dataServico:{toDate:()=>document.getElementById('f-data').value?new Date(document.getElementById('f-data').value+'T12:00:00'):null},
@@ -500,6 +537,7 @@ document.getElementById('btn-salvar').addEventListener('click',async()=>{
     tipoServico:document.getElementById('f-tipo').value.trim(),statusId:stSel.value,
     statusNome:stSel.options[stSel.selectedIndex]?.text||'',descricao:document.getElementById('f-desc').value.trim(),
     dataServico,prazo,dataEntrega,valorServico:valor,percentualDesconto:pctDesc,valorComDesconto:valorDesc,
+    formaPagamento:document.getElementById('f-forma-pagamento').value, opcaoPagamento:document.getElementById('f-opcao-pagamento').value,
     imagemProjeto: imagemProjetoBase64, atualizadoEm:serverTimestamp()
   };
   try{

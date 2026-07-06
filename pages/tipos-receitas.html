@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Tipos de Receitas &#8212; Excellentia Controll</title>
+  <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-placeholder"></div>
+  <div class="main-content">
+    <div class="topbar">
+      <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
+      <div><div class="topbar-title">Tipos de Receitas</div><div class="topbar-subtitle">Cadastro de categorias de receitas</div></div>
+      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Tipo</button></div>
+    </div>
+    <div class="page-content">
+      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">&#128269;</span><input type="text" class="form-control" id="search-input" placeholder="Buscar tipo..."></div></div>
+      <div class="card" style="padding:0">
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead><tr><th>Nome</th><th>A&#231;&#245;es</th></tr></thead>
+            <tbody id="list-tbody"><tr><td colspan="2" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-form">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Tipo de Receita</span></span><button class="modal-close" id="close-modal">✕</button></div>
+    <div class="modal-body">
+      <div id="form-alert" class="alert alert-danger" style="display:none"></div>
+      <div class="form-group"><label class="form-label">Nome do Tipo</label>
+        <input type="text" class="form-control" id="f-Nome" placeholder="Ex: Projeto Residencial, Consultoria">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
+      <button class="btn btn-primary" id="btn-salvar">&#128190; Salvar</button>
+    </div>
+  </div>
+</div>
+<div id="toast-container"></div>
+<script type="module">
+import { firebaseConfig } from '../js/firebase/config.js';
+import { showToast, setActivenav, setupMobileSidebar, confirmDialog } from '../js/utils.js';
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
+let allItems=[], editId=null;
+
+onAuthStateChanged(auth, async(user)=>{
+  if(!user){window.location.href='../login.html';return;}
+  const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
+  renderSidebar(u.Nome||user.email, u.perfil||'Usu&#225;rio');
+  const sSnap=await getDocs(query(collection(db,'tiposReceitas'),orderBy('Nome')));
+  allItems=sSnap.docs.map(d=>({id:d.id,...d.data()}));
+  renderTable(allItems);
+});
+
+function renderSidebar(Nome, perfil) {
+  const isAdmin = perfil === 'admin';
+  const ini = Nome.charAt(0).toUpperCase();
+
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light-mode');
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const icon  = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
+    if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
+  };
+
+  const isLight = document.body.classList.contains('light-mode');
+
+  document.getElementById('sidebar-placeholder').innerHTML = `
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+      <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="financeiro.html"><span class="nav-icon">&#128176;</span>Financeiro</a>
+      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
+      <div class="sidebar-section-label">Cadastros</div>
+      <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
+      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
+      <a href="tipos-despesas.html"><span class="nav-icon">&#128203;</span>Tipos de Despesas</a>
+      <a href="tipos-receitas.html"><span class="nav-icon">&#128203;</span>Tipos de Receitas</a>
+      <div class="sidebar-section-label">Outros</div>
+      ${isAdmin ? \`<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>\` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
+          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+        </button>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">${ini}</div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '../login.html';
+  });
+  setActivenav();
+  setupMobileSidebar();
+}
+
+function renderTable(list){
+  const tbody=document.getElementById('list-tbody');
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="2"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhum tipo cadastrado</h3></div></td></tr>`;return;}
+  tbody.innerHTML=list.map(d=>`<tr>
+    <td>${d.Nome||'-'}</td>
+    <td><div class="td-actions">
+      <button class="btn btn-info btn-icon-sm" title="Visualizar" onclick="viewItem('${d.id}')">👁️</button>
+      <button class="btn btn-secondary btn-icon-sm" title="Editar" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
+      ${d.arquivada ? \`<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar('${d.id}', false)">&#128229;</button>\` : \`<button class="btn btn-warning btn-icon-sm" title="Arquivar" onclick="toggleArquivar('${d.id}', true)">&#128451;</button>\`}
+      <button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
+    </div></td></tr>`).join('');
+}
+
+document.getElementById('search-input').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  renderTable(q?allItems.filter(d=>(d.Nome||'').toLowerCase().includes(q)):allItems);
+});
+
+function openModal(id=null){
+  editId=id; document.getElementById('form-alert').style.display='none';
+  document.getElementById('modal-titulo').textContent=id?'Editar Tipo':'Novo Tipo';
+  if(!id){document.getElementById('f-Nome').value='';}
+  document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
+}
+function closeModalFn() { 
+  document.getElementById('modal-form').classList.remove('open'); document.body.style.overflow=''; editId=null; 
+  document.getElementById('btn-salvar').style.display = 'inline-flex';
+  document.querySelectorAll('#modal-form input').forEach(el => el.disabled = false);
+}
+document.getElementById('btn-novo').addEventListener('click',()=>openModal());
+['close-modal','close-modal-2'].forEach(id=>document.getElementById(id).addEventListener('click',closeModalFn));
+
+window.editItem=async(id)=>{
+  const d=allItems.find(x=>x.id===id); if(!d)return; openModal(id);
+  document.getElementById('f-Nome').value=d.Nome||'';
+};
+window.deleteItem=async(id)=>{
+  if(!await confirmDialog('Excluir este tipo?'))return;
+  await deleteDoc(doc(db,'tiposReceitas',id));allItems=allItems.filter(d=>d.id!==id);renderTable(allItems);showToast('Excluído com sucesso!','success');
+};
+
+window.viewItem = async (id) => {
+  await editItem(id);
+  document.getElementById('modal-titulo').textContent = 'Visualizar';
+  document.getElementById('btn-salvar').style.display = 'none';
+  document.querySelectorAll('#modal-form input').forEach(el => el.disabled = true);
+};
+
+window.toggleArquivar = async (id, arquivar) => {
+  if (!await confirmDialog(arquivar ? 'Deseja arquivar?' : 'Deseja desarquivar?')) return;
+  await updateDoc(doc(db, 'tiposReceitas', id), { arquivada: arquivar, atualizadoEm: serverTimestamp() });
+  allItems = allItems.map(d => d.id === id ? { ...d, arquivada: arquivar } : d);
+  renderTable(allItems);
+  showToast(arquivar ? 'Arquivado com sucesso!' : 'Desarquivado com sucesso!', 'success');
+};
+
+document.getElementById('btn-salvar').addEventListener('click',async()=>{
+  const payload={Nome:document.getElementById('f-Nome').value.trim(), atualizadoEm:serverTimestamp()};
+  if(!payload.Nome) { document.getElementById('form-alert').textContent='Preencha o Nome'; document.getElementById('form-alert').style.display='flex'; return; }
+  try{
+    if(editId){await updateDoc(doc(db,'tiposReceitas',editId),payload);allItems=allItems.map(d=>d.id===editId?{...d,...payload}:d);}
+    else{const ref=await addDoc(collection(db,'tiposReceitas'),{...payload,criadoEm:serverTimestamp()});allItems.push({id:ref.id,...payload});}
+    renderTable(allItems);closeModalFn();showToast(editId?'Atualizado com sucesso!':'Cadastrado com sucesso!','success');
+  }catch(err){document.getElementById('form-alert').textContent=err.message;document.getElementById('form-alert').style.display='flex';}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Financeiro &#8212; Excellentia Controll</title>
+  <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-placeholder"></div>
+  <div class="main-content">
+    <div class="topbar">
+      <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
+      <div><div class="topbar-title">Financeiro</div><div class="topbar-subtitle">Controle de receitas e despesas</div></div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" id="btn-nova-despesa">+ Nova Despesa</button>
+      </div>
+    </div>
+    <div class="page-content">
+      
+      <!-- Summary Cards -->
+      <div class="dashboard-cards" style="margin-bottom:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div class="card stat-card" style="border-left:4px solid #00b050">
+          <div class="stat-title">Total Receitas</div>
+          <div class="stat-value" id="tot-receitas">R$ 0,00</div>
+        </div>
+        <div class="card stat-card" style="border-left:4px solid #e74c3c">
+          <div class="stat-title">Total Despesas</div>
+          <div class="stat-value" id="tot-despesas">R$ 0,00</div>
+        </div>
+        <div class="card stat-card" style="border-left:4px solid var(--gold)">
+          <div class="stat-title">Saldo Líquido</div>
+          <div class="stat-value" id="tot-saldo">R$ 0,00</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="receitas">📈 Receitas</button>
+        <button class="tab-btn" data-tab="despesas">📉 Despesas</button>
+        <button class="tab-btn" data-tab="relatorios">📊 Relatórios</button>
+      </div>
+
+      <!-- Tab: Receitas -->
+      <div class="tab-content active" id="tab-receitas">
+        <div class="card" style="padding:0">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead><tr><th>Data/Registro</th><th>Cliente</th><th>Origem</th><th>Forma Pagamento</th><th>Valor</th></tr></thead>
+              <tbody id="receitas-tbody"><tr><td colspan="5" style="text-align:center;padding:40px">Carregando...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Despesas -->
+      <div class="tab-content" id="tab-despesas">
+        <div class="card" style="padding:0">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead><tr><th>Data</th><th>Tipo</th><th>Fornecedor/Prestador</th><th>Detalhamento</th><th>Valor</th><th>Ações</th></tr></thead>
+              <tbody id="despesas-tbody"><tr><td colspan="6" style="text-align:center;padding:40px">Carregando...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Relatórios -->
+      <div class="tab-content" id="tab-relatorios">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div class="card">
+            <h3 style="margin-top:0">Balanço por Período (Últimos 6 meses)</h3>
+            <canvas id="chart-periodo"></canvas>
+          </div>
+          <div class="card">
+            <h3 style="margin-top:0">Despesas por Tipo</h3>
+            <div style="height:300px"><canvas id="chart-tipo-despesa"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal Nova Despesa -->
+<div class="modal-overlay" id="modal-form-despesa">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Nova Despesa</span></span><button class="modal-close" id="close-modal">✕</button></div>
+    <div class="modal-body">
+      <div id="form-alert" class="alert alert-danger" style="display:none"></div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Data da Despesa</label>
+          <input type="date" class="form-control" id="d-data">
+        </div>
+        <div class="form-group"><label class="form-label">Valor (R$)</label>
+          <input type="number" class="form-control" id="d-valor" placeholder="0,00" step="0.01" min="0">
+        </div>
+        <div class="form-group col-span-2"><label class="form-label">Tipo de Despesa</label>
+          <select class="form-select" id="d-tipo"><option value="">Selecione...</option></select>
+        </div>
+        <div class="form-group col-span-2"><label class="form-label">Fornecedor / Prestador (Opcional)</label>
+          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="d-forn" placeholder="Nome do fornecedor"><div class="autocomplete-list" id="forn-auto"></div></div>
+          <input type="hidden" id="d-forn-id">
+        </div>
+        <div class="form-group col-span-2"><label class="form-label">Detalhamento</label>
+          <textarea class="form-control" id="d-desc" rows="3" placeholder="Detalhes adicionais da despesa..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
+      <button class="btn btn-primary" id="btn-salvar-despesa">&#128190; Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script type="module">
+import { firebaseConfig } from '../js/firebase/config.js';
+import { showToast, formatCurrency, formatDate, setActivenav, setupMobileSidebar, confirmDialog, setupAutocomplete } from '../js/utils.js';
+const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js');
+const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
+const { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, Timestamp }
+  = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+
+const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
+let receitas=[], despesas=[], tiposDespesas=[], fornecedores=[], editDespesaId=null;
+let chartPeriodo=null, chartTipoDespesa=null;
+
+onAuthStateChanged(auth, async(user)=>{
+  if(!user){window.location.href='../login.html';return;}
+  const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
+  renderSidebar(u.Nome||user.email, u.perfil||'Usu&#225;rio');
+  
+  await loadRefs();
+  await loadData();
+});
+
+async function loadRefs() {
+  const [tSnap, fSnap] = await Promise.all([
+    getDocs(query(collection(db,'tiposDespesas'), orderBy('Nome'))),
+    getDocs(collection(db,'fornecedores'))
+  ]);
+  tiposDespesas = tSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  fornecedores = fSnap.docs.map(d=>({id:d.id, ...d.data()}));
+
+  const tipoSel = document.getElementById('d-tipo');
+  tiposDespesas.forEach(t => tipoSel.appendChild(new Option(t.Nome, t.Nome)));
+
+  setupAutocomplete(document.getElementById('d-forn'), document.getElementById('forn-auto'), 
+    fornecedores.map(f=>({id:f.id, label:f.nomeCompleto})),
+    (item) => document.getElementById('d-forn-id').value = item.id
+  );
+}
+
+async function loadData() {
+  const [oSnap, dSnap] = await Promise.all([
+    getDocs(query(collection(db,'orcamentos'), orderBy('criadoEm', 'desc'))),
+    getDocs(query(collection(db,'despesas'), orderBy('data', 'desc')))
+  ]);
+  
+  // Receitas são geradas a partir dos orçamentos com pagamento informado
+  receitas = oSnap.docs.map(d=>({id:d.id, ...d.data()}))
+    .filter(o => o.formaPagamento && o.formaPagamento !== '' && !o.arquivada);
+    
+  despesas = dSnap.docs.map(d=>({id:d.id, ...d.data()})).filter(d => !d.arquivada);
+
+  renderReceitas();
+  renderDespesas();
+  renderCards();
+  renderCharts();
+}
+
+function renderReceitas() {
+  const tbody = document.getElementById('receitas-tbody');
+  if(!receitas.length) { tbody.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhuma receita</h3></div></td></tr>'; return; }
+  tbody.innerHTML = receitas.map(r => `
+    <tr>
+      <td>${formatDate(r.criadoEm)}</td>
+      <td>${r.clienteNome || '-'}</td>
+      <td>Orçamento - ${r.tipoServico || ''}</td>
+      <td>${r.formaPagamento} ${r.opcaoPagamento ? `(${r.opcaoPagamento})` : ''}</td>
+      <td style="color:var(--gold);font-weight:bold">${formatCurrency(r.valorComDesconto || r.valorServico || 0)}</td>
+    </tr>
+  `).join('');
+}
+
+function renderDespesas() {
+  const tbody = document.getElementById('despesas-tbody');
+  if(!despesas.length) { tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhuma despesa</h3></div></td></tr>'; return; }
+  tbody.innerHTML = despesas.map(d => `
+    <tr>
+      <td>${formatDate(d.data)}</td>
+      <td>${d.tipo || '-'}</td>
+      <td>${d.fornecedorNome || '-'}</td>
+      <td>${d.detalhamento || '-'}</td>
+      <td style="color:#e74c3c;font-weight:bold">${formatCurrency(d.valor || 0)}</td>
+      <td><div class="td-actions">
+        <button class="btn btn-secondary btn-icon-sm" title="Editar" onclick="editDespesa('${d.id}')">&#9999;&#65039;</button>
+        <button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="deleteDespesa('${d.id}')">&#128465;&#65039;</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function renderCards() {
+  const tRec = receitas.reduce((acc, r) => acc + (r.valorComDesconto || r.valorServico || 0), 0);
+  const tDes = despesas.reduce((acc, d) => acc + (d.valor || 0), 0);
+  document.getElementById('tot-receitas').textContent = formatCurrency(tRec);
+  document.getElementById('tot-despesas').textContent = formatCurrency(tDes);
+  document.getElementById('tot-saldo').textContent = formatCurrency(tRec - tDes);
+  document.getElementById('tot-saldo').style.color = (tRec - tDes) >= 0 ? '#00b050' : '#e74c3c';
+}
+
+function renderCharts() {
+  const meses = []; const valsRec = []; const valsDes = [];
+  const hoje = new Date();
+  for(let i=5; i>=0; i--) {
+    const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+    meses.push(d.toLocaleDateString('pt-BR', {month:'short', year:'2-digit'}));
+    valsRec.push(0); valsDes.push(0);
+  }
+
+  receitas.forEach(r => {
+    const dt = r.criadoEm?.toDate ? r.criadoEm.toDate() : new Date(r.criadoEm || 0);
+    const idx = (hoje.getFullYear() - dt.getFullYear()) * 12 + (hoje.getMonth() - dt.getMonth());
+    if(idx >= 0 && idx < 6) valsRec[5 - idx] += (r.valorComDesconto || r.valorServico || 0);
+  });
+  despesas.forEach(d => {
+    const dt = d.data?.toDate ? d.data.toDate() : new Date(d.data || 0);
+    const idx = (hoje.getFullYear() - dt.getFullYear()) * 12 + (hoje.getMonth() - dt.getMonth());
+    if(idx >= 0 && idx < 6) valsDes[5 - idx] += (d.valor || 0);
+  });
+
+  if(chartPeriodo) chartPeriodo.destroy();
+  chartPeriodo = new Chart(document.getElementById('chart-periodo'), {
+    type: 'bar',
+    data: {
+      labels: meses,
+      datasets: [
+        { label: 'Receitas', data: valsRec, backgroundColor: '#00b050' },
+        { label: 'Despesas', data: valsDes, backgroundColor: '#e74c3c' }
+      ]
+    },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+  });
+
+  const despesaPorTipo = {};
+  despesas.forEach(d => {
+    const t = d.tipo || 'Outros';
+    despesaPorTipo[t] = (despesaPorTipo[t] || 0) + (d.valor || 0);
+  });
+  const tipos = Object.keys(despesaPorTipo);
+  const valsTipo = Object.values(despesaPorTipo);
+  
+  const bgColors = ['#F58220', '#3498DB', '#9B59B6', '#E67E22', '#F1C40F', '#1ABC9C', '#34495E'];
+
+  if(chartTipoDespesa) chartTipoDespesa.destroy();
+  chartTipoDespesa = new Chart(document.getElementById('chart-tipo-despesa'), {
+    type: 'doughnut',
+    data: {
+      labels: tipos,
+      datasets: [{ data: valsTipo, backgroundColor: bgColors.slice(0, tipos.length) }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+
+function openModalDespesa(id=null) {
+  editDespesaId = id;
+  document.getElementById('form-alert').style.display='none';
+  document.getElementById('modal-titulo').textContent = id ? 'Editar Despesa' : 'Nova Despesa';
+  if(!id) {
+    document.getElementById('d-data').value = new Date().toISOString().split('T')[0];
+    ['d-valor','d-tipo','d-forn','d-forn-id','d-desc'].forEach(i => document.getElementById(i).value='');
+  }
+  document.getElementById('modal-form-despesa').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModalDespesa() {
+  document.getElementById('modal-form-despesa').classList.remove('open');
+  document.body.style.overflow='';
+  editDespesaId = null;
+}
+
+document.getElementById('btn-nova-despesa').addEventListener('click', () => openModalDespesa());
+['close-modal','close-modal-2'].forEach(id => document.getElementById(id).addEventListener('click', closeModalDespesa));
+
+window.editDespesa = (id) => {
+  const d = despesas.find(x => x.id === id); if(!d) return;
+  openModalDespesa(id);
+  if(d.data) { const dt = d.data.toDate ? d.data.toDate() : new Date(d.data); document.getElementById('d-data').value = dt.toISOString().split('T')[0]; }
+  document.getElementById('d-valor').value = d.valor || '';
+  document.getElementById('d-tipo').value = d.tipo || '';
+  document.getElementById('d-forn').value = d.fornecedorNome || '';
+  document.getElementById('d-forn-id').value = d.fornecedorId || '';
+  document.getElementById('d-desc').value = d.detalhamento || '';
+};
+
+window.deleteDespesa = async (id) => {
+  if(!await confirmDialog('Deseja excluir esta despesa?')) return;
+  await deleteDoc(doc(db, 'despesas', id));
+  despesas = despesas.filter(d => d.id !== id);
+  renderDespesas(); renderCards(); renderCharts();
+  showToast('Despesa excluída!', 'success');
+};
+
+document.getElementById('btn-salvar-despesa').addEventListener('click', async () => {
+  const dataVal = document.getElementById('d-data').value;
+  const valor = parseFloat(document.getElementById('d-valor').value) || 0;
+  const tipo = document.getElementById('d-tipo').value;
+  if(!dataVal || !valor || !tipo) {
+    document.getElementById('form-alert').textContent = 'Preencha Data, Valor e Tipo.';
+    document.getElementById('form-alert').style.display = 'flex';
+    return;
+  }
+  
+  const payload = {
+    data: Timestamp.fromDate(new Date(dataVal + 'T12:00:00')),
+    valor, tipo,
+    fornecedorId: document.getElementById('d-forn-id').value,
+    fornecedorNome: document.getElementById('d-forn').value.trim(),
+    detalhamento: document.getElementById('d-desc').value.trim(),
+    atualizadoEm: serverTimestamp()
+  };
+
+  try {
+    if(editDespesaId) {
+      await updateDoc(doc(db,'despesas',editDespesaId), payload);
+      despesas = despesas.map(d => d.id === editDespesaId ? {...d, ...payload} : d);
+    } else {
+      const ref = await addDoc(collection(db,'despesas'), {...payload, criadoEm: serverTimestamp(), arquivada: false});
+      despesas.unshift({id: ref.id, ...payload});
+    }
+    renderDespesas(); renderCards(); renderCharts();
+    closeModalDespesa();
+    showToast('Despesa salva!', 'success');
+  } catch(err) {
+    document.getElementById('form-alert').textContent = err.message;
+    document.getElementById('form-alert').style.display = 'flex';
+  }
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+function renderSidebar(Nome, perfil) {
+  const isAdmin = perfil === 'admin';
+  const ini = Nome.charAt(0).toUpperCase();
+
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light-mode');
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const icon  = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    if (icon)  icon.textContent  = isLight ? '\u{1F319}' : '\u2600\uFE0F';
+    if (label) label.textContent = isLight ? 'Modo Escuro' : 'Modo Claro';
+  };
+
+  const isLight = document.body.classList.contains('light-mode');
+
+  document.getElementById('sidebar-placeholder').innerHTML = `
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="../assets/logo.png" alt="Logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">
+      <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="financeiro.html"><span class="nav-icon">&#128176;</span>Financeiro</a>
+      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
+      <div class="sidebar-section-label">Cadastros</div>
+      <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
+      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
+      <a href="tipos-despesas.html"><span class="nav-icon">&#128203;</span>Tipos de Despesas</a>
+      <a href="tipos-receitas.html"><span class="nav-icon">&#128203;</span>Tipos de Receitas</a>
+      <div class="sidebar-section-label">Outros</div>
+      ${isAdmin ? \`<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>\` : ''}
+      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
+      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-theme-row">
+        <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
+          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+        </button>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">${ini}</div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
+  
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '../login.html';
+  });
+  setActivenav();
+  setupMobileSidebar();
+}
+</script>
+</body>
+</html>
