@@ -204,15 +204,15 @@ async function loadData() {
 function renderReceitas() {
   const tbody = document.getElementById('receitas-tbody');
   if(!receitas.length) { tbody.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhuma receita</h3></div></td></tr>'; return; }
-  tbody.innerHTML = receitas.map(r => \`
+  tbody.innerHTML = receitas.map(r => `
     <tr>
-      <td>\${r.dataBase ? formatDate(r.dataBase) : '-'}</td>
-      <td>\${r.clienteNome || '-'}</td>
-      <td>Orçamento - \${r.tipoServico || ''}</td>
-      <td>\${r.formaPagamento} \${r.opcaoPagamento ? \`(\${r.opcaoPagamento})\` : ''}</td>
-      <td style="color:var(--gold);font-weight:bold">\${formatCurrency(r.valorComDesconto)}</td>
+      <td>${r.dataBase ? formatDate(r.dataBase) : '-'}</td>
+      <td>${r.clienteNome || '-'}</td>
+      <td>Orçamento - ${r.tipoServico || ''}</td>
+      <td>${r.formaPagamento} ${r.opcaoPagamento ? `(${r.opcaoPagamento})` : ''}</td>
+      <td style="color:var(--gold);font-weight:bold">${formatCurrency(r.valorComDesconto)}</td>
     </tr>
-  \`).join('');
+  `).join('');
 }
 
 function renderDespesas() {
