@@ -104,6 +104,7 @@ function renderSidebar(Nome, perfil) {
       <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
       <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
       <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="financeiro.html"><span class="nav-icon">&#128176;</span>Financeiro</a>
       <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
       <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
@@ -111,8 +112,10 @@ function renderSidebar(Nome, perfil) {
       <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
       <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
       <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
+      <a href="tipos-despesas.html"><span class="nav-icon">&#128203;</span>Tipos de Despesas</a>
+      <a href="tipos-receitas.html"><span class="nav-icon">&#128203;</span>Tipos de Receitas</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>` : ''}
+      ${isAdmin ? \`<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>\` : ''}
       <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
       <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
       <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
@@ -154,8 +157,10 @@ function renderTable(list) {
     <td>${d.nomeCompleto||'-'}</td><td>${d.tipo==='PF'?'Pessoa F-sica':d.tipo==='PJ'?'Pessoa Jur-dica':'-'}</td>
     <td>${d.cpfCnpj||'-'}</td><td>${d.email||'-'}</td><td>${d.contato1||'-'}</td>
     <td><div class="td-actions">
-      <button class="btn btn-secondary btn-icon-sm" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
-      <button class="btn btn-danger btn-icon-sm"    onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
+      <button class="btn btn-info btn-icon-sm" title="Visualizar" onclick="viewItem('${d.id}')">👁️</button>
+      <button class="btn btn-secondary btn-icon-sm" title="Editar" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
+      ${d.arquivada ? `<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar('${d.id}', false)">&#128229;</button>` : `<button class="btn btn-warning btn-icon-sm" title="Arquivar" onclick="toggleArquivar('${d.id}', true)">&#128451;</button>`}
+      <button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
     </div></td></tr>`).join('');
 }
 
@@ -170,7 +175,11 @@ function openModal(id=null) {
   if (!id) { ['f-Nome','f-cpf','f-endereco','f-email','f-contato1','f-contato2'].forEach(i => document.getElementById(i).value=''); document.getElementById('f-tipo').value=''; }
   document.getElementById('modal-form').classList.add('open'); document.body.style.overflow='hidden';
 }
-function closeModalFn() { document.getElementById('modal-form').classList.remove('open'); document.body.style.overflow=''; editId=null; }
+function closeModalFn() { 
+  document.getElementById('modal-form').classList.remove('open'); document.body.style.overflow=''; editId=null; 
+  document.getElementById('btn-salvar').style.display = 'inline-flex';
+  document.querySelectorAll('#modal-form input, #modal-form select').forEach(el => el.disabled = false);
+}
 
 document.getElementById('btn-novo').addEventListener('click', () => openModal());
 ['close-modal','close-modal-2'].forEach(id => document.getElementById(id).addEventListener('click', closeModalFn));
@@ -185,6 +194,21 @@ window.editItem = async (id) => {
 window.deleteItem = async (id) => {
   if (!await confirmDialog('Deseja excluir este fornecedor?')) return;
   await deleteDoc(doc(db,'fornecedores',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Fornecedor exclu-do!','success');
+};
+
+window.viewItem = async (id) => {
+  await editItem(id);
+  document.getElementById('modal-titulo').textContent = 'Visualizar Fornecedor';
+  document.getElementById('btn-salvar').style.display = 'none';
+  document.querySelectorAll('#modal-form input, #modal-form select').forEach(el => el.disabled = true);
+};
+
+window.toggleArquivar = async (id, arquivar) => {
+  if (!await confirmDialog(arquivar ? 'Deseja arquivar?' : 'Deseja desarquivar?')) return;
+  await updateDoc(doc(db, 'fornecedores', id), { arquivada: arquivar, atualizadoEm: serverTimestamp() });
+  allItems = allItems.map(d => d.id === id ? { ...d, arquivada: arquivar } : d);
+  renderTable(allItems);
+  showToast(arquivar ? 'Arquivado com sucesso!' : 'Desarquivado com sucesso!', 'success');
 };
 
 document.getElementById('btn-salvar').addEventListener('click', async () => {
