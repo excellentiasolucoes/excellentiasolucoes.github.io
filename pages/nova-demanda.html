@@ -87,6 +87,23 @@
             </div>
           </div>
 
+          <!-- Tem Or&#231;amento -->
+          <div class="form-group col-span-2" style="padding:12px 0;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;color:var(--text-1)">
+              <input type="checkbox" id="tem-orcamento" style="width:18px;height:18px">
+              Este projeto possui or&#231;amento vinculado?
+            </label>
+          </div>
+          <div class="form-group col-span-2" id="grupo-orcamento" style="display:none;background:var(--surface-2);padding:16px;border-radius:8px;border:1px solid var(--border-subtle)">
+            <label class="form-label">Selecionar Or&#231;amento</label>
+            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+              <select class="form-select" id="orcamento-id" style="flex:1;min-width:200px">
+                <option value="">Selecione um or&#231;amento...</option>
+              </select>
+              <div style="font-size:13px;color:var(--text-2)">Valor Final: <span id="orcamento-valor" style="font-weight:bold;color:var(--gold);font-size:16px;margin-left:4px">R$ 0,00</span></div>
+            </div>
+          </div>
+
           <!-- Datas e Prazo -->
           <div class="form-group">
             <label class="form-label">Data do Servi&#231;o</label>
@@ -135,7 +152,7 @@ const db   = getFirestore(app);
 
 const params    = new URLSearchParams(location.search);
 const editId    = params.get('id');
-let currentUser = null, clientes = [], tiposServico = [], statusList = [];
+let currentUser = null, clientes = [], tiposServico = [], statusList = [], orcamentos = [];
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = '../login.html'; return; }
@@ -217,15 +234,17 @@ function renderSidebar(Nome, perfil) {
 }
 
 async function loadRefs() {
-  const [cliSnap, tipoSnap, stSnap] = await Promise.all([
+  const [cliSnap, tipoSnap, stSnap, orcSnap] = await Promise.all([
     getDocs(collection(db, 'clientes')),
     getDocs(collection(db, 'tiposServico')),
-    getDocs(query(collection(db, 'statusServico'), orderBy('ordem')))
+    getDocs(query(collection(db, 'statusServico'), orderBy('ordem'))),
+    getDocs(query(collection(db, 'orcamentos'), orderBy('criadoEm', 'desc')))
   ]);
 
   clientes      = cliSnap.docs.map(d => ({ id: d.id, ...d.data() }));
   tiposServico  = tipoSnap.docs.map(d => ({ id: d.id, ...d.data() }));
   statusList    = stSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  orcamentos    = orcSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
   // Autocomplete clientes
   const clienteItems = clientes.map(c => ({ id: c.id, label: c.nomeCompleto }));
@@ -263,6 +282,34 @@ async function loadRefs() {
     document.getElementById('novo-status-grupo').style.display = stSel.value === '__novo__' ? 'block' : 'none';
   });
 
+  // Orcamentos Select
+  const orcSel = document.getElementById('orcamento-id');
+  orcamentos.forEach(o => {
+    let dateStr = '';
+    if (o.criadoEm) {
+      const date = o.criadoEm.toDate ? o.criadoEm.toDate() : new Date(o.criadoEm);
+      dateStr = date.toLocaleDateString('pt-BR');
+    }
+    const txt = `${o.clienteNome || 'Sem cliente'} - ${o.tipoServico || ''} (${dateStr})`;
+    orcSel.appendChild(new Option(txt, o.id));
+  });
+
+  // Checkbox Event
+  const chkOrc = document.getElementById('tem-orcamento');
+  chkOrc.addEventListener('change', () => {
+    document.getElementById('grupo-orcamento').style.display = chkOrc.checked ? 'block' : 'none';
+  });
+
+  // Select Event
+  orcSel.addEventListener('change', () => {
+    const o = orcamentos.find(x => x.id === orcSel.value);
+    if (o) {
+      document.getElementById('orcamento-valor').textContent = Number(o.valorComDesconto || o.valorServico || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    } else {
+      document.getElementById('orcamento-valor').textContent = 'R$ 0,00';
+    }
+  });
+
   applyCpfCnpjMask(document.getElementById('cpf-cnpj'));
 }
 
@@ -292,6 +339,15 @@ async function loadDemanda(id) {
     const dt = d.dataServico.toDate ? d.dataServico.toDate() : new Date(d.dataServico);
     document.getElementById('data-servico').value = dt.toISOString().split('T')[0];
   }
+  
+  if (d.temOrcamento) {
+    document.getElementById('tem-orcamento').checked = true;
+    document.getElementById('grupo-orcamento').style.display = 'block';
+    document.getElementById('orcamento-id').value = d.orcamentoId || '';
+    const o = orcamentos.find(x => x.id === d.orcamentoId);
+    if (o) document.getElementById('orcamento-valor').textContent = Number(o.valorComDesconto || o.valorServico || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
   updateEntrega();
 }
 
@@ -356,6 +412,9 @@ document.getElementById('btn-salvar').addEventListener('click', async () => {
       dataEntrega = Timestamp.fromDate(de);
     }
 
+    const chkOrc = document.getElementById('tem-orcamento').checked;
+    const orcId = document.getElementById('orcamento-id').value;
+
     const payload = {
       clienteNome:      document.getElementById('cliente-Nome').value.trim(),
       clienteId:        document.getElementById('cliente-id').value,
@@ -369,6 +428,8 @@ document.getElementById('btn-salvar').addEventListener('click', async () => {
       dataServico,
       prazo,
       dataEntrega,
+      temOrcamento:     chkOrc,
+      orcamentoId:      chkOrc ? orcId : null,
       atualizadoEm:     serverTimestamp()
     };
 
@@ -380,7 +441,6 @@ document.getElementById('btn-salvar').addEventListener('click', async () => {
         ...payload,
         numero:       num,
         arquivada:    false,
-        temOrcamento: false,
         dataRegistro: serverTimestamp(),
         criadoEm:     serverTimestamp(),
         criadoPor:    currentUser.uid
