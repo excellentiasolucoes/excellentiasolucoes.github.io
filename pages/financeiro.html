@@ -162,9 +162,36 @@ async function loadData() {
     getDocs(query(collection(db,'despesas'), orderBy('data', 'desc')))
   ]);
   
-  // Receitas são geradas a partir dos orçamentos com pagamento informado
-  receitas = oSnap.docs.map(d=>({id:d.id, ...d.data()}))
-    .filter(o => o.formaPagamento && o.formaPagamento !== '' && !o.arquivada);
+  // Receitas agora são baseadas nos status "Pagamento Efetivado"
+  const orcs = oSnap.docs.map(d=>({id:d.id, ...d.data()})).filter(o => !o.arquivada);
+  receitas = [];
+  orcs.forEach(o => {
+    if (o.opcaoPagamento === 'Parcelado' && o.parcelas) {
+      o.parcelas.forEach(p => {
+        if (p.statusPagamento === 'Pagamento Efetivado') {
+          receitas.push({
+            id: o.id + '_' + p.numero,
+            clienteNome: o.clienteNome,
+            tipoServico: o.tipoServico + ' (Parc ' + p.numero + 'x)',
+            formaPagamento: o.formaPagamento,
+            opcaoPagamento: o.opcaoPagamento,
+            dataBase: p.dataPagamento ? new Date(p.dataPagamento + 'T12:00:00') : (o.criadoEm?.toDate ? o.criadoEm.toDate() : new Date()),
+            valorComDesconto: p.valor
+          });
+        }
+      });
+    } else if (o.statusPagamento === 'Pagamento Efetivado') {
+      receitas.push({
+        id: o.id,
+        clienteNome: o.clienteNome,
+        tipoServico: o.tipoServico,
+        formaPagamento: o.formaPagamento,
+        opcaoPagamento: o.opcaoPagamento,
+        dataBase: o.dataPagamento ? new Date(o.dataPagamento + 'T12:00:00') : (o.criadoEm?.toDate ? o.criadoEm.toDate() : new Date()),
+        valorComDesconto: o.valorComDesconto || o.valorServico || 0
+      });
+    }
+  });
     
   despesas = dSnap.docs.map(d=>({id:d.id, ...d.data()})).filter(d => !d.arquivada);
 
@@ -177,15 +204,15 @@ async function loadData() {
 function renderReceitas() {
   const tbody = document.getElementById('receitas-tbody');
   if(!receitas.length) { tbody.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhuma receita</h3></div></td></tr>'; return; }
-  tbody.innerHTML = receitas.map(r => `
+  tbody.innerHTML = receitas.map(r => \`
     <tr>
-      <td>${formatDate(r.criadoEm)}</td>
-      <td>${r.clienteNome || '-'}</td>
-      <td>Orçamento - ${r.tipoServico || ''}</td>
-      <td>${r.formaPagamento} ${r.opcaoPagamento ? `(${r.opcaoPagamento})` : ''}</td>
-      <td style="color:var(--gold);font-weight:bold">${formatCurrency(r.valorComDesconto || r.valorServico || 0)}</td>
+      <td>\${r.dataBase ? formatDate(r.dataBase) : '-'}</td>
+      <td>\${r.clienteNome || '-'}</td>
+      <td>Orçamento - \${r.tipoServico || ''}</td>
+      <td>\${r.formaPagamento} \${r.opcaoPagamento ? \`(\${r.opcaoPagamento})\` : ''}</td>
+      <td style="color:var(--gold);font-weight:bold">\${formatCurrency(r.valorComDesconto)}</td>
     </tr>
-  `).join('');
+  \`).join('');
 }
 
 function renderDespesas() {
@@ -225,9 +252,9 @@ function renderCharts() {
   }
 
   receitas.forEach(r => {
-    const dt = r.criadoEm?.toDate ? r.criadoEm.toDate() : new Date(r.criadoEm || 0);
+    const dt = r.dataBase;
     const idx = (hoje.getFullYear() - dt.getFullYear()) * 12 + (hoje.getMonth() - dt.getMonth());
-    if(idx >= 0 && idx < 6) valsRec[5 - idx] += (r.valorComDesconto || r.valorServico || 0);
+    if(idx >= 0 && idx < 6) valsRec[5 - idx] += (r.valorComDesconto || 0);
   });
   despesas.forEach(d => {
     const dt = d.data?.toDate ? d.data.toDate() : new Date(d.data || 0);

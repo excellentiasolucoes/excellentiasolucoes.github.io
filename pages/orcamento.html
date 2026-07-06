@@ -79,6 +79,33 @@
             <option value="Parcelado">Parcelado</option>
           </select>
         </div>
+        
+        <!-- Status Pagamento À Vista / Outros (Nao Parcelado) -->
+        <div class="form-group" id="container-status-pagamento" style="display:none;">
+          <label class="form-label">Status do Pagamento</label>
+          <select class="form-select" id="f-status-pagamento">
+            <option value="Em Espera">Em Espera</option>
+            <option value="Pagamento Efetivado">Pagamento Efetivado</option>
+          </select>
+        </div>
+        <div class="form-group" id="container-data-pagamento" style="display:none;">
+          <label class="form-label">Data do Pagamento</label>
+          <input type="date" class="form-control" id="f-data-pagamento">
+        </div>
+
+        <!-- Container Parcelamento -->
+        <div class="form-group col-span-2" id="container-parcelamento" style="display:none; background:var(--surface-2); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+          <div style="font-weight:bold; margin-bottom:12px; font-size:14px;">Parcelamento</div>
+          <div class="form-row" style="align-items:flex-end;">
+            <div class="form-group" style="flex:1"><label class="form-label">Nº de Parcelas</label>
+              <input type="number" class="form-control" id="f-num-parcelas" min="1" max="48" placeholder="Ex: 3">
+            </div>
+            <div class="form-group" style="flex:0"><button type="button" class="btn btn-secondary" id="btn-gerar-parcelas">Gerar Parcelas</button></div>
+          </div>
+          <div id="tabela-parcelas-container" style="margin-top:10px; max-height:250px; overflow-y:auto; padding-right:4px;">
+            <!-- Parcelas geradas entrarão aqui -->
+          </div>
+        </div>
         <div class="form-group col-span-2">
           <label class="form-label">Planta / Imagem do Projeto (Opcional)</label>
           <input type="file" class="form-control" id="f-imagem" accept="image/*" style="padding: 6px;">
@@ -284,6 +311,68 @@ function calcEntrega(){
   } else document.getElementById('f-entrega').value='';
 }
 
+// Lógica de Visibilidade de Pagamento
+document.getElementById('f-opcao-pagamento').addEventListener('change', (e) => {
+  const val = e.target.value;
+  const cStatus = document.getElementById('container-status-pagamento');
+  const cData = document.getElementById('container-data-pagamento');
+  const cParcela = document.getElementById('container-parcelamento');
+  if(val === 'Parcelado') {
+    cStatus.style.display = 'none'; cData.style.display = 'none'; cParcela.style.display = 'block';
+  } else if(val === '&#192; vista') {
+    cStatus.style.display = 'block'; cData.style.display = 'block'; cParcela.style.display = 'none';
+  } else {
+    cStatus.style.display = 'none'; cData.style.display = 'none'; cParcela.style.display = 'none';
+  }
+});
+
+// Gerar Parcelas
+document.getElementById('btn-gerar-parcelas').addEventListener('click', () => {
+  const num = parseInt(document.getElementById('f-num-parcelas').value) || 0;
+  if(num <= 0) return;
+  const pctDesc = parseFloat(document.getElementById('f-desconto').value)||0;
+  const valorTotal = (parseFloat(document.getElementById('f-valor').value)||0) * (1 - pctDesc/100);
+  const valorParcela = valorTotal / num;
+  
+  const container = document.getElementById('tabela-parcelas-container');
+  let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
+  const hoje = new Date();
+  for(let i=1; i<=num; i++) {
+    const venc = new Date(hoje); venc.setMonth(venc.getMonth() + i);
+    const vencStr = venc.toISOString().split('T')[0];
+    html += \`
+      <div class="parcela-item" data-num="\${i}" style="display:flex; gap:10px; align-items:center; background:var(--surface); padding:10px; border-radius:6px; border:1px solid var(--border-subtle);">
+        <div style="width:40px; font-weight:bold; text-align:center;">\${i}x</div>
+        <div style="flex:1"><input type="number" class="form-control p-valor" step="0.01" value="\${valorParcela.toFixed(2)}" title="Valor da Parcela"></div>
+        <div style="flex:1"><input type="date" class="form-control p-venc" value="\${vencStr}" title="Vencimento"></div>
+        <div style="flex:1.5">
+          <select class="form-select p-status">
+            <option value="Em Espera">Em Espera</option>
+            <option value="Pagamento Efetivado">Efetivado</option>
+          </select>
+        </div>
+        <div style="flex:1"><input type="date" class="form-control p-data" title="Data do Pagamento" style="display:none;"></div>
+      </div>
+    \`;
+  }
+  html += '</div>';
+  container.innerHTML = html;
+  
+  // Lógica para mostrar a Data do Pagamento quando o status for "Efetivado"
+  container.querySelectorAll('.p-status').forEach(sel => {
+    sel.addEventListener('change', (e) => {
+      const pData = e.target.closest('.parcela-item').querySelector('.p-data');
+      if(e.target.value === 'Pagamento Efetivado') {
+        pData.style.display = 'block';
+        if(!pData.value) pData.value = new Date().toISOString().split('T')[0];
+      } else {
+        pData.style.display = 'none';
+        pData.value = '';
+      }
+    });
+  });
+});
+
 function openModal(id=null){
   editId=id; document.getElementById('form-alert').style.display='none'; document.getElementById('alerta-prazo').style.display='none';
   document.getElementById('modal-titulo').textContent=id?'Editar Orçamento':'Novo Or&#231;amento';
@@ -291,6 +380,9 @@ function openModal(id=null){
     ['f-data','f-prazo','f-valor','f-desconto'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('f-status').value=''; 
     document.getElementById('f-forma-pagamento').value=''; document.getElementById('f-opcao-pagamento').value=''; 
+    document.getElementById('f-status-pagamento').value='Em Espera'; document.getElementById('f-data-pagamento').value='';
+    document.getElementById('f-num-parcelas').value=''; document.getElementById('tabela-parcelas-container').innerHTML='';
+    document.getElementById('f-opcao-pagamento').dispatchEvent(new Event('change'));
     calcDesconto();
     imagemProjetoBase64=null; document.getElementById('img-preview').style.display='none'; document.getElementById('img-preview').src='';
   }
@@ -306,7 +398,47 @@ window.editItem=async(id)=>{
   document.getElementById('f-tipo').value=d.tipoServico||''; document.getElementById('f-status').value=d.statusId||'';
   document.getElementById('f-desc').value=d.descricao||''; document.getElementById('f-valor').value=d.valorServico||'';
   document.getElementById('f-desconto').value=d.percentualDesconto||''; document.getElementById('f-prazo').value=d.prazo||'';
-  document.getElementById('f-forma-pagamento').value=d.formaPagamento||''; document.getElementById('f-opcao-pagamento').value=d.opcaoPagamento||'';
+  document.getElementById('f-forma-pagamento').value=d.formaPagamento||''; 
+  document.getElementById('f-opcao-pagamento').value=d.opcaoPagamento||'';
+  
+  document.getElementById('f-status-pagamento').value = d.statusPagamento || 'Em Espera';
+  document.getElementById('f-data-pagamento').value = d.dataPagamento || '';
+  document.getElementById('f-opcao-pagamento').dispatchEvent(new Event('change'));
+
+  if(d.opcaoPagamento === 'Parcelado' && d.parcelas && d.parcelas.length > 0) {
+    document.getElementById('f-num-parcelas').value = d.parcelas.length;
+    const container = document.getElementById('tabela-parcelas-container');
+    let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
+    d.parcelas.forEach((p, idx) => {
+      const i = idx + 1;
+      html += \`
+        <div class="parcela-item" data-num="\${i}" style="display:flex; gap:10px; align-items:center; background:var(--surface); padding:10px; border-radius:6px; border:1px solid var(--border-subtle);">
+          <div style="width:40px; font-weight:bold; text-align:center;">\${i}x</div>
+          <div style="flex:1"><input type="number" class="form-control p-valor" step="0.01" value="\${p.valor}" title="Valor da Parcela"></div>
+          <div style="flex:1"><input type="date" class="form-control p-venc" value="\${p.vencimento}" title="Vencimento"></div>
+          <div style="flex:1.5">
+            <select class="form-select p-status">
+              <option value="Em Espera" \${p.statusPagamento === 'Em Espera' ? 'selected' : ''}>Em Espera</option>
+              <option value="Pagamento Efetivado" \${p.statusPagamento === 'Pagamento Efetivado' ? 'selected' : ''}>Efetivado</option>
+            </select>
+          </div>
+          <div style="flex:1"><input type="date" class="form-control p-data" title="Data do Pagamento" style="display:\${p.statusPagamento === 'Pagamento Efetivado' ? 'block' : 'none'};" value="\${p.dataPagamento || ''}"></div>
+        </div>
+      \`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+    container.querySelectorAll('.p-status').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        const pData = e.target.closest('.parcela-item').querySelector('.p-data');
+        if(e.target.value === 'Pagamento Efetivado') { pData.style.display = 'block'; if(!pData.value) pData.value = new Date().toISOString().split('T')[0]; }
+        else { pData.style.display = 'none'; pData.value = ''; }
+      });
+    });
+  } else {
+    document.getElementById('tabela-parcelas-container').innerHTML = '';
+  }
+
   if(d.dataServico){const dt=d.dataServico.toDate?d.dataServico.toDate():new Date(d.dataServico);document.getElementById('f-data').value=dt.toISOString().split('T')[0];}
   imagemProjetoBase64 = d.imagemProjeto || null;
   const imgEl = document.getElementById('img-preview');
@@ -532,12 +664,34 @@ document.getElementById('btn-salvar').addEventListener('click',async()=>{
   const valorDesc=valor*(1-pctDesc/100);
   let dataServico=null,dataEntrega=null;
   if(ds){dataServico=Timestamp.fromDate(new Date(ds+'T12:00:00'));const de=new Date(ds+'T12:00:00');de.setDate(de.getDate()+prazo);dataEntrega=Timestamp.fromDate(de);}
+  
+  const opcaoPagamento = document.getElementById('f-opcao-pagamento').value;
+  let statusPagamento = 'Em Espera';
+  let dataPagamento = '';
+  let parcelas = [];
+  
+  if (opcaoPagamento === '&#192; vista') {
+    statusPagamento = document.getElementById('f-status-pagamento').value;
+    dataPagamento = document.getElementById('f-data-pagamento').value;
+  } else if (opcaoPagamento === 'Parcelado') {
+    document.querySelectorAll('.parcela-item').forEach(el => {
+      parcelas.push({
+        numero: parseInt(el.dataset.num),
+        valor: parseFloat(el.querySelector('.p-valor').value) || 0,
+        vencimento: el.querySelector('.p-venc').value,
+        statusPagamento: el.querySelector('.p-status').value,
+        dataPagamento: el.querySelector('.p-data').value
+      });
+    });
+  }
+
   const payload={
     clienteNome:document.getElementById('f-cliente').value.trim(),clienteId:document.getElementById('f-cliente-id').value,
     tipoServico:document.getElementById('f-tipo').value.trim(),statusId:stSel.value,
     statusNome:stSel.options[stSel.selectedIndex]?.text||'',descricao:document.getElementById('f-desc').value.trim(),
     dataServico,prazo,dataEntrega,valorServico:valor,percentualDesconto:pctDesc,valorComDesconto:valorDesc,
-    formaPagamento:document.getElementById('f-forma-pagamento').value, opcaoPagamento:document.getElementById('f-opcao-pagamento').value,
+    formaPagamento:document.getElementById('f-forma-pagamento').value, opcaoPagamento,
+    statusPagamento, dataPagamento, parcelas,
     imagemProjeto: imagemProjetoBase64, atualizadoEm:serverTimestamp()
   };
   try{
