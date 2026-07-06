@@ -13,8 +13,8 @@
   <div class="main-content">
     <div class="topbar">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <div><div class="topbar-title">Or&#231;amentos</div><div class="topbar-subtitle">Gestão de or&#231;amentos</div></div>
-      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Or&#231;amento</button></div>
+      <div><div class="topbar-title">Orçamentos</div><div class="topbar-subtitle">Gestão de Orçamentos</div></div>
+      <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Orçamento</button></div>
     </div>
     <div class="page-content">
       <div class="card" style="padding:0">
@@ -32,7 +32,7 @@
 <!-- Modal: novo/Editar Orçamento -->
 <div class="modal-overlay" id="modal-form">
   <div class="modal modal-lg">
-    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Or&#231;amento</span></span><button class="modal-close" id="close-modal">✕</button></div>
+    <div class="modal-header"><span class="modal-title"><span id="modal-titulo">Novo Orçamento</span></span><button class="modal-close" id="close-modal">✕</button></div>
     <div class="modal-body">
       <div id="form-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-grid">
@@ -47,8 +47,15 @@
         <div class="form-group"><label class="form-label">Status</label>
           <select class="form-select" id="f-status"><option value="">Selecionar</option></select>
         </div>
-        <div class="form-group col-span-2"><label class="form-label">Descri&#231;&#227;o do Servi&#231;o</label>
-          <textarea class="form-control" id="f-desc" rows="3" placeholder="Descreva o servi&#231;o..."></textarea>
+        <!-- Container Serviços do Orçamento -->
+        <div class="form-group col-span-2" style="background:var(--surface-2); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="font-weight:bold; font-size:14px;">Serviços do Orçamento</div>
+            <button type="button" class="btn btn-secondary btn-icon-sm" id="btn-add-servico" style="padding:4px 10px; font-size:12px;">+ Adicionar Servi&#231;o</button>
+          </div>
+          <div id="lista-servicos-container" style="display:flex; flex-direction:column; gap:8px;">
+            <!-- Linhas de serviços dinâmicas -->
+          </div>
         </div>
         <div class="form-group"><label class="form-label">Data do Servi&#231;o</label>
           <input type="date" class="form-control" id="f-data">
@@ -59,8 +66,8 @@
         <div class="form-group"><label class="form-label">Data de Entrega (calculada)</label>
           <input type="text" class="form-control" id="f-entrega" readonly style="opacity:0.6">
         </div>
-        <div class="form-group"><label class="form-label">Valor do Servi&#231;o (R$)</label>
-          <input type="number" class="form-control" id="f-valor" placeholder="0,00" step="0.01" min="0">
+        <div class="form-group"><label class="form-label">Valor do Orçamento (Aprovados)</label>
+          <input type="number" class="form-control" id="f-valor" placeholder="0,00" step="0.01" min="0" readonly style="background:var(--surface-2); font-weight:bold;">
         </div>
         <div class="form-group"><label class="form-label">Forma de Pagamento</label>
           <select class="form-select" id="f-forma-pagamento">
@@ -91,6 +98,10 @@
         <div class="form-group" id="container-data-pagamento" style="display:none;">
           <label class="form-label">Data do Pagamento</label>
           <input type="date" class="form-control" id="f-data-pagamento">
+        </div>
+        <div class="form-group" id="container-valor-pago" style="display:none;">
+          <label class="form-label">Valor Pago</label>
+          <input type="number" class="form-control" id="f-valor-pago" step="0.01">
         </div>
 
         <!-- Container Parcelamento -->
@@ -226,7 +237,7 @@ function renderSidebar(Nome, perfil) {
       <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
       <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
       <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
-      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
+      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Orçamentos</a>
       <a href="financeiro.html"><span class="nav-icon">&#128176;</span>Financeiro</a>
       <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
       <div class="sidebar-section-label">Cadastros</div>
@@ -311,20 +322,61 @@ function calcEntrega(){
   } else document.getElementById('f-entrega').value='';
 }
 
+// Lógica de Serviços Dinâmicos
+function updateValorOrcamento() {
+  const servicos = document.querySelectorAll('.servico-item');
+  let somaAprovados = 0;
+  servicos.forEach(s => {
+    const isAprovado = s.querySelector('.s-aprovado').checked;
+    if(isAprovado) {
+      somaAprovados += parseFloat(s.querySelector('.s-valor').value) || 0;
+    }
+  });
+  document.getElementById('f-valor').value = somaAprovados.toFixed(2);
+  calcDesconto();
+}
+
+function addServicoRow(descricao = '', valor = 0, aprovado = true) {
+  const container = document.getElementById('lista-servicos-container');
+  const div = document.createElement('div');
+  div.className = 'servico-item';
+  div.style.cssText = 'display:flex; gap:10px; align-items:center; background:var(--surface); padding:10px; border-radius:6px; border:1px solid var(--border-subtle);';
+  div.innerHTML = `
+    <div style="flex:2"><input type="text" class="form-control s-desc" placeholder="Descrição do serviço" value="${descricao}"></div>
+    <div style="flex:1"><input type="number" class="form-control s-valor" step="0.01" placeholder="Valor (R$)" value="${valor.toFixed(2)}"></div>
+    <div style="flex:0; display:flex; align-items:center; gap:5px;">
+      <input type="checkbox" class="s-aprovado" ${aprovado ? 'checked' : ''} style="width:20px; height:20px; cursor:pointer;"> 
+      <small>Aprovado</small>
+    </div>
+    <div style="flex:0"><button type="button" class="btn btn-danger btn-icon-sm btn-remover-servico" title="Remover">&#128465;&#65039;</button></div>
+  `;
+  div.querySelector('.btn-remover-servico').addEventListener('click', () => { div.remove(); updateValorOrcamento(); });
+  div.querySelector('.s-valor').addEventListener('input', updateValorOrcamento);
+  div.querySelector('.s-aprovado').addEventListener('change', updateValorOrcamento);
+  container.appendChild(div);
+  updateValorOrcamento();
+}
+document.getElementById('btn-add-servico').addEventListener('click', () => addServicoRow());
+
 // Lógica de Visibilidade de Pagamento
-document.getElementById('f-opcao-pagamento').addEventListener('change', (e) => {
-  const val = e.target.value;
+function updateVisibilidadePagamento() {
+  const forma = document.getElementById('f-forma-pagamento').value;
+  const opcao = document.getElementById('f-opcao-pagamento').value;
   const cStatus = document.getElementById('container-status-pagamento');
   const cData = document.getElementById('container-data-pagamento');
+  const cValorPago = document.getElementById('container-valor-pago');
   const cParcela = document.getElementById('container-parcelamento');
-  if(val === 'Parcelado') {
-    cStatus.style.display = 'none'; cData.style.display = 'none'; cParcela.style.display = 'block';
-  } else if(val === '&#192; vista') {
-    cStatus.style.display = 'block'; cData.style.display = 'block'; cParcela.style.display = 'none';
+  
+  if (opcao === 'Parcelado') {
+    cStatus.style.display = 'none'; cData.style.display = 'none'; cValorPago.style.display = 'none'; cParcela.style.display = 'block';
+  } else if (forma !== '' || opcao !== '') {
+    cStatus.style.display = 'block'; cData.style.display = 'block'; cValorPago.style.display = 'block'; cParcela.style.display = 'none';
   } else {
-    cStatus.style.display = 'none'; cData.style.display = 'none'; cParcela.style.display = 'none';
+    cStatus.style.display = 'none'; cData.style.display = 'none'; cValorPago.style.display = 'none'; cParcela.style.display = 'none';
   }
-});
+}
+document.getElementById('f-opcao-pagamento').addEventListener('change', updateVisibilidadePagamento);
+document.getElementById('f-forma-pagamento').addEventListener('change', updateVisibilidadePagamento);
 
 // Gerar Parcelas
 document.getElementById('btn-gerar-parcelas').addEventListener('click', () => {
@@ -376,8 +428,10 @@ document.getElementById('btn-gerar-parcelas').addEventListener('click', () => {
 function openModal(id=null){
   editId=id; document.getElementById('form-alert').style.display='none'; document.getElementById('alerta-prazo').style.display='none';
   document.getElementById('modal-titulo').textContent=id?'Editar Orçamento':'Novo Or&#231;amento';
-  if(!id){['f-cliente','f-cliente-id','f-tipo','f-desc','f-entrega','f-imagem'].forEach(i=>document.getElementById(i).value='');
-    ['f-data','f-prazo','f-valor','f-desconto'].forEach(i=>document.getElementById(i).value='');
+  if(!id){
+    ['f-cliente','f-cliente-id','f-tipo','f-entrega','f-imagem'].forEach(i=>document.getElementById(i).value='');
+    ['f-data','f-prazo','f-valor','f-desconto','f-valor-pago'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('lista-servicos-container').innerHTML = '';
     document.getElementById('f-status').value=''; 
     document.getElementById('f-forma-pagamento').value=''; document.getElementById('f-opcao-pagamento').value=''; 
     document.getElementById('f-status-pagamento').value='Em Espera'; document.getElementById('f-data-pagamento').value='';
@@ -396,13 +450,22 @@ window.editItem=async(id)=>{
   const d=allItems.find(x=>x.id===id); if(!d)return; openModal(id);
   document.getElementById('f-cliente').value=d.clienteNome||''; document.getElementById('f-cliente-id').value=d.clienteId||'';
   document.getElementById('f-tipo').value=d.tipoServico||''; document.getElementById('f-status').value=d.statusId||'';
-  document.getElementById('f-desc').value=d.descricao||''; document.getElementById('f-valor').value=d.valorServico||'';
+  
+  document.getElementById('lista-servicos-container').innerHTML = '';
+  if (d.servicos && d.servicos.length > 0) {
+    d.servicos.forEach(s => addServicoRow(s.descricao, s.valor, s.aprovado));
+  } else if (d.descricao) { // Backward compatibility
+    addServicoRow(d.descricao, d.valorServico || 0, true);
+  }
+  
+  document.getElementById('f-valor').value=d.valorServico||'';
   document.getElementById('f-desconto').value=d.percentualDesconto||''; document.getElementById('f-prazo').value=d.prazo||'';
   document.getElementById('f-forma-pagamento').value=d.formaPagamento||''; 
   document.getElementById('f-opcao-pagamento').value=d.opcaoPagamento||'';
   
   document.getElementById('f-status-pagamento').value = d.statusPagamento || 'Em Espera';
   document.getElementById('f-data-pagamento').value = d.dataPagamento || '';
+  document.getElementById('f-valor-pago').value = d.valorPago || '';
   document.getElementById('f-opcao-pagamento').dispatchEvent(new Event('change'));
 
   if(d.opcaoPagamento === 'Parcelado' && d.parcelas && d.parcelas.length > 0) {
@@ -666,14 +729,13 @@ document.getElementById('btn-salvar').addEventListener('click',async()=>{
   if(ds){dataServico=Timestamp.fromDate(new Date(ds+'T12:00:00'));const de=new Date(ds+'T12:00:00');de.setDate(de.getDate()+prazo);dataEntrega=Timestamp.fromDate(de);}
   
   const opcaoPagamento = document.getElementById('f-opcao-pagamento').value;
+  const formaPagamento = document.getElementById('f-forma-pagamento').value;
   let statusPagamento = 'Em Espera';
   let dataPagamento = '';
   let parcelas = [];
+  let valorPago = 0;
   
-  if (opcaoPagamento === '&#192; vista') {
-    statusPagamento = document.getElementById('f-status-pagamento').value;
-    dataPagamento = document.getElementById('f-data-pagamento').value;
-  } else if (opcaoPagamento === 'Parcelado') {
+  if (opcaoPagamento === 'Parcelado') {
     document.querySelectorAll('.parcela-item').forEach(el => {
       parcelas.push({
         numero: parseInt(el.dataset.num),
@@ -683,15 +745,29 @@ document.getElementById('btn-salvar').addEventListener('click',async()=>{
         dataPagamento: el.querySelector('.p-data').value
       });
     });
+  } else if (formaPagamento !== '' || opcaoPagamento !== '') {
+    statusPagamento = document.getElementById('f-status-pagamento').value;
+    dataPagamento = document.getElementById('f-data-pagamento').value;
+    valorPago = parseFloat(document.getElementById('f-valor-pago').value) || 0;
   }
+
+  const servicos = [];
+  document.querySelectorAll('.servico-item').forEach(el => {
+    servicos.push({
+      descricao: el.querySelector('.s-desc').value.trim(),
+      valor: parseFloat(el.querySelector('.s-valor').value) || 0,
+      aprovado: el.querySelector('.s-aprovado').checked
+    });
+  });
+  const descricaoTexto = servicos.map(s => `${s.descricao} - ${s.aprovado ? 'Aprovado' : 'Pendente/Recusado'}`).join('\n');
 
   const payload={
     clienteNome:document.getElementById('f-cliente').value.trim(),clienteId:document.getElementById('f-cliente-id').value,
     tipoServico:document.getElementById('f-tipo').value.trim(),statusId:stSel.value,
-    statusNome:stSel.options[stSel.selectedIndex]?.text||'',descricao:document.getElementById('f-desc').value.trim(),
+    statusNome:stSel.options[stSel.selectedIndex]?.text||'',descricao:descricaoTexto,
     dataServico,prazo,dataEntrega,valorServico:valor,percentualDesconto:pctDesc,valorComDesconto:valorDesc,
-    formaPagamento:document.getElementById('f-forma-pagamento').value, opcaoPagamento,
-    statusPagamento, dataPagamento, parcelas,
+    formaPagamento, opcaoPagamento,
+    statusPagamento, dataPagamento, parcelas, valorPago, servicos,
     imagemProjeto: imagemProjetoBase64, atualizadoEm:serverTimestamp()
   };
   try{

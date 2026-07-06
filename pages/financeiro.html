@@ -188,7 +188,7 @@ async function loadData() {
         formaPagamento: o.formaPagamento,
         opcaoPagamento: o.opcaoPagamento,
         dataBase: o.dataPagamento ? new Date(o.dataPagamento + 'T12:00:00') : (o.criadoEm?.toDate ? o.criadoEm.toDate() : new Date()),
-        valorComDesconto: o.valorComDesconto || o.valorServico || 0
+        valorComDesconto: o.valorPago > 0 ? o.valorPago : (o.valorComDesconto || o.valorServico || 0)
       });
     }
   });
