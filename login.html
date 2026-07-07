@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Excellentia Controll &#8212; Login</title>
+  <title>Excellentia Controll — Login</title>
   <meta name="description" content="Sistema de Gestao de Projetos para Empresas de Arquitetura">
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="assets/logo.png">
@@ -17,16 +17,16 @@
     <p>Sistema de Gestao de Projetos para Empresas de Arquitetura</p>
     <div style="margin-top:40px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">
       <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
-        <span style="font-size:22px">&#128203;</span>
+        <span style="font-size:22px">📋</span>
         <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Gestão de Projetos</div><div style="font-size:11px;color:var(--text-3)">Controle total dos seus atendimentos</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
-        <span style="font-size:22px">&#128200;</span>
-        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Relatórios & Gráficos</div><div style="font-size:11px;color:var(--text-3)">Dados em tempo real do seu neg&#243;cio</div></div>
+        <span style="font-size:22px">📈</span>
+        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Relatórios & Gráficos</div><div style="font-size:11px;color:var(--text-3)">Dados em tempo real do seu negócio</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:14px 16px">
-        <span style="font-size:22px">&#8226;&#8226;&#8226;</span>
-        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Exclusivo para Arquitetura</div><div style="font-size:11px;color:var(--text-3)">Pensado para o seu escrit&#243;rio</div></div>
+        <span style="font-size:22px">•••</span>
+        <div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--gold)">Exclusivo para Arquitetura</div><div style="font-size:11px;color:var(--text-3)">Pensado para o seu escritório</div></div>
       </div>
     </div>
   </div>
@@ -47,7 +47,7 @@
         <label class="form-label">Senha</label>
         <div class="password-wrapper">
           <input type="password" class="form-control" id="login-password" placeholder="--------" required>
-          <button type="button" class="password-toggle" id="toggle-password">&#128065;</button>
+          <button type="button" class="password-toggle" id="toggle-password">👁</button>
         </div>
       </div>
       <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:15px;margin-top:8px" id="btn-login">
@@ -69,7 +69,7 @@
     <div class="login-legal">
       Este sistema foi desenvolvido para organizar e otimizar seus atendimentos.<br>
       Não é permitida a utilização por pessoas não autorizadas.<br>
-      <strong style="color:var(--gold)">Excellentia Controll &#8212; 2026</strong>
+      <strong style="color:var(--gold)">Excellentia Controll — 2026</strong>
     </div>
   </div>
 </div>
@@ -78,14 +78,14 @@
 <div class="modal-overlay" id="modal-change-pwd">
   <div class="modal modal-sm">
     <div class="modal-header">
-      <span class="modal-title">&#128273; Alterar Senha</span>
+      <span class="modal-title">🔑 Alterar Senha</span>
     </div>
     <div class="modal-body">
-      <p style="color:var(--text-2);margin-bottom:18px;font-size:14px">Por seguran&#231;a, voc&#234; precisa definir uma nova senha no primeiro acesso.</p>
+      <p style="color:var(--text-2);margin-bottom:18px;font-size:14px">Por segurança, você precisa definir uma nova senha no primeiro acesso.</p>
       <div id="change-pwd-alert" class="alert alert-danger" style="display:none"></div>
       <div class="form-group">
         <label class="form-label">Nova Senha</label>
-        <input type="password" class="form-control" id="new-password" placeholder="M&#237;nimo 6 caracteres">
+        <input type="password" class="form-control" id="new-password" placeholder="Mínimo 6 caracteres">
       </div>
       <div class="form-group">
         <label class="form-label">Confirmar nova Senha</label>
@@ -112,16 +112,61 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-// Verifica se email esta na lista de autorizados
+// Verifica se email esta na lista de autorizados ou ja cadastrado na base
 async function checkEmailAutorizado(email) {
   try {
     const snap = await getDoc(doc(db, 'configuracoes', 'emailsAutorizados'));
-    if (!snap.exists()) return true; // lista vazia = todos permitidos
-    const lista = snap.data().lista || [];
-    if (lista.length === 0) return true; // lista vazia = todos permitidos
-    return lista.includes(email.toLowerCase());
+    let inWhitelist = false;
+    if (!snap.exists()) {
+      inWhitelist = true;
+    } else {
+      const lista = snap.data().lista || [];
+      if (lista.length === 0) inWhitelist = true;
+      else if (lista.includes(email.toLowerCase())) inWhitelist = true;
+    }
+    if (inWhitelist) return true;
+    
+    // Verifica se o email ja foi criado pelo admin em 'usuarios'
+    const { collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+    const q = query(collection(db, 'usuarios'), where('email', '==', email), where('ativo', '==', true));
+    const userSnap = await getDocs(q);
+    if (!userSnap.empty) return true;
+
+    return false;
   } catch(e) {
-    return true; // em caso de erro, permite (nao bloqueia por falha tecnica)
+    return true;
+  }
+}
+
+async function linkOrMigrateUserDoc(user) {
+  try {
+    const ref = doc(db, 'usuarios', user.uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      const { collection, query, where, getDocs, setDoc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+      const q = query(collection(db, 'usuarios'), where('email', '==', user.email));
+      const qSnap = await getDocs(q);
+      
+      if (!qSnap.empty) {
+        const fakeDoc = qSnap.docs[0];
+        await setDoc(ref, {
+          ...fakeDoc.data(),
+          atualizadoEm: serverTimestamp()
+        });
+        await deleteDoc(fakeDoc.ref);
+      } else {
+        await setDoc(ref, {
+          Nome        : user.displayName || user.email.split('@')[0],
+          email       : user.email,
+          perfil      : 'usuario',
+          ativo       : true,
+          primeiroLogin: false,
+          criadoEm    : serverTimestamp()
+        });
+      }
+    }
+  } catch (e) {
+    console.warn('Erro na migracao do doc:', e.message);
   }
 }
 
@@ -137,6 +182,7 @@ onAuthStateChanged(auth, async (user) => {
       document.getElementById('login-alert').style.display = 'flex';
       return;
     }
+    await linkOrMigrateUserDoc(user);
     const snap = await getDoc(doc(db, 'usuarios', user.uid));
     if (snap.exists() && snap.data().primeiroLogin) {
       document.getElementById('modal-change-pwd').classList.add('open');
@@ -178,6 +224,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
       alertEl.style.display = 'flex';
       return;
     }
+    await linkOrMigrateUserDoc(cred.user);
     const snap = await getDoc(doc(db, 'usuarios', cred.user.uid));
     hideLoading();
     if (snap.exists() && snap.data().primeiroLogin) {
@@ -214,24 +261,8 @@ document.getElementById('btn-google').addEventListener('click', async () => {
     const cred     = await signInWithPopup(auth, provider);
     const user     = cred.user;
 
-    // Cria doc em /usuarios se nao existir (nao bloqueia o login se falhar)
-    try {
-      const ref  = doc(db, 'usuarios', user.uid);
-      const snap = await getDoc(ref);
-      if (!snap.exists()) {
-        await setDoc(ref, {
-          Nome        : user.displayname || user.email.split('@')[0],
-          email       : user.email,
-          perfil      : 'usuario',
-          ativo       : true,
-          primeiroLogin: false,
-          criadoEm    : serverTimestamp()
-        });
-      }
-    } catch (fsErr) {
-      // Regras do Firestore ainda nao liberadas  redireciona mesmo assim
-      console.warn('Firestore usuarios:', fsErr.message);
-    }
+    // Cria ou migra doc em /usuarios (nao bloqueia o login se falhar)
+    await linkOrMigrateUserDoc(user);
     const autorizado = await checkEmailAutorizado(user.email);
     if (!autorizado) {
       const { signOut: _so } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js');
@@ -288,7 +319,7 @@ document.getElementById('btn-save-pwd').addEventListener('click', async () => {
 </script>
 
 <button class="theme-toggle theme-toggle-login" id="login-theme-toggle" onclick="toggleLoginTheme()">
-  <span id="login-theme-icon">&#9728;&#65039;</span> <span id="login-theme-label">Modo Claro</span>
+  <span id="login-theme-icon">☀️</span> <span id="login-theme-label">Modo Claro</span>
 </button>
 
 <script>
