@@ -12,7 +12,7 @@
   <div id="sidebar-placeholder"></div>
   <div class="main-content">
     <div class="topbar">
-      <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
       <div><div class="topbar-title">Clientes</div><div class="topbar-subtitle">Cadastro de clientes</div></div>
       <div class="topbar-actions">
         <button class="btn btn-primary" id="btn-novo">+ Novo Cliente</button>
@@ -21,7 +21,7 @@
     <div class="page-content">
       <div class="search-bar">
         <div class="search-input-wrapper">
-          <span class="search-icon">&#128269;</span>
+          <span class="search-icon">🔍</span>
           <input type="text" class="form-control" id="search-input" placeholder="Buscar por Nome, CPF/CNPJ...">
         </div>
       </div>
@@ -59,8 +59,8 @@
           <label class="form-label">Tipo</label>
           <select class="form-select" id="f-tipo">
             <option value="">Selecionar</option>
-            <option value="PF">Pessoa Fsica</option>
-            <option value="PJ">Pessoa Jurdica</option>
+            <option value="PF">Pessoa Física</option>
+            <option value="PJ">Pessoa Jurídica</option>
           </select>
         </div>
         <div class="form-group">
@@ -87,7 +87,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
-      <button class="btn btn-primary" id="btn-salvar">&#128190; Salvar</button>
+      <button class="btn btn-primary" id="btn-salvar">💾 Salvar</button>
     </div>
   </div>
 </div>
@@ -112,7 +112,7 @@ onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = '../login.html'; return; }
   const snap = await getDoc(doc(db, 'usuarios', user.uid));
   const u = snap.exists() ? snap.data() : {};
-  renderSidebar(u.Nome || user.email, u.perfil || 'Usu&#225;rio');
+  renderSidebar(u.Nome || user.email, u.perfil || 'Usuário');
   await loadData();
   applyCpfCnpjMask(document.getElementById('f-cpf'));
   applyPhoneMask(document.getElementById('f-contato1'));
@@ -145,39 +145,39 @@ function renderSidebar(Nome, perfil) {
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
-      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
-      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
-      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
-      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
-      <a href="financeiro.html"><span class="nav-icon">&#128176;</span>Financeiro</a>
-      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
+      <a href="dashboard.html"><span class="nav-icon">📊</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">📋</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">📁️</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">📅</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">💰</span>Orçamentos</a>
+      <a href="financeiro.html"><span class="nav-icon">💰</span>Financeiro</a>
+      <a href="relatorios.html"><span class="nav-icon">📈</span>Relatórios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
-      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
-      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
-      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
-      <a href="tipos-despesas.html"><span class="nav-icon">&#128203;</span>Tipos de Despesas</a>
-      <a href="tipos-receitas.html"><span class="nav-icon">&#128203;</span>Tipos de Receitas</a>
+      <a href="colaboradores.html"><span class="nav-icon">👨‍💼</span>Colaboradores</a>
+      <a href="clientes.html"><span class="nav-icon">👥</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">🏭</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">🧱</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">🔨</span>Serviços</a>
+      <a href="tipos-despesas.html"><span class="nav-icon">📋</span>Tipos de Despesas</a>
+      <a href="tipos-receitas.html"><span class="nav-icon">📋</span>Tipos de Receitas</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? '<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>' : ''}
-      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
-      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
+      ${isAdmin ? '<a href="usuarios.html"><span class="nav-icon">👤</span>Usuários</a>' : ''}
+      <a href="agenda.html"><span class="nav-icon">📚</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">💡</span>Sugestões</a>
+      <a href="creditos.html"><span class="nav-icon">⭐</span>Créditos</a>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-theme-row">
         <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
-          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-icon">${isLight ? '🌙' : '☀️'}</span>
           <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
         </button>
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usuário'}</div></div>
       </div>
-      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+      <button class="btn-logout" id="btn-logout"><span>🚪</span> Sair</button>
     </div>
   </aside>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
@@ -197,28 +197,28 @@ function getSidebar(Nome, perfil) {
     <div class="sidebar-brand-text"><div class="name">Excellentia</div><div class="sub">Controll</div></div></div>
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">&#9642;</span>Dashboard</a>
-      <a href="demandas.html"><span class="nav-icon">&#9642;</span>Projetos</a>
-      <a href="kanban.html"><span class="nav-icon">&#9642;</span>Kanban</a>
-      <a href="calendario.html"><span class="nav-icon">&#9642;</span>Calend&#225;rio</a>
-      <a href="orcamento.html"><span class="nav-icon">&#9642;</span>Or&#231;amentos</a>
-      <a href="relatorios.html"><span class="nav-icon">&#9642;</span>Relat&#243;rios</a>
+      <a href="dashboard.html"><span class="nav-icon">▪</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">▪</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">▪</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">▪</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">▪</span>Orçamentos</a>
+      <a href="relatorios.html"><span class="nav-icon">▪</span>Relatórios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
-      <a href="clientes.html"><span class="nav-icon">&#9642;</span>Clientes</a>
-      <a href="fornecedores.html"><span class="nav-icon">&#9642;</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">&#9642;</span>Materiais</a>
-      <a href="servicos.html"><span class="nav-icon">&#9642;</span>Servi&#231;os</a>
+      <a href="colaboradores.html"><span class="nav-icon">👨‍💼</span>Colaboradores</a>
+      <a href="clientes.html"><span class="nav-icon">▪</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">▪</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">▪</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">▪</span>Serviços</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">&#9642;</span>Usu&#225;rios</a>` : ''}
-      <a href="agenda.html"><span class="nav-icon">&#9642;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#9642;</span>Sugest&#245;es</a>
-      <a href="creditos.html"><span class="nav-icon">&#9642;</span>Cr&#233;ditos</a>
+      ${isAdmin ? `<a href="usuarios.html"><span class="nav-icon">▪</span>Usuários</a>` : ''}
+      <a href="agenda.html"><span class="nav-icon">▪</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">▪</span>Sugestões</a>
+      <a href="creditos.html"><span class="nav-icon">▪</span>Créditos</a>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-user"><div class="sidebar-avatar">${ini}</div>
-      <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div></div>
-      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+      <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usuário'}</div></div></div>
+      <button class="btn-logout" id="btn-logout"><span>🚪</span> Sair</button>
     </div>
   </aside><div class="sidebar-overlay" id="sidebar-overlay"></div>`;
 }
@@ -232,7 +232,7 @@ async function loadData() {
 function renderTable(list) {
   const tbody = document.getElementById('list-tbody');
   if (list.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>nenhum cliente</h3><p>Clique em "+ Novo Cliente" para comear.</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><h3>nenhum cliente</h3><p>Clique em "+ Novo Cliente" para comear.</p></div></td></tr>`;
     return;
   }
   tbody.innerHTML = list.map(d => `<tr>
@@ -243,9 +243,9 @@ function renderTable(list) {
     <td>${d.contato1 || ''}</td>
     <td><div class="td-actions">
       <button class="btn btn-info btn-icon-sm" title="Visualizar" onclick="viewItem('${d.id}')">👁️</button>
-      <button class="btn btn-secondary btn-icon-sm" title="Editar" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
-      ${d.arquivada ? `<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar('${d.id}', false)">&#128229;</button>` : `<button class="btn btn-warning btn-icon-sm" title="Arquivar" onclick="toggleArquivar('${d.id}', true)">&#128451;</button>`}
-      <button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
+      <button class="btn btn-secondary btn-icon-sm" title="Editar" onclick="editItem('${d.id}')">✏️</button>
+      ${d.arquivada ? `<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar('${d.id}', false)">📥</button>` : `<button class="btn btn-warning btn-icon-sm" title="Arquivar" onclick="toggleArquivar('${d.id}', true)">🗃</button>`}
+      <button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="deleteItem('${d.id}')">🗑️</button>
     </div></td>
   </tr>`).join('');
 }
@@ -261,7 +261,7 @@ document.getElementById('search-input').addEventListener('input', (e) => {
 function openModal(id = null) {
   editId = id;
   document.getElementById('form-alert').style.display = 'none';
-  document.getElementById('modal-titulo').textContent = id ? 'Editar Cliente' : 'novo Cliente';
+  document.getElementById('modal-titulo').textContent = id ? 'Editar Cliente' : 'Novo Cliente';
   if (!id) { ['f-Nome','f-cpf','f-endereco','f-email','f-contato1','f-contato2'].forEach(i => document.getElementById(i).value = ''); document.getElementById('f-tipo').value = ''; }
   document.getElementById('modal-form').classList.add('open');
   document.body.style.overflow = 'hidden';
