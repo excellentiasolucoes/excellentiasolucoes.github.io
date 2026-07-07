@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Tipos de Receitas &#8212; Excellentia Controll</title>
+  <title>Tipos de Receitas — Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
 </head>
 <body>
@@ -10,16 +10,16 @@
   <div id="sidebar-placeholder"></div>
   <div class="main-content">
     <div class="topbar">
-      <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
       <div><div class="topbar-title">Tipos de Receitas</div><div class="topbar-subtitle">Cadastro de categorias de receitas</div></div>
       <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Tipo</button></div>
     </div>
     <div class="page-content">
-      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">&#128269;</span><input type="text" class="form-control" id="search-input" placeholder="Buscar tipo..."></div></div>
+      <div class="search-bar"><div class="search-input-wrapper"><span class="search-icon">🔍</span><input type="text" class="form-control" id="search-input" placeholder="Buscar tipo..."></div></div>
       <div class="card" style="padding:0">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Nome</th><th>A&#231;&#245;es</th></tr></thead>
+            <thead><tr><th>Nome</th><th>Ações</th></tr></thead>
             <tbody id="list-tbody"><tr><td colspan="2" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
           </table>
         </div>
@@ -39,7 +39,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
-      <button class="btn btn-primary" id="btn-salvar">&#128190; Salvar</button>
+      <button class="btn btn-primary" id="btn-salvar">💾 Salvar</button>
     </div>
   </div>
 </div>
@@ -57,7 +57,7 @@ let allItems=[], editId=null;
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.Nome||user.email, u.perfil||'Usu&#225;rio');
+  renderSidebar(u.Nome||user.email, u.perfil||'Usuário');
   const sSnap=await getDocs(query(collection(db,'tiposReceitas'),orderBy('Nome')));
   allItems=sSnap.docs.map(d=>({id:d.id,...d.data()}));
   renderTable(allItems);
@@ -88,39 +88,39 @@ function renderSidebar(Nome, perfil) {
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
-      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
-      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
-      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
-      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Or&#231;amentos</a>
-      <a href="financeiro.html"><span class="nav-icon">&#128176;</span>Financeiro</a>
-      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
+      <a href="dashboard.html"><span class="nav-icon">📊</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">📋</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">📁️</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">📅</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">💰</span>Orçamentos</a>
+      <a href="financeiro.html"><span class="nav-icon">💰</span>Financeiro</a>
+      <a href="relatorios.html"><span class="nav-icon">📈</span>Relatórios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
-      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
-      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
-      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
-      <a href="tipos-despesas.html"><span class="nav-icon">&#128203;</span>Tipos de Despesas</a>
-      <a href="tipos-receitas.html"><span class="nav-icon">&#128203;</span>Tipos de Receitas</a>
+      <a href="colaboradores.html"><span class="nav-icon">👨‍💼</span>Colaboradores</a>
+      <a href="clientes.html"><span class="nav-icon">👥</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">🏭</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">🧱</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">🔨</span>Serviços</a>
+      <a href="tipos-despesas.html"><span class="nav-icon">📋</span>Tipos de Despesas</a>
+      <a href="tipos-receitas.html"><span class="nav-icon">📋</span>Tipos de Receitas</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? '<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>' : ''}
-      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
-      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
+      ${isAdmin ? '<a href="usuarios.html"><span class="nav-icon">👤</span>Usuários</a>' : ''}
+      <a href="agenda.html"><span class="nav-icon">📚</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">💡</span>Sugestões</a>
+      <a href="creditos.html"><span class="nav-icon">⭐</span>Créditos</a>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-theme-row">
         <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
-          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-icon">${isLight ? '🌙' : '☀️'}</span>
           <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
         </button>
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usuário'}</div></div>
       </div>
-      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+      <button class="btn-logout" id="btn-logout"><span>🚪</span> Sair</button>
     </div>
   </aside>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
@@ -135,14 +135,14 @@ function renderSidebar(Nome, perfil) {
 
 function renderTable(list){
   const tbody=document.getElementById('list-tbody');
-  if(!list.length){tbody.innerHTML=`<tr><td colspan="2"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>Nenhum tipo cadastrado</h3></div></td></tr>`;return;}
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="2"><div class="empty-state"><div class="empty-icon">📋</div><h3>Nenhum tipo cadastrado</h3></div></td></tr>`;return;}
   tbody.innerHTML=list.map(d=>`<tr>
     <td>${d.Nome||'-'}</td>
     <td><div class="td-actions">
       <button class="btn btn-info btn-icon-sm" title="Visualizar" onclick="viewItem('${d.id}')">👁️</button>
-      <button class="btn btn-secondary btn-icon-sm" title="Editar" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
-      ${d.arquivada ? \`<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar('${d.id}', false)">&#128229;</button>\` : \`<button class="btn btn-warning btn-icon-sm" title="Arquivar" onclick="toggleArquivar('${d.id}', true)">&#128451;</button>\`}
-      <button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
+      <button class="btn btn-secondary btn-icon-sm" title="Editar" onclick="editItem('${d.id}')">✏️</button>
+      ${d.arquivada ? '<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar(\''+d.id+'\', false)">📥</button>' : '<button class="btn btn-warning btn-icon-sm" title="Arquivar" onclick="toggleArquivar(\''+d.id+'\', true)">🗄️</button>'}
+      <button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="deleteItem('${d.id}')">🗑️</button>
     </div></td></tr>`).join('');
 }
 

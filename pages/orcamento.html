@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Or&#231;amentos &#8212; Excellentia Controll</title>
+  <title>Orçamentos — Excellentia Controll</title>
   <link rel="stylesheet" href="../css/style.css"><link rel="icon" href="../assets/logo.png">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -12,7 +12,7 @@
   <div id="sidebar-placeholder"></div>
   <div class="main-content">
     <div class="topbar">
-      <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
       <div><div class="topbar-title">Orçamentos</div><div class="topbar-subtitle">Gestão de Orçamentos</div></div>
       <div class="topbar-actions"><button class="btn btn-primary" id="btn-novo">+ Novo Orçamento</button></div>
     </div>
@@ -20,7 +20,7 @@
       <div class="card" style="padding:0">
         <div class="table-wrapper">
           <table class="data-table">
-            <thead><tr><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Com Desconto</th><th>Entrega</th><th>Status</th><th>A&#231;&#245;es</th></tr></thead>
+            <thead><tr><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Com Desconto</th><th>Entrega</th><th>Status</th><th>Ações</th></tr></thead>
             <tbody id="list-tbody"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-3)">Carregando...</td></tr></tbody>
           </table>
         </div>
@@ -41,8 +41,8 @@
           <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-cliente" placeholder="Nome do cliente"><div class="autocomplete-list" id="cli-auto"></div></div>
           <input type="hidden" id="f-cliente-id">
         </div>
-        <div class="form-group"><label class="form-label">Tipo de Servi&#231;o</label>
-          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-tipo" placeholder="Tipo de servi&#231;o"><div class="autocomplete-list" id="tipo-auto"></div></div>
+        <div class="form-group"><label class="form-label">Tipo de Serviço</label>
+          <div class="autocomplete-wrapper"><input type="text" class="form-control" id="f-tipo" placeholder="Tipo de serviço"><div class="autocomplete-list" id="tipo-auto"></div></div>
         </div>
         <div class="form-group"><label class="form-label">Status</label>
           <select class="form-select" id="f-status"><option value="">Selecionar</option></select>
@@ -57,7 +57,7 @@
             <!-- Linhas de serviços dinâmicas -->
           </div>
         </div>
-        <div class="form-group"><label class="form-label">Data do Servi&#231;o</label>
+        <div class="form-group"><label class="form-label">Data do Serviço</label>
           <input type="date" class="form-control" id="f-data">
         </div>
         <div class="form-group"><label class="form-label">Prazo (dias)</label>
@@ -71,18 +71,18 @@
         </div>
         <div class="form-group"><label class="form-label">Forma de Pagamento</label>
           <select class="form-select" id="f-forma-pagamento">
-            <option value="">N&#227;o informada</option>
-            <option value="Cart&#227;o">Cart&#227;o</option>
+            <option value="">Não informada</option>
+            <option value="Cartão">Cartão</option>
             <option value="Pix">Pix</option>
             <option value="Dinheiro">Dinheiro</option>
             <option value="Boleto">Boleto</option>
             <option value="Outros">Outros</option>
           </select>
         </div>
-        <div class="form-group"><label class="form-label">Op&#231;&#227;o de Pagamento</label>
+        <div class="form-group"><label class="form-label">Opção de Pagamento</label>
           <select class="form-select" id="f-opcao-pagamento">
-            <option value="">N&#227;o informada</option>
-            <option value="&#192; vista">&#192; vista</option>
+            <option value="">Não informada</option>
+            <option value="À vista">À vista</option>
             <option value="Parcelado">Parcelado</option>
           </select>
         </div>
@@ -150,7 +150,7 @@
     <div class="modal-footer">
       <button class="btn btn-secondary" id="close-modal-2">Cancelar</button>
       <button class="btn btn-info" id="btn-preview">Preview</button>
-      <button class="btn btn-primary" id="btn-salvar">&#128190; Salvar</button>
+      <button class="btn btn-primary" id="btn-salvar">💾 Salvar</button>
     </div>
   </div>
 </div>
@@ -159,12 +159,12 @@
 <div class="modal-overlay" id="modal-preview">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <span class="modal-title">Preview do Or&#231;amento</span>
+      <span class="modal-title">Preview do Orçamento</span>
       <button class="modal-close" id="close-preview">✕</button>
     </div>
     <div class="modal-body">
       <div class="no-print" style="display:flex;gap:10px;margin-bottom:16px">
-        <button class="btn btn-secondary" onclick="window.print()">&#128424; Imprimir</button>
+        <button class="btn btn-secondary" onclick="window.print()">🖨 Imprimir</button>
         <button class="btn btn-danger" id="btn-pdf">📄 Baixar PDF</button>
       </div>
       <div id="orcamento-preview-content" style="background:white;color:#111;padding:40px;border-radius:8px;font-family:'Inter',sans-serif"></div>
@@ -186,7 +186,7 @@ let allItems=[], clientes=[], tiposServico=[], statusList=[], editId=null, image
 onAuthStateChanged(auth, async(user)=>{
   if(!user){window.location.href='../login.html';return;}
   const snap=await getDoc(doc(db,'usuarios',user.uid)); const u=snap.exists()?snap.data():{};
-  renderSidebar(u.Nome||user.email,u.perfil||'Usu&#225;rio');
+  renderSidebar(u.Nome||user.email,u.perfil||'Usuário');
   const [oSnap,cSnap,tSnap,sSnap]=await Promise.all([
     getDocs(query(collection(db,'orcamentos'),orderBy('criadoEm','desc'))),
     getDocs(collection(db,'clientes')), getDocs(collection(db,'tiposServico')),
@@ -233,39 +233,39 @@ function renderSidebar(Nome, perfil) {
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Principal</div>
-      <a href="dashboard.html"><span class="nav-icon">&#128202;</span>Dashboard</a>
-      <a href="demandas.html"><span class="nav-icon">&#128203;</span>Projetos</a>
-      <a href="kanban.html"><span class="nav-icon">&#128193;&#65039;</span>Kanban</a>
-      <a href="calendario.html"><span class="nav-icon">&#128197;</span>Calend&#225;rio</a>
-      <a href="orcamento.html"><span class="nav-icon">&#128176;</span>Orçamentos</a>
-      <a href="financeiro.html"><span class="nav-icon">&#128176;</span>Financeiro</a>
-      <a href="relatorios.html"><span class="nav-icon">&#128200;</span>Relat&#243;rios</a>
+      <a href="dashboard.html"><span class="nav-icon">📊</span>Dashboard</a>
+      <a href="demandas.html"><span class="nav-icon">📋</span>Projetos</a>
+      <a href="kanban.html"><span class="nav-icon">📁️</span>Kanban</a>
+      <a href="calendario.html"><span class="nav-icon">📅</span>Calendário</a>
+      <a href="orcamento.html"><span class="nav-icon">💰</span>Orçamentos</a>
+      <a href="financeiro.html"><span class="nav-icon">💰</span>Financeiro</a>
+      <a href="relatorios.html"><span class="nav-icon">📈</span>Relatórios</a>
       <div class="sidebar-section-label">Cadastros</div>
-      <a href="colaboradores.html"><span class="nav-icon">&#128104;&#8205;&#128188;</span>Colaboradores</a>
-      <a href="clientes.html"><span class="nav-icon">&#128101;</span>Clientes</a>
-      <a href="fornecedores.html"><span class="nav-icon">&#127981;</span>Fornecedores</a>
-      <a href="materiais.html"><span class="nav-icon">&#129521;</span>Materiais</a>
-      <a href="servicos.html"><span class="nav-icon">&#128296;</span>Servi&#231;os</a>
-      <a href="tipos-despesas.html"><span class="nav-icon">&#128203;</span>Tipos de Despesas</a>
-      <a href="tipos-receitas.html"><span class="nav-icon">&#128203;</span>Tipos de Receitas</a>
+      <a href="colaboradores.html"><span class="nav-icon">👨‍💼</span>Colaboradores</a>
+      <a href="clientes.html"><span class="nav-icon">👥</span>Clientes</a>
+      <a href="fornecedores.html"><span class="nav-icon">🏭</span>Fornecedores</a>
+      <a href="materiais.html"><span class="nav-icon">🧱</span>Materiais</a>
+      <a href="servicos.html"><span class="nav-icon">🔨</span>Serviços</a>
+      <a href="tipos-despesas.html"><span class="nav-icon">📋</span>Tipos de Despesas</a>
+      <a href="tipos-receitas.html"><span class="nav-icon">📋</span>Tipos de Receitas</a>
       <div class="sidebar-section-label">Outros</div>
-      ${isAdmin ? '<a href="usuarios.html"><span class="nav-icon">&#128100;</span>Usu&#225;rios</a>' : ''}
-      <a href="agenda.html"><span class="nav-icon">&#128218;</span>Agenda de Contatos</a>
-      <a href="sugestoes.html"><span class="nav-icon">&#128161;</span>Sugest&#245;es</a>
-      <a href="creditos.html"><span class="nav-icon">&#11088;</span>Cr&#233;ditos</a>
+      ${isAdmin ? '<a href="usuarios.html"><span class="nav-icon">👤</span>Usuários</a>' : ''}
+      <a href="agenda.html"><span class="nav-icon">📚</span>Agenda de Contatos</a>
+      <a href="sugestoes.html"><span class="nav-icon">💡</span>Sugestões</a>
+      <a href="creditos.html"><span class="nav-icon">⭐</span>Créditos</a>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-theme-row">
         <button class="theme-toggle" id="sidebar-theme-toggle" onclick="window.toggleTheme()">
-          <span id="theme-icon">${isLight ? '&#127769;' : '&#9728;&#65039;'}</span>
+          <span id="theme-icon">${isLight ? '🌙' : '☀️'}</span>
           <span id="theme-label">${isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
         </button>
       </div>
       <div class="sidebar-user">
         <div class="sidebar-avatar">${ini}</div>
-        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usu&#225;rio'}</div></div>
+        <div class="sidebar-user-info"><div class="u-name">${Nome}</div><div class="u-role">${isAdmin ? 'Administrador' : 'Usuário'}</div></div>
       </div>
-      <button class="btn-logout" id="btn-logout"><span>&#128682;</span> Sair</button>
+      <button class="btn-logout" id="btn-logout"><span>🚪</span> Sair</button>
     </div>
   </aside>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>`;
@@ -280,7 +280,7 @@ function renderSidebar(Nome, perfil) {
 
 function renderTable(list){
   const tbody=document.getElementById('list-tbody');
-  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">&#128203;</div><h3>nenhum or&#231;amento</h3></div></td></tr>`;return;}
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><h3>nenhum orçamento</h3></div></td></tr>`;return;}
   tbody.innerHTML=list.map(d=>{
     const st=statusList.find(s=>s.id===d.statusId);
     return `<tr>
@@ -290,11 +290,11 @@ function renderTable(list){
       <td>${buildStatusBadge(d.statusNome||'-',st?.cor)}</td>
       <td><div class="td-actions">
         <button class="btn btn-info btn-icon-sm" title="Visualizar" onclick="previewOrc('${d.id}')">👁️</button>
-        <button class="btn btn-secondary btn-icon-sm" title="Editar" onclick="editItem('${d.id}')">&#9999;&#65039;</button>
+        <button class="btn btn-secondary btn-icon-sm" title="Editar" onclick="editItem('${d.id}')">✏️</button>
         ${d.arquivada
-          ? `<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar('${d.id}', false)">&#128229;</button>`
-          : `<button class="btn btn-warning btn-icon-sm" title="Arquivar"    onclick="toggleArquivar('${d.id}', true)">&#128451;</button>`}
-        <button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="deleteItem('${d.id}')">&#128465;&#65039;</button>
+          ? `<button class="btn btn-success btn-icon-sm" title="Desarquivar" onclick="toggleArquivar('${d.id}', false)">📥</button>`
+          : `<button class="btn btn-warning btn-icon-sm" title="Arquivar"    onclick="toggleArquivar('${d.id}', true)">🗃</button>`}
+        <button class="btn btn-danger btn-icon-sm" title="Excluir" onclick="deleteItem('${d.id}')">🗑️</button>
       </div></td></tr>`;
   }).join('');
 }
@@ -348,7 +348,7 @@ function addServicoRow(descricao = '', valor = 0, aprovado = true) {
       <input type="checkbox" class="s-aprovado" ${aprovado ? 'checked' : ''} style="width:20px; height:20px; cursor:pointer;"> 
       <small>Aprovado</small>
     </div>
-    <div style="flex:0"><button type="button" class="btn btn-danger btn-icon-sm btn-remover-servico" title="Remover">&#128465;&#65039;</button></div>
+    <div style="flex:0"><button type="button" class="btn btn-danger btn-icon-sm btn-remover-servico" title="Remover">🗑️</button></div>
   `;
   div.querySelector('.btn-remover-servico').addEventListener('click', () => { div.remove(); updateValorOrcamento(); });
   div.querySelector('.s-valor').addEventListener('input', updateValorOrcamento);
@@ -427,7 +427,7 @@ document.getElementById('btn-gerar-parcelas').addEventListener('click', () => {
 
 function openModal(id=null){
   editId=id; document.getElementById('form-alert').style.display='none'; document.getElementById('alerta-prazo').style.display='none';
-  document.getElementById('modal-titulo').textContent=id?'Editar Orçamento':'Novo Or&#231;amento';
+  document.getElementById('modal-titulo').textContent=id?'Editar Orçamento':'Novo Orçamento';
   if(!id){
     ['f-cliente','f-cliente-id','f-tipo','f-entrega','f-imagem'].forEach(i=>document.getElementById(i).value='');
     ['f-data','f-prazo','f-valor','f-desconto','f-valor-pago'].forEach(i=>document.getElementById(i).value='');
@@ -536,17 +536,17 @@ document.getElementById('f-imagem').addEventListener('change', function(e) {
 });
 
 window.deleteItem=async(id)=>{
-  if(!await confirmDialog('Excluir este or&#231;amento?'))return;
-  await deleteDoc(doc(db,'orcamentos',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Or&#231;amento exclu-do!','success');
+  if(!await confirmDialog('Excluir este orçamento?'))return;
+  await deleteDoc(doc(db,'orcamentos',id)); allItems=allItems.filter(d=>d.id!==id); renderTable(allItems); showToast('Orçamento exclu-do!','success');
 };
 
 window.toggleArquivar = async (id, arquivar) => {
-  const msg = arquivar ? 'Deseja arquivar este or&#231;amento?' : 'Deseja desarquivar este or&#231;amento?';
+  const msg = arquivar ? 'Deseja arquivar este orçamento?' : 'Deseja desarquivar este orçamento?';
   if (!await confirmDialog(msg)) return;
   await updateDoc(doc(db, 'orcamentos', id), { arquivada: arquivar, atualizadoEm: serverTimestamp() });
   allItems = allItems.map(d => d.id === id ? { ...d, arquivada: arquivar } : d);
   renderTable(allItems);
-  showToast(arquivar ? 'Or&#231;amento arquivado!' : 'Or&#231;amento desarquivado!', 'success');
+  showToast(arquivar ? 'Orçamento arquivado!' : 'Orçamento desarquivado!', 'success');
 };
 
 window.previewOrc=async(id)=>{
@@ -591,7 +591,7 @@ function renderPreview(d){
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px;">
           <div style="flex:1">
             <h1 style="font-family:'Georgia',serif;font-size:36px;font-weight:normal;color:#111;margin:0 0 16px 0;line-height:1.2">Proposta de projeto de<br>interiores</h1>
-            <p style="font-size:14px;color:#333;margin:0 0 16px 0;max-width:320px;line-height:1.4">Agradecemos pela oportunidade de apresentar nossa proposta de or&#231;amento para atender &#224;s suas necessidades.</p>
+            <p style="font-size:14px;color:#333;margin:0 0 16px 0;max-width:320px;line-height:1.4">Agradecemos pela oportunidade de apresentar nossa proposta de orçamento para atender às suas necessidades.</p>
             <div style="font-size:18px;font-weight:bold;color:#111">${new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'})}</div>
           </div>
           <div style="width:200px;text-align:right">
@@ -662,7 +662,7 @@ function renderPreview(d){
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px;">
           <div style="flex:1">
             <h1 style="font-family:'Georgia',serif;font-size:36px;font-weight:normal;color:#111;margin:0 0 16px 0;line-height:1.2">Proposta de projeto de<br>interiores</h1>
-            <p style="font-size:14px;color:#333;margin:0 0 16px 0;max-width:320px;line-height:1.4">Agradecemos pela oportunidade de apresentar nossa proposta de or&#231;amento para atender &#224;s suas necessidades.</p>
+            <p style="font-size:14px;color:#333;margin:0 0 16px 0;max-width:320px;line-height:1.4">Agradecemos pela oportunidade de apresentar nossa proposta de orçamento para atender às suas necessidades.</p>
             <div style="font-size:18px;font-weight:bold;color:#111">${new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'})}</div>
           </div>
           <div style="width:200px;text-align:right">
@@ -829,7 +829,7 @@ document.getElementById('btn-salvar').addEventListener('click',async()=>{
   try{
     if(editId){await updateDoc(doc(db,'orcamentos',editId),payload);allItems=allItems.map(d=>d.id===editId?{...d,...payload}:d);}
     else{const ref=await addDoc(collection(db,'orcamentos'),{...payload,criadoEm:serverTimestamp()});allItems.push({id:ref.id,...payload});}
-    renderTable(allItems);closeModalFn();showToast(editId?'Or&#231;amento atualizado!':'Or&#231;amento salvo!','success');
+    renderTable(allItems);closeModalFn();showToast(editId?'Orçamento atualizado!':'Orçamento salvo!','success');
   }catch(err){document.getElementById('form-alert').textContent=err.message;document.getElementById('form-alert').style.display='flex';}
 });
 </script>
